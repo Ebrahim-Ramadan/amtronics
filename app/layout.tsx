@@ -1,0 +1,60 @@
+import type React from "react"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import { CartProvider } from "@/lib/context"
+import Header from "@/components/header"
+
+const inter = Inter({ subsets: ["latin"] })
+
+export const metadata: Metadata = {
+  title: "Amtronics - Electronics & Educational Kits Store",
+  description:
+    "Shop premium electronics, educational kits, Raspberry Pi, and lab equipment. Free delivery in Kuwait. أمترونيكس - متجر الإلكترونيات والأطقم التعليمية",
+  keywords: "electronics, raspberry pi, lab kits, educational kits, kuwait, أمترونيكس, إلكترونيات",
+  openGraph: {
+    title: "Amtronics - Electronics & Educational Kits Store",
+    description:
+      "Shop premium electronics, educational kits, Raspberry Pi, and lab equipment. Free delivery in Kuwait.",
+    type: "website",
+    locale: "en_US",
+    alternateLocale: "ar_KW",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning >
+      <head>
+        <link rel="alternate" hrefLang="ar" href="/ar" />
+        <link rel="canonical" href="https://amtronics.co" />
+      </head>
+      <body className={inter.className}>
+        <CartProvider>
+          <Header />
+          <main className="min-h-screen">{children}</main>
+          <footer className="bg-gray-800 text-white py-8">
+            <div className="container mx-auto px-4 text-center">
+              <p>&copy; 2024 Amtronics. All rights reserved.</p>
+            </div>
+          </footer>
+        </CartProvider>
+      </body>
+    </html>
+  )
+}
