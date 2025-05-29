@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     const { code } = await request.json()
 
     const client = await clientPromise
-    const db = client.db("ecommerce")
+    const db = client.db("amtronics")
 
     const promoCode = await db.collection("promocodes").findOne({
       code: code,

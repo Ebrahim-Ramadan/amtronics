@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const orderData = await request.json()
 
     const client = await clientPromise
-    const db = client.db("ecommerce")
+    const db = client.db("amtronics")
 
     // Start a session for transaction
     const session = client.startSession()

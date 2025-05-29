@@ -1,7 +1,5 @@
 import { MongoClient } from "mongodb"
 
-console.log("MONGODB_URI", process.env.NEXT_PUBLIC_MONGODB_URI)
-
 if (!process.env.MONGODB_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"')
 }
@@ -17,12 +15,12 @@ if (process.env.NODE_ENV === "development") {
   }
 
   if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(process.env.NEXT_PUBLIC_MONGODB_URI as string, options)
+    client = new MongoClient(process.env.MONGODB_URI as string, options)
     globalWithMongo._mongoClientPromise = client.connect()
   }
   clientPromise = globalWithMongo._mongoClientPromise
 } else {
-  client = new MongoClient(process.env.NEXT_PUBLIC_MONGODB_URI as string, options)
+  client = new MongoClient(process.env.MONGODB_URI as string, options)
   clientPromise = client.connect()
 }
 

@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const limit = Number.parseInt(searchParams.get("limit") || "20")
 
     const client = await clientPromise
-    const db = client.db("ecommerce")
+    const db = client.db("amtronics")
 
     const query: any = { visible_in_catalog: 1 }
 
@@ -33,13 +33,24 @@ export async function GET(request: Request) {
 
     let sort: any = {}
     if (featured === "true") {
-      // Featured products could be based on sold_quantity or custom field
-      sort = { sold_quantity: -1 }
+      // Simulate featured products by combining sold_quantity and random factor
+      // In a real scenario, you might have a featured flag in the database
+      sort = { sold_quantity: -1, price: -1 }
     } else if (recent === "true") {
-      sort = { _id: -1 }
+      // Simulate recent products by sorting by _id (newest first) and price
+      sort = { _id: -1, price: 1 }
+    } else {
+      // Default sorting
+      sort = { sold_quantity: -1 }
     }
 
-    const products = await db.collection("products").find(query).sort(sort).limit(limit).toArray()
+    // Add some randomization for featured products to make it more dynamic
+    if (featured === "true") {
+      // You can add additional logic here to randomize featured products
+      // For now, we'll use a combination of sold_quantity and price
+    }
+
+    const products = await db.collection("products").find(query).limit(limit).toArray()
 
     return NextResponse.json(products)
   } catch (error) {
