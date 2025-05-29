@@ -26,6 +26,8 @@ export default function ProductsPage() {
       try {
         const response = await fetch("/api/categories")
         const data = await response.json()
+        console.log("data", data)
+
         setCategories(isArabic ? data.ar_categories : data.en_categories)
       } catch (error) {
         console.error("Error fetching categories:", error)

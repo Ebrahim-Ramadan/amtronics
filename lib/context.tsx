@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createContext, useContext, useReducer, type ReactNode } from "react"
+import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react"
 import type { CartItem, Product } from "./types"
 
 interface CartState {
@@ -17,6 +17,7 @@ type CartAction =
   | { type: "UPDATE_QUANTITY"; payload: { productId: string; quantity: number } }
   | { type: "CLEAR_CART" }
   | { type: "SET_LANGUAGE"; payload: "en" | "ar" }
+  | { type: "LOAD_CART"; payload: CartState }
 
 const CartContext = createContext<{
   state: CartState
@@ -72,9 +73,36 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         ...state,
         language: action.payload,
       }
+    case "LOAD_CART":
+      return action.payload
     default:
       return state
   }
+}
+
+// Helper functions for localStorage
+const saveCartToStorage = (cartState: CartState) => {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("amtronics_cart", JSON.stringify(cartState))
+    } catch (error) {
+      console.error("Error saving cart to localStorage:", error)
+    }
+  }
+}
+
+const loadCartFromStorage = (): CartState | null => {
+  if (typeof window !== "undefined") {
+    try {
+      const savedCart = localStorage.getItem("amtronics_cart")
+      if (savedCart) {
+        return JSON.parse(savedCart)
+      }
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error)
+    }
+  }
+  return null
 }
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -83,6 +111,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     total: 0,
     language: "en",
   })
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const savedCart = loadCartFromStorage()
+    if (savedCart) {
+      dispatch({ type: "LOAD_CART", payload: savedCart })
+    }
+  }, [])
+
+  // Save cart to localStorage whenever state changes
+  useEffect(() => {
+    saveCartToStorage(state)
+  }, [state])
 
   return <CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>
 }

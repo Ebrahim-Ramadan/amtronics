@@ -68,7 +68,7 @@ export default function CategoryCircles() {
 
   return (
     <div className="py-8">
-      <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
+      <div className="py-2 flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
         {categories.map((category, index) => (
           <Link key={index} href={category.link} className="flex-shrink-0 flex flex-col items-center group">
             <div
