@@ -73,6 +73,7 @@ export default function ProductPage() {
   }
 
   const discountedPrice = product.discount ? product.price - product.price * (product.discount / 100) : product.price
+  console.log('discountedPrice', discountedPrice);
 
   return (
     <div className="container mx-auto px-4 py-8">
