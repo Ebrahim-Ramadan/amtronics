@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import ProductCard from "@/components/product-card"
@@ -16,26 +15,42 @@ export default function ProductsPage() {
   const searchParams = useSearchParams()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const [categories, setCategories] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "")
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "")
   const isArabic = state.language === "ar"
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/categories")
-        const data = await response.json()
-        console.log("data", data)
-
-        setCategories(isArabic ? data.ar_categories : data.en_categories)
-      } catch (error) {
-        console.error("Error fetching categories:", error)
-      }
-    }
-
-    fetchCategories()
-  }, [isArabic])
+  const categories = [
+    "Kits",
+    "Resistor",
+    "Modules",
+    "Sparkfun",
+    "Transistor & Regulator",
+    "Power Supply",
+    "Accessories",
+    "Switch",
+    "Resistor & Potentiometer",
+    "Diode",
+    "Sensor",
+    "DFRobot",
+    "Keyestudio",
+    "Servo & Stepper Motor",
+    "Led & Diode",
+    "Battery",
+    "Service",
+    "Transistor",
+    "IC",
+    "3D Print & Accessories",
+    "Capacitors",
+    "Batteries & Power Supply",
+    "Tools",
+    "DC Motor & Pump",
+    "Motor",
+    "Arduino",
+    "Filament",
+    "Potentiometer",
+    "Raspberry Pi",
+    "Bread Board & PCB"
+  ]
 
   useEffect(() => {
     const fetchProducts = async () => {
