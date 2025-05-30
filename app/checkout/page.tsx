@@ -84,7 +84,7 @@ export default function CheckoutPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">{isArabic ? "الاسم الكامل" : "Full Name"} *</Label>
+                  <Label className="mb-1" htmlFor="name">{isArabic ? "الاسم الكامل" : "Full Name"} *</Label>
                   <Input
                     id="name"
                     required
@@ -94,7 +94,7 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">{isArabic ? "رقم الهاتف" : "Phone Number"} *</Label>
+                  <Label className="mb-1" htmlFor="phone">{isArabic ? "رقم الهاتف" : "Phone Number"} *</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -106,7 +106,7 @@ export default function CheckoutPage() {
               </div>
 
               <div>
-                <Label htmlFor="email">{isArabic ? "البريد الإلكتروني" : "Email Address"}</Label>
+                <Label className="mb-1" htmlFor="email">{isArabic ? "البريد الإلكتروني" : "Email Address"}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -117,7 +117,7 @@ export default function CheckoutPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="country">{isArabic ? "الدولة" : "Country"} *</Label>
+                  <Label className="mb-1" htmlFor="country">{isArabic ? "الدولة" : "Country"} *</Label>
                   <Input
                     id="country"
                     required
@@ -127,7 +127,7 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="city">{isArabic ? "المدينة" : "City"} *</Label>
+                  <Label className="mb-1" htmlFor="city">{isArabic ? "المدينة" : "City"} *</Label>
                   <Input
                     id="city"
                     required
@@ -140,7 +140,7 @@ export default function CheckoutPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="area">{isArabic ? "المنطقة" : "Area"} *</Label>
+                  <Label className="mb-1" htmlFor="area">{isArabic ? "المنطقة" : "Area"} *</Label>
                   <Input
                     id="area"
                     required
@@ -150,7 +150,7 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="block">{isArabic ? "القطعة" : "Block"} *</Label>
+                  <Label className="mb-1" htmlFor="block">{isArabic ? "القطعة" : "Block"} *</Label>
                   <Input
                     id="block"
                     required
@@ -162,7 +162,7 @@ export default function CheckoutPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="street">{isArabic ? "الشارع" : "Street"} *</Label>
+                  <Label className="mb-1" htmlFor="street">{isArabic ? "الشارع" : "Street"} *</Label>
                   <Input
                     id="street"
                     required
@@ -172,7 +172,7 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="house">{isArabic ? "رقم المنزل" : "House Number"} *</Label>
+                  <Label className="mb-1" htmlFor="house">{isArabic ? "رقم المنزل" : "House Number"} *</Label>
                   <Input
                     id="house"
                     required
