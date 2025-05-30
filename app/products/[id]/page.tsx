@@ -10,10 +10,7 @@ import { ObjectId } from "mongodb"
 import type { Product } from "@/lib/types"
 import ProductActions from "./ProductActions"
 
-export const metadata = {
-  title: "Product Details",
-  description: "View detailed information about the product",
-}
+
 
 async function getProduct(id: string): Promise<Product | null> {
   try {
@@ -33,6 +30,25 @@ interface ProductPageProps {
   params: { id: string }
   searchParams: { lang?: string }
 }
+export async function generateMetadata({ params, searchParams }: ProductPageProps) {
+  const product = await getProduct(params.id)
+  const isArabic = searchParams.lang === "ar"
+
+  if (!product) {
+    return {
+      title: isArabic ? "المنتج غير موجود" : "Product Not Found",
+      description: isArabic
+        ? "المنتج المطلوب غير متوفر."
+        : "The requested product is not available.",
+    }
+  }
+
+  return {
+    title: isArabic ? product.ar_name : product.en_name,
+    description: isArabic ? product.ar_description : product.en_description,
+  }
+}
+
 
 export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const product = await getProduct(params.id)
