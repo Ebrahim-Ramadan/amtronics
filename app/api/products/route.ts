@@ -50,8 +50,18 @@ export async function GET(request: Request) {
       // For now, we'll use a combination of sold_quantity and price
     }
 
-    const products = await db.collection("products").find(query).limit(limit).toArray()
+    // Only fetch summary fields for product list
+    const projection = {
+      _id: 1,
+      en_name: 1,
+      ar_name: 1,
+      price: 1,
+      image: 1,
+      // add more summary fields if needed
+    }
 
+    const products = await db.collection("products").find(query, { projection }).limit(limit).toArray()
+    
     return NextResponse.json(products)
   } catch (error) {
     console.error("Error fetching products:", error)
