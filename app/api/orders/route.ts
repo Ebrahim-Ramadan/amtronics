@@ -24,19 +24,32 @@ export async function POST(request: Request) {
           { session },
         )
 
-        // Update product quantities
-        for (const item of orderData.items) {
-          await db.collection("products").updateOne(
-            { _id: new ObjectId(item.product._id) },
-            {
+        // bulkupdate unstead of Update product quantities
+        // for (const item of orderData.items) {
+        //   await db.collection("products").updateOne(
+        //     { _id: new ObjectId(item.product._id) },
+        //     {
+        //       $inc: {
+        //         quantity_on_hand: -item.quantity,
+        //         sold_quantity: item.quantity,
+        //       },
+        //     },
+        //     { session },
+        //   )
+        // }
+        const productUpdates = orderData.items.map((item: any) => ({
+          updateOne: {
+            filter: { _id: new ObjectId(item.product._id) },
+            update: {
               $inc: {
                 quantity_on_hand: -item.quantity,
                 sold_quantity: item.quantity,
               },
             },
-            { session },
-          )
-        }
+          },
+        }))
+        await db.collection("products").bulkWrite(productUpdates, { session })
+
 
         // Insert subscriber if email provided
         if (orderData.customerInfo.email) {
