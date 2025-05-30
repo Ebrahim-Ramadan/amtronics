@@ -1,64 +1,49 @@
-import HeroBanner from "@/components/hero-banner"
-import PromotionalBanner from "@/components/promotional-banner"
-import CategoryCircles from "@/components/category-circles"
-import DealsSection from "@/components/deals-section"
+import EnhancedHeroSlider from "@/components/enhanced-hero-slider"
+import EnhancedCategories from "@/components/enhanced-categories"
+import PromotionalGrid from "@/components/promotional-grid"
+import ProductCarousel from "@/components/product-carousel"
 import BrandShowcase from "@/components/brand-showcase"
-import ProductSection from "@/components/product-sections"
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Promotional Banner */}
-      <div className="container mx-auto px-4 pt-4">
-        <PromotionalBanner />
+      {/* Enhanced Hero Slider */}
+      <div className="container mx-auto px-4 pt-6">
+        <EnhancedHeroSlider />
       </div>
 
-      {/* Hero Banner */}
+      {/* Enhanced Categories */}
       <div className="container mx-auto px-4">
-        <HeroBanner />
+        <EnhancedCategories />
       </div>
 
-      {/* Category Circles */}
+      {/* Promotional Grid Sections */}
       <div className="container mx-auto px-4">
-        <CategoryCircles />
+        <PromotionalGrid />
       </div>
 
-      {/* Deals Sections */}
+      {/* Product Carousels */}
       <div className="container mx-auto px-4 space-y-8 py-8">
-        {/* Flash Deals */}
-        <DealsSection
-          title="Flash Deals"
-          arTitle="عروض خاطفة"
-          bgColor="bg-gradient-to-r from-red-500 to-pink-500"
-          dealType="flash"
+        <ProductCarousel
+          title="Best Sellers in Electronics"
+          arTitle="الأكثر مبيعاً في الإلكترونيات"
+          type="bestsellers"
+          bgColor="bg-white"
         />
 
-        {/* Mega Deals */}
-        <DealsSection
-          title="Mega Deals"
-          arTitle="عروض ضخمة"
-          bgColor="bg-gradient-to-r from-blue-500 to-purple-500"
-          dealType="mega"
+        <ProductCarousel
+          title="Today's Deals"
+          arTitle="عروض اليوم"
+          type="deals"
+          bgColor="bg-gradient-to-r from-yellow-50 to-orange-50"
         />
 
-        {/* Featured Products */}
-        <DealsSection
-          title="Featured Products"
-          arTitle="منتجات مميزة"
-          bgColor="bg-gradient-to-r from-green-500 to-teal-500"
-          dealType="featured"
-        />
+        <ProductCarousel title="Recommended for You" arTitle="موصى لك" type="recommended" bgColor="bg-white" />
       </div>
 
       {/* Brand Showcase */}
       <div className="container mx-auto px-4">
         <BrandShowcase />
-      </div>
-
-      {/* Traditional Product Sections */}
-      <div className="container mx-auto px-4 space-y-16 py-8">
-        <ProductSection title="New Arrivals" arTitle="الإضافات الحديثة" type="recent" />
-        <ProductSection title="Best Sellers" arTitle="الأكثر مبيعاً" type="featured" />
       </div>
     </div>
   )
