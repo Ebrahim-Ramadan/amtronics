@@ -1,79 +1,50 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
 import Image from "next/image"
+import { notFound } from "next/navigation"
 import { ShoppingCart, Star, Truck, Shield, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import clientPromise from "@/lib/mongodb"
+import { ObjectId } from "mongodb"
 import type { Product } from "@/lib/types"
-import { useCart } from "@/lib/context"
+import ProductActions from "./ProductActions"
 
-export default function ProductPage() {
-  const { state, dispatch } = useCart()
-  const params = useParams()
-  const [product, setProduct] = useState<Product | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [quantity, setQuantity] = useState(1)
-  const isArabic = state.language === "ar"
+export const metadata = {
+  title: "Product Details",
+  description: "View detailed information about the product",
+}
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await fetch(`/api/products/${params.id}`)
-        const data = await response.json()
-        setProduct(data)
-      } catch (error) {
-        console.error("Error fetching product:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    if (params.id) {
-      fetchProduct()
-    }
-  }, [params.id])
-
-  const addToCart = () => {
-    if (product) {
-      for (let i = 0; i < quantity; i++) {
-        dispatch({ type: "ADD_ITEM", payload: product })
-      }
-    }
+async function getProduct(id: string): Promise<Product | null> {
+  try {
+    const client = await clientPromise
+    const db = client.db("amtronics")
+    const product = await db.collection("products").findOne({
+      _id: new ObjectId(id),
+    })
+    return product as Product | null
+  } catch (error) {
+    console.error("Error fetching product:", error)
+    return null
   }
+}
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-gray-200 h-96 rounded-lg"></div>
-            <div className="space-y-4">
-              <div className="h-8 bg-gray-200 rounded"></div>
-              <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-10 bg-gray-200 rounded w-1/2"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+interface ProductPageProps {
+  params: { id: string }
+  searchParams: { lang?: string }
+}
+
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
+  const product = await getProduct(params.id)
+  const isArabic = searchParams.lang === "ar"
 
   if (!product) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-12">
-          <h1 className="text-2xl font-bold mb-4">{isArabic ? "المنتج غير موجود" : "Product not found"}</h1>
-        </div>
-      </div>
-    )
+    notFound()
   }
 
-  const discountedPrice = product.discount ? product.price - product.price * (product.discount / 100) : product.price
-  console.log('discountedPrice', discountedPrice);
+  const discountedPrice = product.discount
+    ? product.price - product.price * (product.discount / 100)
+    : product.price
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -143,30 +114,7 @@ export default function ProductPage() {
           </div>
 
           {/* Quantity Selector and Add to Cart */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <label className="font-medium">{isArabic ? "الكمية:" : "Quantity:"}</label>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
-                  -
-                </Button>
-                <span className="w-12 text-center">{quantity}</span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setQuantity(quantity + 1)}
-                  disabled={quantity >= product.quantity_on_hand}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-
-            <Button onClick={addToCart} size="lg" className="w-full" disabled={product.quantity_on_hand === 0}>
-              <ShoppingCart className="h-5 w-5 mr-2" />
-              {isArabic ? "أضف للسلة" : "Add to Cart"}
-            </Button>
-          </div>
+          <ProductActions product={product} isArabic={isArabic} />
 
           {/* Features */}
           <Card>
