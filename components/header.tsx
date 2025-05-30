@@ -2,21 +2,27 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Search, ShoppingCart, Globe, Menu, User, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/lib/context"
-import { useRouter } from "next/navigation"
+import { useRouter , useSearchParams} from "next/navigation"
 
 export default function Header() {
   const { state, dispatch } = useCart()
   const [searchQuery, setSearchQuery] = useState("")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const router = useRouter()
-
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    const query = searchParams.get('q')
+    if (query) {
+      setSearchQuery(query)
+    }
+  }, [searchParams])
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
@@ -49,7 +55,7 @@ export default function Header() {
                   placeholder={isArabic ? "البحث عن المنتجات..." : "What are you looking for?"}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pr-10 rounded-full border-0 shadow-md h-11"
+                  className="pr-12 rounded-full border-0 shadow-md h-11"
                   dir={isArabic ? "rtl" : "ltr"}
                 />
                 <Button type="submit" size="sm" className="absolute right-1 top-1 h-9 w-9 p-0 rounded-full">
