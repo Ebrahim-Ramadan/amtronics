@@ -134,3 +134,12 @@
   95% { transform: scale(0.8); } /* Slightly overshoot */
   100% { transform: scale(1); } /* Return to original size */
 }
+
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

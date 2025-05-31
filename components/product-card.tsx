@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ShoppingCart, Star, Check } from "lucide-react"
+import {  Star,  CheckCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -44,7 +44,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             alt={isArabic ? product.ar_name : product.en_name}
             width={250}
             height={250}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-48 object-contain group-hover:scale-105 transition-transform duration-300"
           />
         </Link>
         {product.discount && <Badge className="absolute top-2 left-2 bg-red-500">-{product.discount}%</Badge>}
@@ -55,20 +55,20 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
 
-      <CardContent className="p-4">
+      <CardContent className="p-2">
         <Link href={`/products/${product._id}`}>
-          <h3 className="font-semibold text-lg mb-2 line-clamp-2 hover:text-blue-600 transition-colors">
+          <h3 className="font-semibold text-lg line-clamp-2 hover:text-blue-600 transition-colors">
             {isArabic ? product.ar_name : product.en_name}
           </h3>
         </Link>
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+        <p className="text-gray-600 text-sm  line-clamp-2">
           {isArabic ? product.ar_description : product.en_description}
         </p>
 
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-1">
           <div className="flex">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`h-4 w-4 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+              <Star key={i} className={`h-2 w-2 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
             ))}
           </div>
           <span className="text-sm text-gray-500">
@@ -79,16 +79,16 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex items-center gap-2">
           {product.discount ? (
             <>
-              <span className="text-xl font-bold text-green-600">
-                {discountedPrice.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+              <span className="text-2xl font-bold text-green-600">
+                {discountedPrice.toFixed(2)} <span className="text-sm">{isArabic ? "د.ك" : "KD"}</span>
               </span>
               <span className="text-sm text-gray-500 line-through">
-                {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                {product.price.toFixed(2)} <span className="text-sm">{isArabic ? "د.ك" : "KD"}</span>
               </span>
             </>
           ) : (
-            <span className="text-xl font-bold">
-              {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+            <span className="text-2xl font-bold">
+              {product.price.toFixed(2)} <span className="text-sm">{isArabic ? "د.ك" : "KD"}</span>
             </span>
           )}
         </div>
@@ -96,11 +96,18 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       <CardFooter className="p-4 pt-0">
         <Button onClick={addToCart} className="w-full" disabled={product.quantity_on_hand === 0 || addToCartLoading}>
-          {!addToCartLoading && !showCheck && <ShoppingCart className="h-4 w-4 mr-2" />}
+          {!addToCartLoading && !showCheck &&
+            <Image
+            src='/quick-atc-add-to-cart-grey.svg'
+            width={20}
+            height={20}
+            alt="Add to Cart"
+            />
+          }
           {addToCartLoading ? (
             <span className="h-4 w-4 mr-2 animate-spin border-2 border-gray-300 border-t-transparent rounded-full inline-block align-middle"></span>
           ) : showCheck ? (
-            <><Check className="h-4 w-4 mr-2 text-green-500" />{isArabic ? "تمت الإضافة" : "Added"}</>
+            <><CheckCheck className="h-4 w-4 mr-2 text-green-500" />{isArabic ? "تمت الإضافة" : "Added"}</>
           ) : (
             isArabic ? "أضف للسلة" : "Add to Cart"
           )}

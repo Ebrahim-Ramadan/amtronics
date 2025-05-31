@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { ShoppingCart, Check } from "lucide-react"
+import { ShoppingCart, Check, CheckCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/context"
 import type { Product } from "@/lib/types"
 import { useRouter } from "next/navigation"
 import LoadingDots from "@/components/ui/loading-spinner"
 import { toast } from "sonner"
+import Image from "next/image"
 
 interface ProductActionsProps {
   product: Product
@@ -76,11 +77,22 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
   className="md:flex-1"
   disabled={product.quantity_on_hand === 0 || shopNowLoading || addtoCartLoading}
 >
-  {!addtoCartLoading && !showCheck && <ShoppingCart className="h-5 w-4 mr-2" />}
+  {!addtoCartLoading && !showCheck && 
+  
+  <Image
+  src='/quick-atc-add-to-cart-grey.svg'
+  width={20}
+  height={20}
+  alt="Add to Cart"
+  />
+  }
   {addtoCartLoading ? (
     <LoadingDots />
   ) : showCheck ? (
-    <Check className="h-5 w-5 text-green-500" />
+    <>
+    <CheckCheck className="h-5 w-5 text-white" />
+    Added
+    </>
   ) : (
     isArabic ? "أضف للسلة" : "Add to Cart"
   )}

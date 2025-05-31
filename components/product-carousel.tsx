@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight, Plus, Star } from "lucide-react"
+import { ChevronLeft, ChevronRight, Plus, Star, Check, CheckCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import type { Product } from "@/lib/types"
 import { useCart } from "@/lib/context"
+import { toast } from "sonner"
 
 interface ProductCarouselProps {
   title: string
@@ -23,6 +24,8 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
   const [loading, setLoading] = useState(true)
   const [currentIndex, setCurrentIndex] = useState(0)
   const isArabic = state.language === "ar"
+  const [addLoading, setAddLoading] = useState<{[id: string]: boolean}>({})
+  const [showCheck, setShowCheck] = useState<{[id: string]: boolean}>({})
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -46,7 +49,15 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
   }, [type])
 
   const addToCart = (product: Product) => {
-    dispatch({ type: "ADD_ITEM", payload: product })
+    setAddLoading((prev) => ({ ...prev, [product._id]: true }))
+    setShowCheck((prev) => ({ ...prev, [product._id]: false }))
+    setTimeout(() => {
+      dispatch({ type: "ADD_ITEM", payload: product })
+      toast.success(isArabic ? "تمت الإضافة إلى السلة" : "Added to cart")
+      setAddLoading((prev) => ({ ...prev, [product._id]: false }))
+      setShowCheck((prev) => ({ ...prev, [product._id]: true }))
+      setTimeout(() => setShowCheck((prev) => ({ ...prev, [product._id]: false })), 2000)
+    }, 200)
   }
 
   const nextSlide = () => {
@@ -132,9 +143,22 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
                   <span className="font-bold text-green-600">
                     {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
                   </span>
-                  <Button size="sm" onClick={() => addToCart(product)} className="text-xs px-3">
-                    <Plus/>
-                    {isArabic ? "أضف" : "Add"}
+                  <Button size="sm" onClick={() => addToCart(product)} className="text-xs px-3" disabled={addLoading[product._id]}>
+                    {!addLoading[product._id] && !showCheck[product._id] && 
+                    <Image
+                    src='/quick-atc-add-to-cart-grey.svg'
+                    width={20}
+                    height={20}
+                    alt="Add to Cart"
+                    />
+                    }
+                    {addLoading[product._id] ? (
+                      <span className="h-4 w-4 mr-1 animate-spin border-2 border-gray-300 border-t-transparent rounded-full inline-block align-middle"></span>
+                    ) : showCheck[product._id] ? (
+                      <><CheckCheck className="h-4 w-4 mr-1 text-white" />{isArabic ? "تمت الإضافة" : "Added"}</>
+                    ) : (
+                      isArabic ? "أضف" : "Add"
+                    )}
                   </Button>
                 </div>
               </CardContent>
