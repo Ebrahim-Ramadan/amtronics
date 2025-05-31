@@ -45,45 +45,48 @@ export default function Footer() {
                   : "Al Soor Street, Kuwait City, Kuwait"}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <a className="flex items-center gap-2" href="https://wa.me/+96555501387" target="_blank" rel="noopener noreferrer">
               <Phone className="h-5 w-5" color="#FEEE00" />
-              <p className="text-sm">+965 1234 5678</p>
-            </div>
+              <p className="text-sm">+9 655 550 1387</p>
+            </a>
+            <a className="flex items-center gap-2" href="tel:+96555501493">
+              <Phone className="h-5 w-5" color="#FEEE00" />
+              <p className="text-sm">+9 655 550 1493</p>
+            </a>
             <div className="flex items-center gap-2">
               <Mail className="h-5 w-5" color="#FEEE00" />
               <p className="text-sm">support@amtronics.kw</p>
             </div>
           </div>
-
-          {/* Product Categories */}
-          <div className="space-y-4">
+         {/* Product Categories */}
+         <div className="space-y-4">
             <h3 className="text-xl font-bold">
               {isArabic ? "الفئات" : "Categories"}
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/products/microcontrollers" className="hover:underline">
-                  {isArabic ? "المتحكمات الدقيقة" : "Microcontrollers"}
+                <Link href="/products?category=Kits" className="hover:underline">
+                  {isArabic ? "الأطقم" : "Kits"}
                 </Link>
               </li>
               <li>
-                <Link href="/products/sensors" className="hover:underline">
-                  {isArabic ? "المستشعرات" : "Sensors"}
+                <Link href="/products?category=Resistor" className="hover:underline">
+                  {isArabic ? "المقاومه" : "Resistor"}
                 </Link>
               </li>
               <li>
-                <Link href="/products/resistors" className="hover:underline">
-                  {isArabic ? "المقاومات" : "Resistors"}
+                <Link href="/products?category=Sensor" className="hover:underline">
+                  {isArabic ? "المستشعرات" : "Sensor"}
                 </Link>
               </li>
               <li>
-                <Link href="/products/capacitors" className="hover:underline">
+                <Link href="/products?category=Capacitors" className="hover:underline">
                   {isArabic ? "المكثفات" : "Capacitors"}
                 </Link>
               </li>
               <li>
-                <Link href="/products/leds" className="hover:underline">
-                  {isArabic ? "الصمامات الثنائية" : "LEDs"}
+                <Link href="/products?category=Arduino" className="hover:underline">
+                  {isArabic ? "أردوينو" : "Arduino"}
                 </Link>
               </li>
             </ul>
