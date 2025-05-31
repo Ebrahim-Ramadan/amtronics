@@ -10,11 +10,11 @@ import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/lib/context"
 import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
+import { categories } from "@/lib/utils"
 
 export default function Header() {
   const { state, dispatch } = useCart()
   const [searchQuery, setSearchQuery] = useState("")
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [badgeAnimate, setBadgeAnimate] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
@@ -22,38 +22,6 @@ export default function Header() {
   const searchParams = useSearchParams()
   const navRef = useRef(null)
 
-  const categories = [
-    "Kits",
-    "Resistor",
-    "Modules",
-    "Sparkfun",
-    "Transistor & Regulator",
-    "Power Supply",
-    "Accessories",
-    "Switch",
-    "Resistor & Potentiometer",
-    "Diode",
-    "Sensor",
-    "DFRobot",
-    "Keyestudio",
-    "Servo & Stepper Motor",
-    "Led & Diode",
-    "Battery",
-    "Service",
-    "Transistor",
-    "IC",
-    "3D Print & Accessories",
-    "Capacitors",
-    "Batteries & Power Supply",
-    "Tools",
-    "DC Motor & Pump",
-    "Motor",
-    "Arduino",
-    "Filament",
-    "Potentiometer",
-    "Raspberry Pi",
-    "Bread Board & PCB"
-  ]
 
   useEffect(() => {
     const query = searchParams.get('q')
@@ -166,14 +134,6 @@ export default function Header() {
                 </Button>
               </Link>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="md:hidden text-gray-800"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
             </div>
           </div>
 
@@ -186,7 +146,7 @@ export default function Header() {
                   placeholder={isArabic ? "البحث عن المنتجات..." : "What are you looking for?"}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pr-10 rounded-full border-0 shadow-md"
+                  className="pr-10 rounded-full border-0 shadow-md bg-white"
                   dir={isArabic ? "rtl" : "ltr"}
                 />
                 <Button type="submit" size="sm" className="absolute right-1 top-1 h-8 w-8 p-0 rounded-full">
@@ -200,7 +160,7 @@ export default function Header() {
 
       {/* Navigation - Teal */}
       <div className="bg-[#091638] text-white relative">
-        <div className="container mx-auto px-4">
+        <div className=" mx-auto md:px-4">
           <div className="relative flex items-center">
             {/* Left Arrow */}
             <Button
@@ -216,7 +176,7 @@ export default function Header() {
             {/* Scrollable Nav */}
             <nav
               ref={navRef}
-              className={`${isMenuOpen ? "block" : "hidden"} md:block py-2 overflow-x-auto whitespace-nowrap scrollbar-hidden flex-1 mx-10`}
+              className={`block py-2 overflow-x-auto whitespace-nowrap scrollbar-hidden flex-1 mx-10`}
             >
               <div className="flex gap-4 md:gap-8">
                 {categories.map((category) => (

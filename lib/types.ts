@@ -21,6 +21,8 @@ export interface Product {
   slug_url: string
   discount?: number
   discount_type?: string
+  ar_brand?: string
+  en_brand?: string
 }
 
 export interface CartItem {

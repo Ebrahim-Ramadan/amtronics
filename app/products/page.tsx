@@ -9,6 +9,7 @@ import { useCart } from "@/lib/context"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { categories } from "@/lib/utils"
 
 export default function ProductsPage() {
   const { state } = useCart()
@@ -18,39 +19,6 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "")
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "")
   const isArabic = state.language === "ar"
-
-  const categories = [
-    "Kits",
-    "Resistor",
-    "Modules",
-    "Sparkfun",
-    "Transistor & Regulator",
-    "Power Supply",
-    "Accessories",
-    "Switch",
-    "Resistor & Potentiometer",
-    "Diode",
-    "Sensor",
-    "DFRobot",
-    "Keyestudio",
-    "Servo & Stepper Motor",
-    "Led & Diode",
-    "Battery",
-    "Service",
-    "Transistor",
-    "IC",
-    "3D Print & Accessories",
-    "Capacitors",
-    "Batteries & Power Supply",
-    "Tools",
-    "DC Motor & Pump",
-    "Motor",
-    "Arduino",
-    "Filament",
-    "Potentiometer",
-    "Raspberry Pi",
-    "Bread Board & PCB"
-  ]
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -85,11 +53,11 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="container mx-auto px-2 py-4 md:px-4 md:py-8">
-      <h1 className="text-3xl font-bold mb-8">{isArabic ? "المنتجات" : "Products"}</h1>
+    <div className="container mx-auto px-2 py-4 md:px-4 md:py-6">
+      <h1 className="text-3xl font-bold mb-2 md:mb-4">{isArabic ? "المنتجات" : "Products"}</h1>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
+      <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-8">
         <form onSubmit={handleSearch} className="flex-1">
           <Input
             type="search"

@@ -1,4 +1,3 @@
-import Image from "next/image"
 import { notFound } from "next/navigation"
 import { ShoppingCart, Star, Truck, Shield, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -9,8 +8,8 @@ import clientPromise from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
 import type { Product } from "@/lib/types"
 import ProductActions from "./ProductActions"
-
-
+import Link from "next/link"
+import ProductImageGallery from "./ProductImageGallery"
 
 async function getProduct(id: string): Promise<Product | null> {
   try {
@@ -30,6 +29,7 @@ interface ProductPageProps {
   params: { id: string }
   searchParams: { lang?: string }
 }
+
 export async function generateMetadata({ params, searchParams }: ProductPageProps) {
   const product = await getProduct(params.id)
   const isArabic = searchParams.lang === "ar"
@@ -49,9 +49,10 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
   }
 }
 
-
 export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const product = await getProduct(params.id)
+  console.log("product", product)
+
   const isArabic = searchParams.lang === "ar"
 
   if (!product) {
@@ -62,26 +63,68 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     ? product.price - product.price * (product.discount / 100)
     : product.price
 
+  // Breadcrumbs
+  const category = isArabic ? product.ar_main_category : product.en_main_category
+  const productName = isArabic ? product.ar_name : product.en_name
+
+  // Stock status: Treat quantity_on_hand as Infinity if null
+  const availableStock = product.quantity_on_hand ?? Infinity
+  const isOutOfStock = availableStock === 0
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-2 md:py-4">
+      {/* Breadcrumbs */}
+      <nav className="mb-6 text-[10px] md:text-xs" aria-label="Breadcrumb">
+        <ol className="flex items-center md:space-x-2 rtl:space-x-reverse text-gray-500">
+          <span className="md:block hidden">></span>
+          <li>
+            <Link
+              href={isArabic ? `/?lang=ar` : `/`}
+              className="md:ml-2 hover:underline text-gray-700 font-medium"
+            >
+              {isArabic ? "الرئيسية" : "Home"}
+            </Link>
+          </li>
+          <li className="mx-1 md:mx-2">/</li>
+          <li>
+            <Link
+              href={
+                isArabic
+                  ? `/products?category=${encodeURIComponent(category)}&lang=ar`
+                  : `/products?category=${encodeURIComponent(category)}`
+              }
+              className="hover:underline text-gray-700 font-medium line-clamp-1"
+            >
+              {category}
+            </Link>
+          </li>
+          <li className="mx-1 md:mx-2">/</li>
+          <li
+            className="text-gray-400 truncate max-w-xs line-clamp-1"
+            aria-current="page"
+          >
+            {productName}
+          </li>
+        </ol>
+      </nav>
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Product Image */}
-        <div className="relative">
-          <Image
-            src={product.image || "/placeholder.svg?height=500&width=500"}
-            alt={isArabic ? product.ar_name : product.en_name}
-            width={500}
-            height={500}
-            className="w-full h-auto rounded-lg"
-          />
-          {product.discount && (
-            <Badge className="absolute top-4 left-4 bg-red-500 text-white">-{product.discount}%</Badge>
-          )}
-        </div>
+        {/* Product Image Gallery */}
+        <ProductImageGallery
+          image={product.image}
+          ar_name={product.ar_name}
+          en_name={product.en_name}
+          isArabic={isArabic}
+          discount={product.discount}
+        />
 
         {/* Product Details */}
         <div className="space-y-6">
           <div>
+            {(product.ar_brand || product.en_brand) && (
+              <h1 className="text-3xl font-bold mb-2">
+                {isArabic ? product.ar_brand : product.en_brand}
+              </h1>
+            )}
             <h1 className="text-3xl font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
             <p className="text-gray-600">{isArabic ? product.ar_description : product.en_description}</p>
           </div>
@@ -90,11 +133,15 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           <div className="flex items-center gap-2">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className={`h-5 w-5 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                <Star
+                  key={i}
+                  className={`h-5 w-5 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                  aria-hidden="true"
+                />
               ))}
             </div>
             <span className="text-gray-500">
-              ({product.sold_quantity} {isArabic ? "مبيع" : "sold"})
+              ({product.sold_quantity ?? 0} {isArabic ? "مبيع" : "sold"})
             </span>
           </div>
 
@@ -118,13 +165,26 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
           {/* Stock Status */}
           <div>
-            {product.quantity_on_hand > 0 ? (
-              <Badge variant="secondary" className="bg-green-100 text-green-800">
-                {isArabic ? "متوفر" : "In Stock"} ({product.quantity_on_hand})
+            {isOutOfStock ? (
+              <Badge
+                variant="secondary"
+                className="bg-red-100 text-red-800"
+                aria-label={isArabic ? "نفذ المخزون" : "Out of Stock"}
+              >
+                {isArabic ? "نفذ المخزون" : "Out of Stock"}
               </Badge>
             ) : (
-              <Badge variant="secondary" className="bg-red-100 text-red-800">
-                {isArabic ? "نفذ المخزون" : "Out of Stock"}
+              <Badge
+                variant="secondary"
+                className="bg-green-100 text-green-800"
+                aria-label={
+                  isArabic
+                    ? `متوفر${product.quantity_on_hand != null ? ` (${product.quantity_on_hand})` : ""}`
+                    : `In Stock${product.quantity_on_hand != null ? ` (${product.quantity_on_hand})` : ""}`
+                }
+              >
+                {isArabic ? "متوفر" : "In Stock"}
+                {product.quantity_on_hand != null && ` (${product.quantity_on_hand})`}
               </Badge>
             )}
           </div>
