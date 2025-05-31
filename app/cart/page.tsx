@@ -22,8 +22,16 @@ export default function CartPage() {
 
   const updateQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) {
+      const confirmMessage = isArabic 
+      ? "هل أنت متأكد من إزالة هذا المنتج من السلة؟" 
+      : "Are you sure you want to remove this item from the cart?"
+    console.log(confirmMessage)
+    if (confirm(confirmMessage)) {
+
       dispatch({ type: "REMOVE_ITEM", payload: productId })
       toast.info('Item Removed')
+    }
+
     } else if (quantity > 99) {
       toast.info("Maximum Quantity")
     } else {
@@ -33,8 +41,14 @@ export default function CartPage() {
   }
 
   const removeItem = (productId: string) => {
-    dispatch({ type: "REMOVE_ITEM", payload: productId })
-    toast.info("Item Removed")
+    const confirmMessage = isArabic 
+      ? "هل أنت متأكد من إزالة هذا المنتج من السلة؟" 
+      : "Are you sure you want to remove this item from the cart?"
+    
+    if (confirm(confirmMessage)) {
+      dispatch({ type: "REMOVE_ITEM", payload: productId })
+      toast.info("Item Removed")
+    }
   }
 
   const applyPromoCode = async () => {
@@ -140,11 +154,11 @@ export default function CartPage() {
                       <p className="font-medium text-primary">
                         {item.product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
                       </p>
-                      {item.product.stock < 10 && (
+                      {/* {item.product.stock < 10 && (
                         <Badge variant="destructive">
                           {isArabic ? `متبقي ${item.product.stock} فقط` : `Only ${item.product.stock} left`}
                         </Badge>
-                      )}
+                      )} */}
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2 border rounded-md">
@@ -200,9 +214,9 @@ export default function CartPage() {
 
         {/* Order Summary */}
         <div className="lg:sticky lg:top-4">
-          <Card className="shadow-lg">
+          <Card className="shadow-lg gap-2 md:gap-4">
             <CardHeader>
-              <CardTitle>{isArabic ? "ملخص الطلب" : "Order Summary"}</CardTitle>
+              <p className="text-lg font-semibold">{isArabic ? "ملخص الطلب" : "Order Summary"}</p>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Promo Code */}
