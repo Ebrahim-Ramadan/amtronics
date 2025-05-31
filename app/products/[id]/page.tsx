@@ -76,7 +76,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       {/* Breadcrumbs */}
       <nav className="mb-6 text-[10px] md:text-xs" aria-label="Breadcrumb">
         <ol className="flex items-center md:space-x-2 rtl:space-x-reverse text-gray-500">
-          <span className="md:block hidden">></span>
+          <span className="md:block hidden">&gt;</span>
           <li>
             <Link
               href={isArabic ? `/?lang=ar` : `/`}
