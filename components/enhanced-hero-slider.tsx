@@ -266,24 +266,24 @@ export default function EnhancedHeroSlider() {
       <Button
         variant="ghost"
         size="icon"
-        className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black/20 transition-all duration-300 z-30
+        className={`absolute left-4 top-1/2 rounded-full transform -translate-y-1/2 text-white bg-black/20 transition-all duration-300 z-30
           ${arrowHover.left ? 'scale-125 bg-yellow-400 text-black shadow-lg' : 'hover:bg-white/20'}`}
         onClick={handlePrevSlide}
         style={{ pointerEvents: isSliding ? 'none' : 'auto' }}
         aria-label="Previous Slide"
       >
-        <ChevronLeft className="h-6 w-6" />
+        <ChevronLeft className={`${arrowHover.left ? 'scale-125' : ''}`} />
       </Button>
       <Button
         variant="ghost"
         size="icon"
-        className={`absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black/20 transition-all duration-300 z-30
+        className={`absolute right-4 top-1/2 rounded-full transform -translate-y-1/2 text-white bg-black/20 transition-all duration-300 z-30
           ${arrowHover.right ? 'scale-125 bg-yellow-400 text-black shadow-lg' : 'hover:bg-white/20'}`}
         onClick={handleNextSlide}
         style={{ pointerEvents: isSliding ? 'none' : 'auto' }}
         aria-label="Next Slide"
       >
-        <ChevronRight className="h-6 w-6" />
+        <ChevronRight className={`${arrowHover.right ? 'scale-125' : ''}`} />
       </Button>
 
       {/* Dots */}
