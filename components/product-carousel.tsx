@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight, Star } from "lucide-react"
+import { ChevronLeft, ChevronRight, Plus, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -133,6 +133,7 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
                     {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
                   </span>
                   <Button size="sm" onClick={() => addToCart(product)} className="text-xs px-3">
+                    <Plus/>
                     {isArabic ? "أضف" : "Add"}
                   </Button>
                 </div>

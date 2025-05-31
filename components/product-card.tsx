@@ -2,12 +2,14 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ShoppingCart, Star } from "lucide-react"
+import { ShoppingCart, Star, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import type { Product } from "@/lib/types"
 import { useCart } from "@/lib/context"
+import { toast } from "sonner"
+import { useState } from "react"
 
 interface ProductCardProps {
   product: Product
@@ -16,9 +18,19 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { state, dispatch } = useCart()
   const isArabic = state.language === "ar"
+  const [showCheck, setShowCheck] = useState(false)
+  const [addToCartLoading, setAddToCartLoading] = useState(false)
 
   const addToCart = () => {
-    dispatch({ type: "ADD_ITEM", payload: product })
+    setAddToCartLoading(true)
+    setShowCheck(false)
+    setTimeout(() => {
+      dispatch({ type: "ADD_ITEM", payload: product })
+      toast.success(isArabic ? "تمت الإضافة إلى السلة" : "Added to cart")
+      setAddToCartLoading(false)
+      setShowCheck(true)
+      setTimeout(() => setShowCheck(false), 2000)
+    }, 200)
   }
 
   const discountedPrice = product.discount ? product.price - product.price * (product.discount / 100) : product.price
@@ -83,9 +95,15 @@ export default function ProductCard({ product }: ProductCardProps) {
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <Button onClick={addToCart} className="w-full" disabled={product.quantity_on_hand === 0}>
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          {isArabic ? "أضف للسلة" : "Add to Cart"}
+        <Button onClick={addToCart} className="w-full" disabled={product.quantity_on_hand === 0 || addToCartLoading}>
+          {!addToCartLoading && !showCheck && <ShoppingCart className="h-4 w-4 mr-2" />}
+          {addToCartLoading ? (
+            <span className="h-4 w-4 mr-2 animate-spin border-2 border-gray-300 border-t-transparent rounded-full inline-block align-middle"></span>
+          ) : showCheck ? (
+            <><Check className="h-4 w-4 mr-2 text-green-500" />{isArabic ? "تمت الإضافة" : "Added"}</>
+          ) : (
+            isArabic ? "أضف للسلة" : "Add to Cart"
+          )}
         </Button>
       </CardFooter>
     </Card>
