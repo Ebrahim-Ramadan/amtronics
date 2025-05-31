@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation"
-import { ShoppingCart, Star, Truck, Shield, RefreshCw } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import {  Star, Truck, Shield, RefreshCw } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -10,6 +9,8 @@ import type { Product } from "@/lib/types"
 import ProductActions from "./ProductActions"
 import Link from "next/link"
 import ProductImageGallery from "./ProductImageGallery"
+import { Suspense } from "react"
+import LoadingProductPage from "./product-loading"
 
 async function getProduct(id: string): Promise<Product | null> {
   try {
@@ -49,7 +50,15 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
   }
 }
 
-export default async function ProductPage({ params, searchParams }: ProductPageProps) {
+export default function ProductPageWrapper(props: ProductPageProps) {
+  return (
+    <Suspense fallback={<LoadingProductPage />}>
+      <ProductPage {...props} />
+    </Suspense>
+  )
+}
+
+async function ProductPage({ params, searchParams }: ProductPageProps) {
   const product = await getProduct(params.id)
   console.log("product", product)
 

@@ -128,11 +128,11 @@
 
 @keyframes cart-bounce-scale {
   0% { transform: scale(1); }
-  60% { transform: scale(1.8); } /* Slower scale-up to a larger size */
-  80% { transform: scale(0.6); } /* Quick snap-back to smaller */
-  90% { transform: scale(1.3); } /* Slightly overshoot */
-  95% { transform: scale(0.8); } /* Slightly overshoot */
-  100% { transform: scale(1); } /* Return to original size */
+  60% { transform: scale(1.8); } 
+  80% { transform: scale(0.6); } 
+  90% { transform: scale(1.3); } 
+  95% { transform: scale(0.8); } 
+  100% { transform: scale(1); } 
 }
 
 

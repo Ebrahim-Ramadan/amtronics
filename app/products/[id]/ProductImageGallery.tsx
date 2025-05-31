@@ -38,7 +38,7 @@ export default function ProductImageGallery({
         alt={isArabic ? `${ar_name} - صورة 1` : `${en_name} - Image 1`}
         width={500}
         height={500}
-        className="w-full h-auto rounded-lg"
+        className="w-full h-auto rounded-lg shadow-sm"
         priority
       />
       {/* Thumbnails */}
