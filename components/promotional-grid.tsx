@@ -136,7 +136,7 @@ function PromotionalGridSection({ section }: PromotionalGridProps) {
 
 export default function PromotionalGrid() {
   return (
-    <div className="py-8">
+    <div className="md:py-4">
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {promotionalSections.map((section, index) => (
           <PromotionalGridSection key={index} section={section} />

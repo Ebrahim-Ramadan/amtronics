@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Enhanced Hero Slider */}
-      <div className="container mx-auto px-4 pt-6">
+      <div className="container mx-auto px-3 md:px-6 pt-2">
         <EnhancedHeroSlider />
       </div>
 
@@ -28,7 +28,7 @@ export default function Home() {
           title="Best Sellers in Electronics"
           arTitle="الأكثر مبيعاً في الإلكترونيات"
           type="bestsellers"
-          bgColor="bg-white"
+          bgColor="bg-gradient-to-br from-green-50 to-green-100"
         />
 
         <ProductCarousel
@@ -38,7 +38,7 @@ export default function Home() {
           bgColor="bg-gradient-to-r from-yellow-50 to-orange-50"
         />
 
-        <ProductCarousel title="Recommended for You" arTitle="موصى لك" type="recommended" bgColor="bg-white" />
+        <ProductCarousel title="Recommended for You" arTitle="موصى لك" type="recommended" bgColor="bg-gradient-to-br from-red-50 to-red-100" />
       </div>
 
       {/* Brand Showcase */}

@@ -76,14 +76,13 @@ export default function EnhancedCategories() {
   const isArabic = state.language === "ar"
 
   return (
-    <div className="py-8">
-      <h2 className="text-2xl font-bold text-center mb-6">{isArabic ? "تسوق حسب الفئة" : "Shop by Category"}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+    <div className="py-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 md:gap-4">
         {categories.map((category, index) => (
           <Link key={index} href={category.link} className="group">
             <div className="text-center">
               <div
-                className={`${category.color} rounded-2xl p-4 mb-3 group-hover:scale-105 transition-transform duration-200 shadow-lg`}
+                className={`${category.color} rounded-2xl p-4 mb-2 md:mb-3 group-hover:scale-105 transition-transform duration-200 shadow-lg`}
               >
                 <Image
                   src={category.image || "/placeholder.svg"}
@@ -93,7 +92,7 @@ export default function EnhancedCategories() {
                   className="mx-auto filter brightness-0 invert"
                 />
               </div>
-              <h3 className="font-medium text-sm text-gray-800 mb-1">
+              <h3 className="font-medium text-sm text-gray-800 md:mb-1">
                 {isArabic ? category.ar_name : category.en_name}
               </h3>
               <p className="text-xs text-gray-500">{category.count}</p>

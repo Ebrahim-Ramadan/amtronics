@@ -39,7 +39,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50">
       {/* Top bar - Yellow */}
-      <div className="bg-yellow-400 py-3">
+      <div className="bg-yellow-400 py-2">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -65,7 +65,7 @@ export default function Header() {
             </form>
 
             {/* Right side icons */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <Button variant="ghost" size="sm" onClick={toggleLanguage} className="text-gray-800">
                 <Globe className="h-5 w-5 mr-1" />
                 {isArabic ? "English" : "العربية"}
@@ -118,7 +118,7 @@ export default function Header() {
       {/* Navigation - Teal */}
       <div className="bg-teal-500 text-white">
         <div className="container mx-auto px-4">
-          <nav className={`${isMenuOpen ? "block" : "hidden"} md:block py-3`}>
+          <nav className={`${isMenuOpen ? "block" : "hidden"} md:block py-2`}>
             <div className="flex flex-col md:flex-row gap-4 md:gap-8 justify-center">
               <Link href="/products" className="hover:text-yellow-200 transition-colors font-medium">
                 {isArabic ? "جميع المنتجات" : "All Products"}

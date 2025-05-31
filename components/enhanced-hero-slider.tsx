@@ -12,8 +12,8 @@ const heroSlides = [
   {
     id: 1,
     en_title: "Electronics Lab Essentials",
-    ar_title: "أساسيات مختبر الإلكترونيات",
-    en_subtitle: "Everything you need for your next project",
+    ar_title: "أساسيات الإلكترونيات",
+    en_subtitle: "Everything for your next project",
     ar_subtitle: "كل ما تحتاجه لمشروعك القادم",
     discount: "Up to 40% OFF",
     ar_discount: "خصم يصل إلى 40%",
