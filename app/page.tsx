@@ -7,24 +7,23 @@ import LazyLoad from "@/components/lazyload"
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen w-full bg-gray-50">
       {/* Enhanced Hero Slider */}
-      <div className="container mx-auto px-3 md:px-6 pt-2">
-        <EnhancedHeroSlider />
-      </div>
+      <EnhancedHeroSlider />
+
 
       {/* Enhanced Categories */}
-      <div className="container mx-auto px-4">
+      <div className="  px-2">
         <EnhancedCategories />
       </div>
 
       {/* Promotional Grid Sections */}
-      <div className="container mx-auto px-4">
+      <div className=" px-2 ">
         <PromotionalGrid />
       </div>
 
       {/* Product Carousels */}
-      <div className="container mx-auto px-4 space-y-8 py-8">
+      <div className=" px-2  space-y-4 py-4">
         <LazyLoad>
           <ProductCarousel
             title="Best Sellers in Electronics"
@@ -49,9 +48,7 @@ export default function Home() {
       </div>
 
       {/* Brand Showcase */}
-      <div className="container mx-auto px-4">
-        <BrandShowcase />
-      </div>
+      <BrandShowcase />
     </div>
   )
 }

@@ -97,7 +97,7 @@ function PromotionalGridSection({ section }: PromotionalGridProps) {
   }
 
   return (
-    <Card className={`${section.bgColor} border-0 hover:shadow-lg transition-shadow`}>
+    <Card className={`${section.bgColor} border-0 hover:shadow-md transition-shadow  duration-300`}>
       <CardContent className="p-6">
         <div className="mb-4">
           <h3 className="text-xl font-bold text-gray-800 mb-1">{isArabic ? section.ar_title : section.en_title}</h3>
@@ -107,7 +107,7 @@ function PromotionalGridSection({ section }: PromotionalGridProps) {
         <div className="grid grid-cols-2 gap-3 mb-4">
           {products.slice(0, 4).map((product) => (
             <Link key={product._id} href={`/products/${product._id}`} className="group">
-              <div className="bg-white rounded-lg p-3 hover:shadow-md transition-shadow">
+              <div className="bg-white/70 rounded-lg p-3 hover:shadow-md transition-shadow">
                 <Image
                   src={product.image || "/placeholder.svg?height=80&width=80"}
                   alt={isArabic ? product.ar_name : product.en_name}

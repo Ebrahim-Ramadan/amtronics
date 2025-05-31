@@ -80,9 +80,9 @@ export default function EnhancedHeroSlider() {
   const currentSlideData = heroSlides[currentSlide]
 
   return (
-    <div className="relative h-[500px] overflow-hidden rounded-xl shadow-2xl">
+    <div className="relative h-[500px] overflow-hidden rounded-xl shadow-2xl mt-2">
       <div className={`absolute inset-0 ${currentSlideData.bgColor} transition-all duration-700`}>
-        <div className="container mx-auto px-8 h-full flex items-center">
+        <div className="container mx-auto  h-full flex items-center">
           <div className="grid lg:grid-cols-2 gap-8 items-center w-full">
             {/* Left Content */}
             <div className={`text-white ${isArabic ? "text-right" : "text-left"}`}>

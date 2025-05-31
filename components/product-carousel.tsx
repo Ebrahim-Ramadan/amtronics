@@ -82,7 +82,7 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
   }
 
   return (
-    <div className={`${bgColor} rounded-lg p-6 relative`}>
+    <div className={`${bgColor} rounded-lg p-6 relative shadow-xs hover:shadow-sm transition-shadow duration-300`}>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">{isArabic ? arTitle : title}</h2>
         <div className="flex gap-2">
@@ -101,7 +101,7 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
           style={{ transform: `translateX(-${currentIndex * 272}px)` }}
         >
           {products.map((product) => (
-            <Card key={product._id} className="flex-shrink-0 w-64 group hover:shadow-lg transition-shadow">
+            <Card key={product._id} className="flex-shrink-0 bg-white/70 w-64 group hover:shadow-lg transition-shadow">
               <CardContent className="p-4">
                 <Link href={`/products/${product._id}`}>
                   <div className="relative mb-3">
@@ -118,7 +118,7 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
                       </Badge>
                     )}
                     {type === "bestsellers" && (
-                      <Badge className="absolute top-2 left-2 bg-yellow-500 text-black">
+                      <Badge className="absolute top-2 left-2 bg-[#FEEE00] text-black">
                         #{products.indexOf(product) + 1} {isArabic ? "الأكثر مبيعاً" : "Best Seller"}
                       </Badge>
                     )}
@@ -143,7 +143,7 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
                   <span className="font-bold text-green-600">
                     {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
                   </span>
-                  <Button size="sm" onClick={() => addToCart(product)} className="text-xs px-3" disabled={addLoading[product._id]}>
+                  <Button size="sm" onClick={() => addToCart(product)} className="bg-[#091638] text-xs px-3" disabled={addLoading[product._id]}>
                     {!addLoading[product._id] && !showCheck[product._id] && 
                     <Image
                     src='/quick-atc-add-to-cart-grey.svg'

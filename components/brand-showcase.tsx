@@ -32,7 +32,7 @@ export default function BrandShowcase() {
   const isArabic = state.language === "ar"
 
   return (
-    <div className="bg-gray-50 rounded-lg p-6 mb-8">
+    <div className="bg-gray-50 rounded-lg px-6 mb-8">
       <h2 className="text-2xl font-bold text-center mb-6">
         {isArabic ? "العلامات التجارية المميزة" : "Featured Brands"}
       </h2>
