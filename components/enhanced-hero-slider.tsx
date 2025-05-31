@@ -287,12 +287,12 @@ export default function EnhancedHeroSlider() {
       </Button>
 
       {/* Dots */}
-      <div className="absolute bottom-2 md:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-40">
+      <div className="absolute bottom-2 md:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1 md:space-x-3 z-40">
         {heroSlides.map((_, index) => (
           <button
             key={index}
-            className={`w-2 md:w-3 h-2 md:h-3 rounded-full transition-all ${
-              index === currentSlide ? "bg-white scale-125" : "bg-white/50"
+            className={`w-3 md:w-6 h-1 cursor-pointer  rounded-xl transition-all ${
+              index === currentSlide ? "bg-[#FEEE00] scale-125" : "bg-white/50"
             }`}
             onClick={() => handleDotClick(index)}
             style={{ pointerEvents: isSliding ? 'none' : 'auto' }}

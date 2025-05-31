@@ -20,7 +20,7 @@ export default function Header() {
   const [canScrollRight, setCanScrollRight] = useState(true)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const navRef = useRef(null)
+  const navRef = useRef<HTMLDivElement | null>(null)
 
 
   useEffect(() => {
@@ -176,14 +176,14 @@ export default function Header() {
             {/* Scrollable Nav */}
             <nav
               ref={navRef}
-              className={`block py-2 overflow-x-auto whitespace-nowrap scrollbar-hidden flex-1 mx-10`}
+              className={`block overflow-x-auto whitespace-nowrap scrollbar-hidden flex-1 mx-10`}
             >
-              <div className="flex gap-4 md:gap-8">
+              <div className="flex gap-4 md:gap-8 py-1">
                 {categories.map((category) => (
                   <Link
                     key={category}
                     href={`/products?category=${encodeURIComponent(category)}`}
-                    className="hover:text-[#FEEE00] transition-colors font-medium inline-block"
+                    className="py-1 hover:text-[#FEEE00] border-b-2 border-transparent hover:border-[#FEEE00] transition-all duration-300 font-medium inline-block"
                   >
                     {category}
                   </Link>
