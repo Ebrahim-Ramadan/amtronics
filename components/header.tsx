@@ -10,11 +10,13 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/lib/context"
 import { useRouter , useSearchParams} from "next/navigation"
+import Image from "next/image"
 
 export default function Header() {
   const { state, dispatch } = useCart()
   const [searchQuery, setSearchQuery] = useState("")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [badgeAnimate, setBadgeAnimate] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   useEffect(() => {
@@ -23,6 +25,16 @@ export default function Header() {
       setSearchQuery(query)
     }
   }, [searchParams])
+
+  // Animate cart badge when items change
+  useEffect(() => {
+    if (state.items.length > 0) {
+      setBadgeAnimate(true)
+      const timeout = setTimeout(() => setBadgeAnimate(false), 1000)
+      return () => clearTimeout(timeout)
+    }
+  }, [state.items.reduce((sum, item) => sum + item.quantity, 0)])
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
@@ -44,7 +56,13 @@ export default function Header() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="text-2xl font-bold text-gray-800">
-              {isArabic ? "أمترونيكس" : "Amtronics"}
+             <Image
+             src='/amtronics-logo.png'
+             width={100}
+             className="w-12"
+             height={100}
+             alt="Amtronics Logo"
+             />
             </Link>
 
             {/* Search bar */}
@@ -76,7 +94,9 @@ export default function Header() {
                 <Button variant="ghost" size="sm" className="relative text-gray-800">
                   <ShoppingCart className="h-5 w-5" />
                   {state.items.length > 0 && (
-                    <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs bg-blue-600">
+                    <Badge
+                      className={`absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs bg-blue-600 transition-transform duration-300 ${badgeAnimate ? 'cart-badge-animate' : ''}`}
+                    >
                       {state.items.reduce((sum, item) => sum + item.quantity, 0)}
                     </Badge>
                   )}

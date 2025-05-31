@@ -6,6 +6,7 @@ import { CartProvider } from "@/lib/context"
 import Header from "@/components/header"
 import TopPromotionalBanner from "@/components/top-promotional-banner"
 import { Suspense } from "react"
+import { Toaster, toast } from 'sonner'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -42,16 +43,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+       <Toaster richColors={true} position="bottom-right" toastOptions={{ duration: 3000 }} />
       <head>
         <link rel="alternate" hrefLang="ar" href="/ar" />
         <link rel="canonical" href="https://amtronics.co" />
       </head>
       <body className={inter.className}>
         <CartProvider>
-            <TopPromotionalBanner />
+          <TopPromotionalBanner />
+
           <Suspense>
             <Header />
           </Suspense>
+
           <main className="min-h-screen">{children}</main>
           <footer className="bg-gray-800 text-white py-8">
             <div className="container mx-auto px-4 text-center">
