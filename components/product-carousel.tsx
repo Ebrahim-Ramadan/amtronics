@@ -71,7 +71,17 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
   if (loading) {
     return (
       <div className={`${bgColor} rounded-lg p-6`}>
-        <h2 className="text-2xl font-bold mb-6">{isArabic ? arTitle : title}</h2>
+          {isArabic ? (
+            <>
+              <span className="text-red-600">{arTitle.split(" ")[0]}</span>{" "}
+              {arTitle.split(" ").slice(1).join(" ")}
+            </>
+          ) : (
+            <>
+              <span className="text-red-600">{title.split(" ")[0]}</span>{" "}
+              {title.split(" ").slice(1).join(" ")}
+            </>
+          )}
         <div className="flex gap-4 overflow-hidden">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex-shrink-0 w-64 h-80 bg-gray-200 animate-pulse rounded-lg"></div>
@@ -84,7 +94,19 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
   return (
     <div className={`${bgColor} rounded-lg p-6 relative shadow-xs hover:shadow-sm transition-shadow duration-300`}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">{isArabic ? arTitle : title}</h2>
+        <h2 className="text-2xl font-bold">
+          {isArabic ? (
+            <>
+              <span className="text-red-600">{arTitle.split(" ")[0]}</span>{" "}
+              {arTitle.split(" ").slice(1).join(" ")}
+            </>
+          ) : (
+            <>
+              <span className="text-red-600">{title.split(" ")[0]}</span>{" "}
+              {title.split(" ").slice(1).join(" ")}
+            </>
+          )}
+        </h2>
         <div className="flex gap-2">
           <Button variant="outline" size="icon" onClick={prevSlide} disabled={currentIndex === 0}>
             <ChevronLeft className="h-4 w-4" />

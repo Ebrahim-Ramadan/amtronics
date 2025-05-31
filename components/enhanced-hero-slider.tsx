@@ -197,7 +197,7 @@ export default function EnhancedHeroSlider() {
               {/* Featured Products */}
               <div className="flex gap-3 md:gap-4 mb-2 md:mb-6 overflow-x-auto py-2">
                 {slideData.products.map((product, idx) => (
-                  <div key={idx} className="bg-white/10 backdrop-blur-sm rounded-lg p-2 md:p-3 min-w-[100px] md:min-w-[120px] text-center">
+                  <div key={idx} className="bg-white/10 backdrop-blur-sm rounded-lg p-2  min-w-[100px] md:min-w-[120px] text-center">
                     <Image
                       src={product.image || "/placeholder.svg"}
                       alt={product.name}
