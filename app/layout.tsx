@@ -57,7 +57,7 @@ export default function RootLayout({
             <Header />
           </Suspense>
 
-          <main className="min-h-screen w-full px-2">{children}</main>
+          <main className="min-h-screen w-full px-1 md:px-2">{children}</main>
           <Footer/>
         </CartProvider>
       </body>
