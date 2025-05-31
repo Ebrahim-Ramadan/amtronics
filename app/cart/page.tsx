@@ -89,10 +89,10 @@ export default function CartPage() {
   if (state.items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 min-h-[60vh] flex items-center justify-center">
-        <div className="text-center py-12 space-y-6">
-          <ShoppingCart className="mx-auto h-16 w-16 text-gray-400" />
-          <h1 className="text-3xl font-bold">{isArabic ? "سلة التسوق فارغة" : "Your Cart is Empty"}</h1>
-          <p className="text-gray-600 max-w-md mx-auto">
+        <div className="text-center py-12 space-y-2 md:space-y-6 flex flex-col items-center justify-center">
+          <Image src="/empty-cart.png" width={200} height={200} alt="shopping cart" />
+          <h1 className="text-xl md:text-3xl font-bold">{isArabic ? "سلة التسوق فارغة" : "Your Amtronics Cart is Empty"}</h1>
+          <p className="text-xs md:text-sm text-gray-600  mx-auto">
             {isArabic 
               ? "ابدأ التسوق الآن لإضافة منتجات رائعة إلى سلتك!"
               : "Start shopping now to add amazing products to your cart!"}

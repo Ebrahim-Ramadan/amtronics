@@ -7,6 +7,7 @@ import Header from "@/components/header"
 import TopPromotionalBanner from "@/components/top-promotional-banner"
 import { Suspense } from "react"
 import { Toaster, toast } from 'sonner'
+import Footer from "@/components/footer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -57,11 +58,7 @@ export default function RootLayout({
           </Suspense>
 
           <main className="min-h-screen w-full px-2">{children}</main>
-          <footer className="bg-gray-800 text-white py-8">
-            <div className=" mx-auto text-center">
-              <p>&copy; 2024 Amtronics. All rights reserved.</p>
-            </div>
-          </footer>
+          <Footer/>
         </CartProvider>
       </body>
     </html>
