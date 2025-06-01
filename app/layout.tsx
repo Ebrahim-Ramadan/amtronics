@@ -8,6 +8,7 @@ import TopPromotionalBanner from "@/components/top-promotional-banner"
 import { Suspense } from "react"
 import { Toaster, toast } from 'sonner'
 import Footer from "@/components/footer"
+import { WishlistProvider } from "@/lib/wishlist-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -50,16 +51,18 @@ export default function RootLayout({
         <link rel="canonical" href="https://amtronics.co" />
       </head>
       <body className={inter.className}>
-        <CartProvider>
-          <TopPromotionalBanner />
+        <WishlistProvider>
+          <CartProvider>
+            <TopPromotionalBanner />
 
-          <Suspense>
-            <Header />
-          </Suspense>
+            <Suspense>
+              <Header />
+            </Suspense>
 
-          <main className="min-h-screen w-full px-1 md:px-2">{children}</main>
-          <Footer/>
-        </CartProvider>
+            <main className="min-h-screen w-full px-1 md:px-2">{children}</main>
+            <Footer/>
+          </CartProvider>
+        </WishlistProvider>
       </body>
     </html>
   )

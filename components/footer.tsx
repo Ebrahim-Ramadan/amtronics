@@ -15,7 +15,7 @@ export default function Footer() {
     <footer 
       className="bg-[#091638] text-white py-12 relative overflow-hidden"
       style={{
-        backgroundImage: `url('/my-durves-vector.svg')`,
+        backgroundImage: `url('/my-durves-vector.webp')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -24,7 +24,7 @@ export default function Footer() {
     >
       <div className="container mx-auto px-4">
        {/* Overlay with blur effect for better text readability */}
-       <div className="z-0 absolute inset-0 bg-[#091638]/40 backdrop-blur-xs"></div>
+       <div className="z-0 absolute inset-0 bg-[#091638]/40 backdrop-blur-lg"></div>
         
         <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}

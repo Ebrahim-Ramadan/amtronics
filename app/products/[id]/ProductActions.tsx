@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ShoppingCart, CheckCheck } from "lucide-react"
+import { ShoppingCart, CheckCheck, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/context"
 import type { Product } from "@/lib/types"
@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import LoadingDots from "@/components/ui/loading-spinner"
 import { toast } from "sonner"
 import Image from "next/image"
+import { useWishlist } from "@/lib/wishlist-context"
 
 interface ProductActionsProps {
   product: Product
@@ -17,6 +18,7 @@ interface ProductActionsProps {
 
 export default function ProductActions({ product, isArabic }: ProductActionsProps) {
   const { dispatch } = useCart()
+  const { state: wishlistState, dispatch: wishlistDispatch } = useWishlist()
   const [quantity, setQuantity] = useState(1)
   const [shopNowLoading, setShopNowLoading] = useState(false)
   const [addToCartLoading, setAddToCartLoading] = useState(false)
@@ -38,6 +40,18 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
       setShowCheck(true)
       setTimeout(() => setShowCheck(false), 1000)
     }, 200)
+  }
+
+  const isWishlisted = wishlistState.items.some(item => item._id === product._id)
+
+  const toggleWishlist = () => {
+    if (isWishlisted) {
+      wishlistDispatch({ type: "REMOVE_ITEM", payload: product._id })
+      toast.info(isArabic ? "تمت الإزالة من قائمة الرغبات" : "Removed from wishlist")
+    } else {
+      wishlistDispatch({ type: "ADD_ITEM", payload: product })
+      toast.success(isArabic ? "تمت الإضافة إلى قائمة الرغبات" : "Added to wishlist")
+    }
   }
 
   const handleShopNow = async () => {
@@ -111,6 +125,7 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
             </>
           )}
         </Button>
+        
         <Button
           onClick={handleShopNow}
           size="lg"
@@ -125,6 +140,17 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
           ) : (
             "Buy Now"
           )}
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          className={`md:flex-1 ${isWishlisted ? 'text-red-500 border-red-500 hover:text-red-600' : 'text-gray-500 hover:text-red-500'}`}
+          onClick={toggleWishlist}
+          disabled={isLoading}
+          aria-label={isArabic ? (isWishlisted ? "إزالة من قائمة الرغبات" : "أضف إلى قائمة الرغبات") : (isWishlisted ? "Remove from wishlist" : "Add to wishlist")}
+        >
+          <Heart className={`h-5 w-5 mr-2 fill-current ${isWishlisted ? '' : 'fill-transparent'}`} />
+          {isArabic ? "قائمة الرغبات" : "Wishlist"}
         </Button>
       </div>
     </div>

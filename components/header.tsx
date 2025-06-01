@@ -3,7 +3,7 @@
 import type React from "react"
 import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
-import { Search, ShoppingCart, Globe, Menu, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, ShoppingCart, Globe, Menu, ChevronLeft, ChevronRight, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -11,6 +11,7 @@ import { useCart } from "@/lib/context"
 import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { categories } from "@/lib/utils"
+import { useWishlist } from "@/lib/wishlist-context"
 
 export default function Header() {
   const { state, dispatch } = useCart()
@@ -21,6 +22,7 @@ export default function Header() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const navRef = useRef<HTMLDivElement | null>(null)
+  const { state: wishlistState } = useWishlist()
 
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export default function Header() {
       return () => clearTimeout(timeout)
     }
   }, [state.items.reduce((sum, item) => sum + item.quantity, 0)])
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -79,6 +82,7 @@ export default function Header() {
   }, [])
 
   const isArabic = state.language === "ar"
+  const wishlistCount = wishlistState.items.length
 
   return (
     <header className="sticky top-0 z-50">
@@ -115,18 +119,31 @@ export default function Header() {
             </form>
 
             {/* Right side icons */}
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center md:gap-4">
               <Button variant="ghost" size="sm" onClick={toggleLanguage} className="text-gray-800">
                 <Globe className="h-5 w-5 mr-1" />
                 {isArabic ? "English" : "العربية"}
               </Button>
 
+              <Link href="/wishlist">
+                <Button variant="ghost" size="sm" className="relative text-gray-800 z-10">
+                  <Heart className="h-5 w-5" />
+                  {wishlistCount > 0 && (
+                    <Badge
+                      className={`absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs bg-red-500 text-white transition-transform duration-300 cart-badge-animate`}
+                    >
+                      {wishlistCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+
               <Link href="/cart">
-                <Button variant="ghost" size="sm" className="relative text-gray-800">
+                <Button variant="ghost" size="sm" className="relative text-gray-800 z-0">
                   <ShoppingCart className="h-5 w-5" />
                   {state.items.length > 0 && (
                     <Badge
-                      className={`absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs bg-blue-600 transition-transform duration-300 ${badgeAnimate ? 'cart-badge-animate' : ''}`}
+                      className={`font-medium absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs bg-[#00B8DB] transition-transform duration-300 ${badgeAnimate ? 'cart-badge-animate' : ''}`}
                     >
                       {state.items.reduce((sum, item) => sum + item.quantity, 0)}
                     </Badge>

@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import {  Star,  CheckCheck } from "lucide-react"
+import {  Star,  CheckCheck, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -10,6 +10,7 @@ import type { Product } from "@/lib/types"
 import { useCart } from "@/lib/context"
 import { toast } from "sonner"
 import { useState } from "react"
+import { useWishlist } from "@/lib/wishlist-context"
 
 interface ProductCardProps {
   product: Product
@@ -17,6 +18,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { state, dispatch } = useCart()
+  const { state: wishlistState, dispatch: wishlistDispatch } = useWishlist()
   const isArabic = state.language === "ar"
   const [showCheck, setShowCheck] = useState(false)
   const [addToCartLoading, setAddToCartLoading] = useState(false)
@@ -31,6 +33,18 @@ export default function ProductCard({ product }: ProductCardProps) {
       setShowCheck(true)
       setTimeout(() => setShowCheck(false), 2000)
     }, 200)
+  }
+
+  const isWishlisted = wishlistState.items.some(item => item._id === product._id)
+
+  const toggleWishlist = () => {
+    if (isWishlisted) {
+      wishlistDispatch({ type: "REMOVE_ITEM", payload: product._id })
+      toast.info(isArabic ? "تمت الإزالة من قائمة الرغبات" : "Removed from wishlist")
+    } else {
+      wishlistDispatch({ type: "ADD_ITEM", payload: product })
+      toast.success(isArabic ? "تمت الإضافة إلى قائمة الرغبات" : "Added to wishlist")
+    }
   }
 
   const discountedPrice = product.discount ? product.price - product.price * (product.discount / 100) : product.price
@@ -91,6 +105,15 @@ export default function ProductCard({ product }: ProductCardProps) {
               {product.price.toFixed(2)} <span className="text-sm">{isArabic ? "د.ك" : "KD"}</span>
             </span>
           )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`ml-auto ${isWishlisted ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}
+            onClick={toggleWishlist}
+            aria-label={isArabic ? (isWishlisted ? "إزالة من قائمة الرغبات" : "أضف إلى قائمة الرغبات") : (isWishlisted ? "Remove from wishlist" : "Add to wishlist")}
+          >
+            <Heart className={`h-6 w-6 fill-current ${isWishlisted ? '' : 'fill-transparent'}`} />
+          </Button>
         </div>
       </CardContent>
 
