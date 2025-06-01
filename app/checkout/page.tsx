@@ -11,6 +11,8 @@ import { useCart } from "@/lib/context"
 import type { CustomerInfo } from "@/lib/types"
 import { useSavedAddresses } from "@/lib/saved-addresses-context"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { MapPin, PlusCircle } from "lucide-react"
+import Image from "next/image"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -75,22 +77,24 @@ export default function CheckoutPage() {
         discount: 0,
         promoCode: "",
       }
+      console.log('orderData', orderData)
+      
 
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      })
+      // const response = await fetch("/api/orders", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(orderData),
+      // })
 
-      if (response.ok) {
-        if (selectedAddressIndex === "new" && customerInfo.phone && customerInfo.name) {
-          savedAddressesDispatch({ type: "ADD_ADDRESS", payload: customerInfo })
-        }
-        dispatch({ type: "CLEAR_CART" })
-        router.push("/order-success")
-      } else {
-        alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
-      }
+      // if (response.ok) {
+      //   if (selectedAddressIndex === "new" && customerInfo.phone && customerInfo.name) {
+      //     savedAddressesDispatch({ type: "ADD_ADDRESS", payload: customerInfo })
+      //   }
+      //   dispatch({ type: "CLEAR_CART" })
+      //   router.push("/order-success")
+      // } else {
+      //   alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
+      // }
     } catch (error) {
       console.error("Error placing order:", error)
       alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
@@ -105,47 +109,72 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto md:px-4 py-8" dir={dir}>
-      <h1 className="text-5xl font-bold mb-8 text-center">{isArabic ? "إتمام الطلب" : "Checkout"}</h1>
+    <div className="mx-auto md:px-4 py-4 md:py-8" dir={dir}>
+      <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-8 text-center">{isArabic ? "إتمام الطلب" : "Checkout"}</h1>
 
       <div className="grid lg:grid-cols-2 gap-8 [&>*]:py-6">
         {/* Customer Information Form */}
-        <Card>
+        <Card className="gap-2 md:gap-4">
           <CardHeader>
             <CardTitle className="text-xl md:text-3xl">{isArabic ? "معلومات التوصيل" : "Delivery Information"}</CardTitle>
           </CardHeader>
           <CardContent className="px-3 md:px-6">
-            {savedAddressesState.addresses.length > 0 && (
-              <div className="mb-6 px-2">
-                <Label className="text-lg mb-4 block">{isArabic ? "اختيار عنوان محفوظ" : "Select Saved Address"}</Label>
-                <RadioGroup
-                  value={selectedAddressIndex.toString()}
-                  onValueChange={handleAddressSelect}
-                  className="space-y-2"
-                >
-                  
-                  {savedAddressesState.addresses.map((address, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem value={index.toString()} id={`address-${index}`} 
-                       className="[&>span]:data-[state=checked]:text-[#00B8DB] [&>span]:border-[#00B8DB]"/>
-                      <Label htmlFor={`address-${index}`} className={isArabic ? "mr-2" : "ml-2"}>
-                        {`${address.name}, ${address.street}, ${address.block}, ${address.area}, ${address.city}, ${address.country}`}
-                      </Label>
-                    </div>
-                  ))}
-                  <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                      value="new"
-                      id="new-address"
-                      className="[&>span]:data-[state=checked]:text-[#00B8DB] [&>span]:border-[#00B8DB]"
-                    />
-                    <Label htmlFor="new-address" className={isArabic ? "mr-2" : "ml-2"}>
-                      {isArabic ? "إضافة عنوان جديد" : "Add New Address"}
-                    </Label>
-                  </div>
-                </RadioGroup>
+          {savedAddressesState.addresses.length > 0 && (
+    <div className="mb-6 ">
+      <Label className="text-sm md:text-base mb-2 md:mb-4 block">
+        {isArabic ? "اختيار عنوان محفوظ" : "Choose Shipping Address"}
+      </Label>
+      {savedAddressesState.addresses.map((address, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between p-2 md:p-4 mb-2 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer"
+          onClick={() => handleAddressSelect(index.toString())}
+        >
+          <div className="flex items-center">
+            <Image
+            src="/checkoutAddressLatLngIndicator.gif"
+            width={50}
+            height={50}
+            alt="Checkout Address LatLng Indicator"
+            />
+            <div>
+              <div className="text-sm font-medium leading-4" dir={isArabic ? "rtl" : "ltr"}>
+                {isArabic ? address.name : address.name} - {address.street}, {address.block}, {address.area}, {address.city}, {address.country}
               </div>
-            )}
+              <div className="text-sm text-gray-600 flex items-center space-x-1">
+                <span>+{address.phone}</span>
+              </div>
+            </div>
+          </div>
+          <input
+            type="radio"
+            name="address"
+            value={index.toString()}
+            checked={selectedAddressIndex === index}
+            onChange={() => handleAddressSelect(index.toString())}
+            className="w-4 h-4 text-[#00B8DB] border-[#00B8DB] focus:ring-[#00B8DB] bg-[#00B8DB]"
+          />
+        </div>
+      ))}
+      <div
+        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer"
+        onClick={() => handleAddressSelect("new")}
+      >
+        <span dir={isArabic ? "rtl" : "ltr"} className="flex items-center gap-2 px-4 text-sm font-medium">
+          <PlusCircle size={16} color="#FFEE01" className="bg-[#3F4553] rounded-full" />
+          {isArabic ? "إضافة عنوان جديد" : "Add New Address"}
+        </span>
+        <input
+          type="radio"
+          name="address"
+          value="new"
+          checked={selectedAddressIndex === "new"}
+          onChange={() => handleAddressSelect("new")}
+          className="w-4 h-4 text-[#00B8DB] border-[#00B8DB] focus:ring-[#00B8DB]"
+        />
+      </div>
+    </div>
+  )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
