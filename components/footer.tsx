@@ -5,6 +5,7 @@ import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, Copyright } from "lu
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export default function Footer() {
   const { state } = useCart()
@@ -46,7 +47,14 @@ export default function Footer() {
               </p>
             </div>
             <a className="flex items-center gap-2" href="https://wa.me/+96555501387" target="_blank" rel="noopener noreferrer">
-              <Phone className="h-5 w-5" color="#FEEE00" />
+              <Image
+                src="/whatsapp.webp"
+                alt="WhatsApp Icon"
+                width={20}
+                height={20}
+                quality={100}
+                className="h-5 w-5"
+                />
               <p className="text-sm">+9 655 550 1387</p>
             </a>
             <a className="flex items-center gap-2" href="tel:+96555501493">
