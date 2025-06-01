@@ -17,13 +17,13 @@ const heroSlides = [
     ar_subtitle: "كل ما تحتاجه لمشروعك القادم",
     discount: "Up to 40% OFF",
     ar_discount: "خصم يصل إلى 40%",
-    image: "/placeholder.svg?height=500&width=800",
-    bgColor: "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700",
+    image: "/hero-slider/electronics-lab-essentials-slide-imae.webp",
+    bgColor: "bg-gradient-to-r from-blue-800 via-purple-700 to-indigo-700",
     link: "/products?category=Kits",
     products: [
-      { name: "Arduino Uno", price: "15.99", image: "/placeholder.svg?height=100&width=100" },
-      { name: "Raspberry Pi 4", price: "89.99", image: "/placeholder.svg?height=100&width=100" },
-      { name: "Breadboard Kit", price: "12.50", image: "/placeholder.svg?height=100&width=100" },
+      { name: "Arduino Uno", price: "15.99", image: "/hero-slider/arduino.webp?height=200&width=100" },
+      { name: "Raspberry Pi 4", price: "89.99", image: "/hero-slider/Raspberry-Pi.webp?height=100&width=100" },
+      { name: "Breadboard Kit", price: "12.50", image: "/hero-slider/breadboard-kit.webp?height=100&width=100" },
     ],
   },
   {
@@ -34,13 +34,13 @@ const heroSlides = [
     ar_subtitle: "حساسات إنترنت الأشياء ووحدات الأتمتة",
     discount: "Buy 2 Get 1 FREE",
     ar_discount: "اشتري 2 واحصل على 1 مجاناً",
-    image: "/placeholder.svg?height=500&width=800",
-    bgColor: "bg-gradient-to-r from-green-500 via-emerald-600 to-teal-700",
+    image: "/hero-slider/smart-home-revolution-slide-image.webp",
+    bgColor: "bg-gradient-to-r from-green-700 via-emerald-600 to-teal-700",
     link: "/products?search=sensor",
     products: [
-      { name: "Motion Sensor", price: "8.99", image: "/placeholder.svg?height=100&width=100" },
-      { name: "WiFi Module", price: "25.99", image: "/placeholder.svg?height=100&width=100" },
-      { name: "Smart Relay", price: "18.50", image: "/placeholder.svg?height=100&width=100" },
+      { name: "Motion Sensor", price: "8.99", image: "/hero-slider/motion-sensor.webp?height=100&width=100" },
+      { name: "WiFi Module", price: "25.99", image: "/hero-slider/wifi.webp?height=100&width=100" },
+      { name: "Smart Relay", price: "18.50", image: "/hero-slider/smart-relay.webp?height=100&width=100" },
     ],
   },
   {
@@ -51,13 +51,13 @@ const heroSlides = [
     ar_subtitle: "أطقم تعليمية بأسعار لا تُقاوم",
     discount: "25% Student Discount",
     ar_discount: "خصم 25% للطلاب",
-    image: "/placeholder.svg?height=500&width=800",
-    bgColor: "bg-gradient-to-r from-orange-500 via-red-500 to-pink-600",
+    image: "/hero-slider/soldering-slide-image.webp",
+    bgColor: "bg-gradient-to-r from-orange-700 via-red-600 to-pink-600",
     link: "/products?featured=true",
     products: [
-      { name: "Lab Kit Pro", price: "45.99", image: "/placeholder.svg?height=100&width=100" },
-      { name: "Multimeter", price: "32.99", image: "/placeholder.svg?height=100&width=100" },
-      { name: "Soldering Kit", price: "28.50", image: "/placeholder.svg?height=100&width=100" },
+      { name: "Lab Kit Pro", price: "45.99", image: "/hero-slider/lab-kit-pro.webp?height=100&width=100" },
+      { name: "Multimeter", price: "32.99", image: "/hero-slider/multimeter.webp?height=100&width=100" },
+      { name: "Soldering Kit", price: "28.50", image: "/hero-slider/soldering-kit.webp?height=100&width=100" },
     ],
   },
 ]
@@ -101,12 +101,12 @@ export default function EnhancedHeroSlider() {
   }, [])
 
   // Slide auto-advance
-  useEffect(() => {
-    const timer = setInterval(() => {
-      handleNextSlide()
-    }, 6000)
-    return () => clearInterval(timer)
-  }, [currentSlide])
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     handleNextSlide()
+  //   }, 6000)
+  //   return () => clearInterval(timer)
+  // }, [currentSlide])
 
   // Slide transition helpers
   const handleNextSlide = () => {
@@ -180,8 +180,8 @@ export default function EnhancedHeroSlider() {
         className={`absolute inset-0 w-full h-full ${slideData.bgColor} transition-all duration-700 ${transitionClass}`}
         style={{ willChange: isSliding ? 'transform' : undefined }}
       >
-        <div className="container mx-auto h-full flex items-center px-4 md:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 items-center w-full">
+        <div className="container mx-auto h-full flex items-center px-2">
+          <div className="grid lg:grid-cols-2 gap-4 items-center w-full">
             {/* Left Content */}
             <div className={`text-white ${isArabic ? "text-right" : "text-left"}`}>
               <Badge className="bg-yellow-400 text-black mb-4 text-sm font-bold px-3 py-1">
@@ -190,20 +190,20 @@ export default function EnhancedHeroSlider() {
               <h1 className="text-2xl md:text-5xl line-clamp-1 md:line-clamp-2 md:leading-14 lg:text-6xl font-bold mb-1 md:mb-3 ">
                 {isArabic ? slideData.ar_title : slideData.en_title}
               </h1>
-              <p className="text-sm md:text-xl lg:text-2xl mb-4 md:mb-8 opacity-90">
+              <p className="text-sm md:text-xl lg:text-2xl mb-1 md:mb-2 opacity-90">
                 {isArabic ? slideData.ar_subtitle : slideData.en_subtitle}
               </p>
 
               {/* Featured Products */}
-              <div className="flex gap-3 md:gap-4 mb-2 md:mb-6 overflow-x-auto py-2">
+              <div className="flex gap-3 md:gap-4  overflow-x-auto py-2">
                 {slideData.products.map((product, idx) => (
-                  <div key={idx} className="bg-white/10 backdrop-blur-sm rounded-lg p-2  min-w-[100px] md:min-w-[120px] text-center">
+                  <div key={idx} className="bg-white/10 backdrop-blur-lg rounded-lg p-2  min-w-[100px] h-fit text-center">
                     <Image
                       src={product.image || "/placeholder.svg"}
                       alt={product.name}
-                      width={60}
+                      width={150}
                       height={60}
-                      className="mx-auto mb-2 rounded"
+                      className="mx-auto mb-2 rounded-sm"
                     />
                     <p className="text-xs md:text-sm font-medium text-balance">{product.name}</p>
                     <p className="text-sm md:text-base font-bold text-yellow-300">{product.price} KD</p>
@@ -212,8 +212,8 @@ export default function EnhancedHeroSlider() {
               </div>
 
               <Link href={slideData.link}>
-                <Button size="sm" className="bg-white text-black hover:bg-gray-100 text-sm md:text-lg px-4 md:px-8 py-2 md:py-4 font-bold md:size-lg">
-                  {isArabic ? "تسوق الآن" : "Shop Now"}
+                <Button  className="bg-white text-black hover:bg-gray-100 text-lg md:text-xl px-4 md:px-8 py-2 md:py-4 font-bold md:size-lg">
+                  {isArabic ? "تسوق الآن" : "SHOP NOW"}
                 </Button>
               </Link>
             </div>
@@ -224,8 +224,8 @@ export default function EnhancedHeroSlider() {
                 src={slideData.image || "/placeholder.svg"}
                 alt={isArabic ? slideData.ar_title : slideData.en_title}
                 width={400}
-                height={320}
-                className="object-contain"
+                height={350}
+                className="object-contain rounded-sm"
               />
             </div>
           </div>
@@ -263,28 +263,28 @@ export default function EnhancedHeroSlider() {
       </div>
 
       {/* Navigation */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className={`absolute left-4 top-1/2 rounded-full transform -translate-y-1/2 text-white bg-black/20 transition-all duration-300 z-30
+      <button
+        className={`cursor-pointer backdrop-blur-lg w-10 md:w-16 h-10 md:h-16 border-2 border-white/20 absolute left-2 md:left-4 top-1/2 rounded-full transform -translate-y-1/2 text-white bg-black/10 transition-all duration-300 z-30 flex items-center justify-center
           ${arrowHover.left ? 'scale-125 bg-yellow-400 text-black shadow-lg' : 'hover:bg-white/20'}`}
         onClick={handlePrevSlide}
         style={{ pointerEvents: isSliding ? 'none' : 'auto' }}
         aria-label="Previous Slide"
+        onMouseEnter={() => setArrowHover((prev) => ({ ...prev, left: true }))}
+        onMouseLeave={() => setArrowHover((prev) => ({ ...prev, left: false }))}
       >
-        <ChevronLeft className={`${arrowHover.left ? 'scale-125' : ''}`} />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className={`absolute right-4 top-1/2 rounded-full transform -translate-y-1/2 text-white bg-black/20 transition-all duration-300 z-30
+        <ChevronLeft className={`w-6 md:w-10 h-6 md:h-10 ${arrowHover.left ? 'scale-125' : ''}`} />
+      </button>
+      <button
+        className={`cursor-pointer backdrop-blur-lg w-10 md:w-16 h-10 md:h-16 border-2 border-white/20 absolute right-2 md:right-4 top-1/2 rounded-full transform -translate-y-1/2 text-white bg-black/20 transition-all duration-300 z-30 flex items-center justify-center
           ${arrowHover.right ? 'scale-125 bg-yellow-400 text-black shadow-lg' : 'hover:bg-white/20'}`}
         onClick={handleNextSlide}
         style={{ pointerEvents: isSliding ? 'none' : 'auto' }}
         aria-label="Next Slide"
+        onMouseEnter={() => setArrowHover((prev) => ({ ...prev, right: true }))}
+        onMouseLeave={() => setArrowHover((prev) => ({ ...prev, right: false }))}
       >
-        <ChevronRight className={`${arrowHover.right ? 'scale-125' : ''}`} />
-      </Button>
+        <ChevronRight className={`w-6 md:w-10 h-6 md:h-10 ${arrowHover.right ? 'scale-125' : ''}`} />
+      </button>
 
       {/* Dots */}
       <div className="absolute bottom-2 md:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1 md:space-x-3 z-40">
