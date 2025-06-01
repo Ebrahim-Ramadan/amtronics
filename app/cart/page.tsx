@@ -158,7 +158,7 @@ export default function CartPage() {
             <Card key={item.product._id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <div className="flex flex-col sm:flex-row gap-6">
-                  <div className="relative h-32 w-full">
+                  <div className="relative h-32 w-full md:w-32">
                     <Image
                       src={item.product.image || "/placeholder.svg?height=128&width=128"}
                       alt={isArabic ? item.product.ar_name : item.product.en_name}
@@ -184,8 +184,10 @@ export default function CartPage() {
                         {isArabic ? item.product.ar_name : item.product.en_name}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        {isArabic ? item.product.ar_description : item.product.en_description}
-                      </p>
+  {(isArabic ? item.product.ar_description : item.product.en_description).slice(0, 50)}
+  {(isArabic ? item.product.ar_description : item.product.en_description).length > 50 && '...'}
+</p>
+
                     </div>
                     <div className="flex items-center gap-4">
                       <p className="font-medium text-primary">
