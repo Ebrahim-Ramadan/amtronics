@@ -35,6 +35,16 @@ export default function WishlistPage() {
     }, 200)
   }
 
+  const clearWishlist = () => {
+    const confirmMessage = isArabic
+      ? "هل أنت متأكد من إزالة جميع المنتجات من قائمة الرغبات؟"
+      : "Are you sure you want to remove all items from your wishlist?"
+    if (confirm(confirmMessage)) {
+      dispatch({ type: "CLEAR_WISHLIST" })
+      toast.info(isArabic ? "تم مسح قائمة الرغبات" : "Wishlist cleared")
+    }
+  }
+
   if (state.items.length === 0) {
     return (
       <div className="bg-[#FBFAF9] mx-auto px-2 md:px-4 py-8 min-h-[60vh] flex items-center justify-center">
@@ -62,8 +72,14 @@ export default function WishlistPage() {
   }
 
   return (
-    <div className="bg-[#FBFAF9] mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">{isArabic ? "قائمة الرغبات" : "Wishlist"}</h1>
+    <div className="bg-[#FBFAF9] mx-auto px-4 py-8 min-h-[80vh]">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">{isArabic ? "قائمة الرغبات" : "Wishlist"}</h1>
+        <Button variant="destructive" onClick={clearWishlist} disabled={state.items.length === 0}>
+          <Trash2 className="h-5 w-5 mr-2" />
+          {isArabic ? "مسح الكل" : "Clear All"}
+        </Button>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {state.items.map((item) => (
