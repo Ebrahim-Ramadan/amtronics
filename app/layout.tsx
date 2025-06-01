@@ -9,6 +9,7 @@ import { Suspense } from "react"
 import { Toaster, toast } from 'sonner'
 import Footer from "@/components/footer"
 import { WishlistProvider } from "@/lib/wishlist-context"
+import { SavedAddressesProvider } from "@/lib/saved-addresses-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -53,14 +54,16 @@ export default function RootLayout({
       <body className={inter.className}>
         <WishlistProvider>
           <CartProvider>
-            <TopPromotionalBanner />
+            <SavedAddressesProvider>
+              <TopPromotionalBanner />
 
-            <Suspense>
-              <Header />
-            </Suspense>
+              <Suspense>
+                <Header />
+              </Suspense>
 
-            <main className="min-h-screen w-full px-1 md:px-2 bg-[#FBFAF9]">{children}</main>
-            <Footer/>
+              <main className="min-h-screen w-full px-1 md:px-2 bg-[#FBFAF9]">{children}</main>
+              <Footer/>
+            </SavedAddressesProvider>
           </CartProvider>
         </WishlistProvider>
       </body>

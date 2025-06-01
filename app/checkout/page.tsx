@@ -1,18 +1,20 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { useCart } from "@/lib/context"
 import type { CustomerInfo } from "@/lib/types"
+import { useSavedAddresses } from "@/lib/saved-addresses-context"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
+  const { state: savedAddressesState, dispatch: savedAddressesDispatch } = useSavedAddresses()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
@@ -26,10 +28,39 @@ export default function CheckoutPage() {
     street: "",
     house: "",
   })
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState<number | "new">("new")
+
   const isArabic = state.language === "ar"
+  const dir = isArabic ? "rtl" : "ltr"
+
+  // Load selected address if available
+  useEffect(() => {
+    if (selectedAddressIndex !== "new" && savedAddressesState.addresses[selectedAddressIndex]) {
+      setCustomerInfo(savedAddressesState.addresses[selectedAddressIndex])
+    } else if (selectedAddressIndex === "new") {
+      setCustomerInfo({
+        name: "",
+        phone: "",
+        email: "",
+        country: "Kuwait",
+        city: "",
+        area: "",
+        block: "",
+        street: "",
+        house: "",
+      })
+    }
+  }, [selectedAddressIndex, savedAddressesState.addresses])
 
   const handleInputChange = (field: keyof CustomerInfo, value: string) => {
     setCustomerInfo((prev) => ({ ...prev, [field]: value }))
+    if (selectedAddressIndex !== "new") {
+      setSelectedAddressIndex("new")
+    }
+  }
+
+  const handleAddressSelect = (value: string) => {
+    setSelectedAddressIndex(value === "new" ? "new" : parseInt(value, 10))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,8 +72,8 @@ export default function CheckoutPage() {
         items: state.items,
         customerInfo,
         total: state.total,
-        discount: 0, // You can add discount logic here
-        promoCode: "", // Add promo code if applied
+        discount: 0,
+        promoCode: "",
       }
 
       const response = await fetch("/api/orders", {
@@ -52,6 +83,9 @@ export default function CheckoutPage() {
       })
 
       if (response.ok) {
+        if (selectedAddressIndex === "new" && customerInfo.phone && customerInfo.name) {
+          savedAddressesDispatch({ type: "ADD_ADDRESS", payload: customerInfo })
+        }
         dispatch({ type: "CLEAR_CART" })
         router.push("/order-success")
       } else {
@@ -71,16 +105,48 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">{isArabic ? "إتمام الطلب" : "Checkout"}</h1>
+    <div className="container mx-auto md:px-4 py-8" dir={dir}>
+      <h1 className="text-5xl font-bold mb-8 text-center">{isArabic ? "إتمام الطلب" : "Checkout"}</h1>
 
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-2 gap-8 [&>*]:py-6">
         {/* Customer Information Form */}
         <Card>
           <CardHeader>
-            <CardTitle>{isArabic ? "معلومات التوصيل" : "Delivery Information"}</CardTitle>
+            <CardTitle className="text-xl md:text-3xl">{isArabic ? "معلومات التوصيل" : "Delivery Information"}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-3 md:px-6">
+            {savedAddressesState.addresses.length > 0 && (
+              <div className="mb-6 px-2">
+                <Label className="text-lg mb-4 block">{isArabic ? "اختيار عنوان محفوظ" : "Select Saved Address"}</Label>
+                <RadioGroup
+                  value={selectedAddressIndex.toString()}
+                  onValueChange={handleAddressSelect}
+                  className="space-y-2"
+                >
+                  
+                  {savedAddressesState.addresses.map((address, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <RadioGroupItem value={index.toString()} id={`address-${index}`} 
+                       className="[&>span]:data-[state=checked]:text-[#00B8DB] [&>span]:border-[#00B8DB]"/>
+                      <Label htmlFor={`address-${index}`} className={isArabic ? "mr-2" : "ml-2"}>
+                        {`${address.name}, ${address.street}, ${address.block}, ${address.area}, ${address.city}, ${address.country}`}
+                      </Label>
+                    </div>
+                  ))}
+                  <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                      value="new"
+                      id="new-address"
+                      className="[&>span]:data-[state=checked]:text-[#00B8DB] [&>span]:border-[#00B8DB]"
+                    />
+                    <Label htmlFor="new-address" className={isArabic ? "mr-2" : "ml-2"}>
+                      {isArabic ? "إضافة عنوان جديد" : "Add New Address"}
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -91,6 +157,7 @@ export default function CheckoutPage() {
                     value={customerInfo.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
+                    disabled={selectedAddressIndex !== "new"}
                   />
                 </div>
                 <div>
@@ -101,6 +168,7 @@ export default function CheckoutPage() {
                     required
                     value={customerInfo.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
+                    disabled={selectedAddressIndex !== "new"}
                   />
                 </div>
               </div>
@@ -112,6 +180,7 @@ export default function CheckoutPage() {
                   type="email"
                   value={customerInfo.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
+                  disabled={selectedAddressIndex !== "new"}
                 />
               </div>
 
@@ -124,6 +193,7 @@ export default function CheckoutPage() {
                     value={customerInfo.country}
                     onChange={(e) => handleInputChange("country", e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
+                    disabled={selectedAddressIndex !== "new"}
                   />
                 </div>
                 <div>
@@ -134,6 +204,7 @@ export default function CheckoutPage() {
                     value={customerInfo.city}
                     onChange={(e) => handleInputChange("city", e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
+                    disabled={selectedAddressIndex !== "new"}
                   />
                 </div>
               </div>
@@ -147,6 +218,7 @@ export default function CheckoutPage() {
                     value={customerInfo.area}
                     onChange={(e) => handleInputChange("area", e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
+                    disabled={selectedAddressIndex !== "new"}
                   />
                 </div>
                 <div>
@@ -156,6 +228,7 @@ export default function CheckoutPage() {
                     required
                     value={customerInfo.block}
                     onChange={(e) => handleInputChange("block", e.target.value)}
+                    disabled={selectedAddressIndex !== "new"}
                   />
                 </div>
               </div>
@@ -169,6 +242,7 @@ export default function CheckoutPage() {
                     value={customerInfo.street}
                     onChange={(e) => handleInputChange("street", e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
+                    disabled={selectedAddressIndex !== "new"}
                   />
                 </div>
                 <div>
@@ -178,6 +252,7 @@ export default function CheckoutPage() {
                     required
                     value={customerInfo.house}
                     onChange={(e) => handleInputChange("house", e.target.value)}
+                    disabled={selectedAddressIndex !== "new"}
                   />
                 </div>
               </div>
@@ -200,12 +275,12 @@ export default function CheckoutPage() {
         {/* Order Summary */}
         <Card>
           <CardHeader>
-            <CardTitle>{isArabic ? "ملخص الطلب" : "Order Summary"}</CardTitle>
+            <CardTitle className="text-xl md:text-3xl">{isArabic ? "ملخص الطلب" : "Order Summary"}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {state.items.map((item) => (
-              <div key={item.product._id} className="flex justify-between">
-                <span>
+              <div key={item.product._id} className="flex justify-between gap-2">
+                <span className="line-clamp-2 leading-6">
                   {isArabic ? item.product.ar_name : item.product.en_name} × {item.quantity}
                 </span>
                 <span>

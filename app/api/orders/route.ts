@@ -52,20 +52,20 @@ export async function POST(request: Request) {
 
 
         // Insert subscriber if email provided
-        if (orderData.customerInfo.email) {
-          await db.collection("subscribers").updateOne(
-            { email: orderData.customerInfo.email },
-            {
-              $set: {
-                name: orderData.customerInfo.name,
-                phone: orderData.customerInfo.phone,
-                email: orderData.customerInfo.email,
-                lastOrderDate: new Date(),
-              },
-            },
-            { upsert: true, session },
-          )
-        }
+        // if (orderData.customerInfo.email) {
+        //   await db.collection("subscribers").updateOne(
+        //     { email: orderData.customerInfo.email },
+        //     {
+        //       $set: {
+        //         name: orderData.customerInfo.name,
+        //         phone: orderData.customerInfo.phone,
+        //         email: orderData.customerInfo.email,
+        //         lastOrderDate: new Date(),
+        //       },
+        //     },
+        //     { upsert: true, session },
+        //   )
+        // }
       })
 
       return NextResponse.json({ success: true, message: "Order placed successfully" })
