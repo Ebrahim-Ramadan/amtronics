@@ -62,7 +62,7 @@ export default function WishlistPage() {
               : "Start adding products you like to your wishlist to keep track of them!"}
           </p>
           <Link href="/products">
-            <Button className="bg-primary hover:bg-primary/90 size-sm md:size-lg">
+            <Button className="bg-cyan-500 hover:bg-primary/90 size-sm md:size-lg">
               {isArabic ? "تسوق الآن" : "Shop Now"}
             </Button>
           </Link>
@@ -72,11 +72,11 @@ export default function WishlistPage() {
   }
 
   return (
-    <div className="bg-[#FBFAF9] mx-auto px-4 py-8 min-h-[80vh]">
+    <div className="bg-[#FBFAF9] mx-auto px-2 md:px-4 py-8 min-h-[80vh]">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">{isArabic ? "قائمة الرغبات" : "Wishlist"}</h1>
+        <h1 className="text-3xl font-bold flex self-start">{isArabic ? "قائمة الرغبات" : "Wishlist"} <span className="text-sm md:text-base font-medium text-neutral-500">({state.items.length})</span></h1>
         <Button variant="destructive" onClick={clearWishlist} disabled={state.items.length === 0}>
-          <Trash2 className="h-5 w-5 mr-2" />
+          <Trash2 className="h-5 w-5" />
           {isArabic ? "مسح الكل" : "Clear All"}
         </Button>
       </div>
@@ -96,7 +96,7 @@ export default function WishlistPage() {
                   />
                 </Link>
                 <Link href={`/products/${item._id}`} className="hover:underline">
-                  <h3 className="font-semibold text-lg line-clamp-2">
+                  <h3 className="font-semibold text-lg line-clamp-2 leading-5">
                     {isArabic ? item.ar_name : item.en_name}
                   </h3>
                 </Link>

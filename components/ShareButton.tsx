@@ -1,22 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { Button } from "./ui/button"
+import { Share2, Upload } from "lucide-react"
 import { toast } from "sonner"
-import { Share, Share2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useCart } from "@/lib/context"
 import { copyToClipboard } from "@/lib/utils"
 
-
-export default function ShareButton() {
+export default function ShareButton({product_id}: {product_id: string}) {
+  const { state } = useCart()
+  const isArabic = state.language === "ar"
 
   const handleShare = async () => {
-    copyToClipboard(window.location.href)
-    toast.success("Link copied to clipboard!")
-  }
+    copyToClipboard(`https://amtronics.co/products/${product_id}`);
+    toast.success(isArabic ? "تم نسخ الرابط إلى الحافظة" : "Link copied to clipboard")
+  };
 
   return (
-    <button onClick={handleShare} className="absolute top-4 right-4 flex items-center gap-2 bg-[#FEEE00] text-white w-8 h-8 flex justify-center rounded-full">
-    <Share size='16' color="#102245"/>
-              </button>
-  )
+    <Button variant="outline" size="icon" onClick={handleShare} aria-label={isArabic ? "مشاركة المنتج" : "Share product"}>
+      <Upload className="h-5 w-5" />
+    </Button>
+  );
 } 

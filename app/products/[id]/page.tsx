@@ -84,8 +84,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
     <div className="container mx-auto px-4 py-2 md:py-4">
       {/* Breadcrumbs */}
       <nav className="mb-6 text-[10px] md:text-xs" aria-label="Breadcrumb">
-        <ol className="flex items-center md:space-x-2 rtl:space-x-reverse text-gray-500">
-          <span className="md:block hidden">&gt;</span>
+        <ol className="flex  rtl:space-x-reverse text-gray-500">
           <li>
             <Link
               href={isArabic ? `/?lang=ar` : `/`}
@@ -116,7 +115,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
           </li>
         </ol>
       </nav>
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-2 md:gap-8">
         {/* Product Image Gallery */}
         <ProductImageGallery
           image={product.image}
@@ -127,15 +126,15 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
         />
 
         {/* Product Details */}
-        <div className="space-y-6">
+        <div className="space-y-2 md:space-y-6">
           <div>
             {(product.ar_brand || product.en_brand) && (
               <h1 className="text-3xl font-bold mb-2">
                 {isArabic ? product.ar_brand : product.en_brand}
               </h1>
             )}
-            <h1 className="text-3xl font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
-            <p className="text-gray-600">{isArabic ? product.ar_description : product.en_description}</p>
+            <h1 className="text-xl md:text-3xl leading-6 md:leading-9 tracking-[.02em]  font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
+            <p className="text-gray-600 leading-4 md:leading-5 text-sm md:text-base">{isArabic ? product.ar_description : product.en_description}</p>
           </div>
 
           {/* Rating */}

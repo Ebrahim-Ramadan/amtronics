@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ShoppingCart, CheckCheck, Heart } from "lucide-react"
+import { CheckCheck, HeartPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/context"
 import type { Product } from "@/lib/types"
@@ -10,6 +10,7 @@ import LoadingDots from "@/components/ui/loading-spinner"
 import { toast } from "sonner"
 import Image from "next/image"
 import { useWishlist } from "@/lib/wishlist-context"
+import ShareButton from "@/components/ShareButton"
 
 interface ProductActionsProps {
   product: Product
@@ -98,11 +99,11 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
         </div>
       </div>
 
-      <div className="flex gap-2 w-full flex-col md:flex-row justify-center">
+      <div className="flex flex-col gap-2 w-full">
         <Button
           onClick={addToCart}
           size="lg"
-          className="md:flex-1"
+          className="w-full"
           disabled={isOutOfStock || isLoading}
           aria-label={isArabic ? "أضف إلى السلة" : "Add to Cart"}
         >
@@ -125,33 +126,35 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
             </>
           )}
         </Button>
-        
-        <Button
-          onClick={handleShopNow}
-          size="lg"
-          className="md:flex-1 flex items-center justify-center"
-          disabled={isOutOfStock || isLoading}
-          aria-label={isArabic ? "اشتري الآن" : "Buy Now"}
-        >
-          {shopNowLoading ? (
-            <LoadingDots aria-label={isArabic ? "جارٍ الانتقال إلى الدفع" : "Proceeding to checkout"} />
-          ) : isArabic ? (
-            "اشتري الآن"
-          ) : (
-            "Buy Now"
-          )}
-        </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          className={`md:flex-1 ${isWishlisted ? 'text-red-500 border-red-500 hover:text-red-600' : 'text-gray-500 hover:text-red-500'}`}
-          onClick={toggleWishlist}
-          disabled={isLoading}
-          aria-label={isArabic ? (isWishlisted ? "إزالة من قائمة الرغبات" : "أضف إلى قائمة الرغبات") : (isWishlisted ? "Remove from wishlist" : "Add to wishlist")}
-        >
-          <Heart className={`h-5 w-5 mr-2 fill-current ${isWishlisted ? '' : 'fill-transparent'}`} />
-          {isArabic ? "قائمة الرغبات" : "Wishlist"}
-        </Button>
+        <div className="flex flex-row gap-2 w-full md:flex-row md:justify-center">
+          <Button
+            onClick={handleShopNow}
+            size="lg"
+            className="flex-1"
+            disabled={isOutOfStock || isLoading}
+            aria-label={isArabic ? "اشتري الآن" : "Buy Now"}
+          >
+            {shopNowLoading ? (
+              <LoadingDots aria-label={isArabic ? "جارٍ الانتقال إلى الدفع" : "Proceeding to checkout"} />
+            ) : isArabic ? (
+              "اشتري الآن"
+            ) : (
+              "Buy Now"
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            className={`flex-1 ${isWishlisted ? 'text-red-500 border-red-500 hover:text-red-600' : 'text-gray-500 hover:text-red-500'}`}
+            onClick={toggleWishlist}
+            disabled={isLoading}
+            aria-label={isArabic ? (isWishlisted ? "إزالة من قائمة الرغبات" : "أضف إلى قائمة الرغبات") : (isWishlisted ? "Remove from wishlist" : "Add to wishlist")}
+          >
+            <HeartPlus className={`h-5 w-5 fill-current ${isWishlisted ? '' : 'fill-transparent'}`} />
+            {isArabic ? "قائمة الرغبات" : "Wishlist"}
+          </Button>
+          <ShareButton product_id={product._id} />
+        </div>
       </div>
     </div>
   )
