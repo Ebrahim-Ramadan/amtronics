@@ -126,7 +126,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
         />
 
         {/* Product Details */}
-        <div className="space-y-2 md:space-y-6">
+        <div className="space-y-2 md:space-y-4">
           <div>
             {(product.ar_brand || product.en_brand) && (
               <h1 className="text-3xl font-bold mb-2">

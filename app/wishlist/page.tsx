@@ -74,10 +74,11 @@ export default function WishlistPage() {
   return (
     <div className="bg-[#FBFAF9] mx-auto px-2 md:px-4 py-8 min-h-[80vh]">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold flex self-start">{isArabic ? "قائمة الرغبات" : "Wishlist"} <span className="text-sm md:text-base font-medium text-neutral-500">({state.items.length})</span></h1>
+        <h1 className="text-3xl font-bold flex self-start">{isArabic ? "قائمة الرغبات" : "Wishlist"} </h1>
         <Button variant="destructive" onClick={clearWishlist} disabled={state.items.length === 0}>
           <Trash2 className="h-5 w-5" />
-          {isArabic ? "مسح الكل" : "Clear All"}
+          {isArabic ? " مسح الكل" : "Clear All "}
+          ({state.items.length})
         </Button>
       </div>
 

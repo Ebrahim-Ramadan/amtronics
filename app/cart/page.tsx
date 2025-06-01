@@ -3,13 +3,28 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react"
+import { Trash2, Plus, Minus, ShoppingCart, Heart, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useCart } from "@/lib/context"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { useWishlist } from "@/lib/wishlist-context"
+import type { Product } from "@/lib/types"
+
+const policyItems = {
+  en: [
+    "Free shipping on orders over 50 KD",
+    "Secure payment guaranteed",
+    "30-day return policy",
+  ],
+  ar: [
+    "الشحن المجاني للطلبات فوق 50 د.ك",
+    "الدفع الآمن مضمون",
+    "سياسة الإرجاع خلال 30 يومًا",
+  ],
+};
 
 export default function CartPage() {
   const { state, dispatch } = useCart()
@@ -20,10 +35,12 @@ export default function CartPage() {
   const isArabic = state.language === "ar"
   const dir = isArabic ? "rtl" : "ltr"
 
+  const { state: wishlistState, dispatch: wishlistDispatch } = useWishlist()
+
   const updateQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) {
-      const confirmMessage = isArabic 
-      ? "هل أنت متأكد من إزالة هذا المنتج من السلة؟" 
+      const confirmMessage = isArabic
+      ? "هل أنت متأكد من إزالة هذا المنتج من السلة؟"
       : "Are you sure you want to remove this item from the cart?"
     console.log(confirmMessage)
     if (confirm(confirmMessage)) {
@@ -41,10 +58,10 @@ export default function CartPage() {
   }
 
   const removeItem = (productId: string) => {
-    const confirmMessage = isArabic 
-      ? "هل أنت متأكد من إزالة هذا المنتج من السلة؟" 
+    const confirmMessage = isArabic
+      ? "هل أنت متأكد من إزالة هذا المنتج من السلة؟"
       : "Are you sure you want to remove this item from the cart?"
-    
+
     if (confirm(confirmMessage)) {
       dispatch({ type: "REMOVE_ITEM", payload: productId })
       toast.info("Item Removed")
@@ -86,14 +103,25 @@ export default function CartPage() {
   const total = subtotal - discountAmount
   const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0)
 
+  const toggleWishlist = (product: Product) => {
+    const isWishlisted = wishlistState.items.some(item => item._id === product._id)
+    if (isWishlisted) {
+      wishlistDispatch({ type: "REMOVE_ITEM", payload: product._id })
+      toast.info(isArabic ? "تمت الإزالة من قائمة الرغبات" : "Removed from wishlist")
+    } else {
+      wishlistDispatch({ type: "ADD_ITEM", payload: product })
+      toast.success(isArabic ? "تمت الإضافة إلى قائمة الرغبات" : "Added to wishlist")
+    }
+  }
+
   if (state.items.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8 min-h-[60vh] flex items-center justify-center">
+      <div className="mx-auto px-4 py-8 min-h-[60vh] flex items-center justify-center">
         <div className="text-center py-12 space-y-2 md:space-y-6 flex flex-col items-center justify-center">
           <Image src="/empty-cart.png" width={200} height={200} alt="shopping cart" />
           <h1 className="text-xl md:text-3xl font-bold">{isArabic ? "سلة التسوق فارغة" : "Your Amtronics Cart is Empty"}</h1>
           <p className="text-xs md:text-sm text-gray-600  mx-auto">
-            {isArabic 
+            {isArabic
               ? "ابدأ التسوق الآن لإضافة منتجات رائعة إلى سلتك!"
               : "Start shopping now to add amazing products to your cart!"}
           </p>
@@ -115,11 +143,11 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8" dir={dir}>
+    <div className="container mx-auto px-2 md:px-4 py-8" dir={dir}>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl md:text-3xl font-bold">{isArabic ? "سلة التسوق" : "Shopping Cart"}</h1>
         <Badge variant="secondary" className="text-sm">
-          {isArabic ? `${itemCount} عناصر` : `${itemCount} Items`}
+          ({isArabic ? `${itemCount} عناصر` : `${itemCount} Items`})
         </Badge>
       </div>
 
@@ -130,7 +158,7 @@ export default function CartPage() {
             <Card key={item.product._id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <div className="flex flex-col sm:flex-row gap-6">
-                  <div className="relative h-32 w-32">
+                  <div className="relative h-32 w-full">
                     <Image
                       src={item.product.image || "/placeholder.svg?height=128&width=128"}
                       alt={isArabic ? item.product.ar_name : item.product.en_name}
@@ -139,6 +167,15 @@ export default function CartPage() {
                       sizes="(max-width: 640px) 100vw, 128px"
                       priority
                     />
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleWishlist(item.product)}
+                        className={`rounded-full w-fit absolute top-0 right-0 text-gray-500 hover:text-red-500 ${wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? 'text-red-500' : ''}`}
+                        aria-label={isArabic ? (wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? "إزالة من قائمة الرغبات" : "أضف إلى قائمة الرغبات") : (wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? "Remove from wishlist" : "Add to wishlist")}
+                      >
+                        <Heart className={`h-5 w-5 ${wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? 'fill-red-500' : 'fill-transparent'}`} />
+                      </Button>
                   </div>
 
                   <div className="flex-1 space-y-3">
@@ -198,6 +235,7 @@ export default function CartPage() {
                       >
                         <Trash2 className="h-5 w-5" />
                       </Button>
+                      
                     </div>
                   </div>
 
@@ -229,9 +267,9 @@ export default function CartPage() {
                     className="h-10"
                     disabled={isApplyingPromo}
                   />
-                  <Button 
-                    onClick={applyPromoCode} 
-                    variant="outline" 
+                  <Button
+                    onClick={applyPromoCode}
+                    variant="outline"
                     className="h-10"
                     disabled={isApplyingPromo}
                   >
@@ -281,8 +319,8 @@ export default function CartPage() {
               </div>
 
               <Link href="/checkout" className="block">
-                <Button 
-                  className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 transition-colors" 
+                <Button
+                  className="w-full h-12 text-base font-semibold bg-[#0F172B] hover:bg-primary/90 transition-colors"
                   size="lg"
                 >
                   {isArabic ? "إتمام الطلب" : "Proceed to Checkout"}
@@ -291,12 +329,15 @@ export default function CartPage() {
             </CardContent>
           </Card>
 
-          {/* Additional Info */}
-          <div className="mt-4 text-sm text-gray-600 space-y-2">
-            <p>{isArabic ? "الشحن المجاني للطلبات فوق 50 د.ك" : "Free shipping on orders over 50 KD"}</p>
-            <p>{isArabic ? "الدفع الآمن مضمون" : "Secure payment guaranteed"}</p>
-            <p>{isArabic ? "سياسة الإرجاع خلال 30 يومًا" : "30-day return policy"}</p>
-          </div>
+        {/* Additional Info */}
+<div className="my-4 text-sm text-neutral-600 space-y-2">
+  {policyItems[isArabic ? 'ar' : 'en'].map((item, index) => (
+    <div className="flex gap-2 text-sm sm:truncate" key={index}>
+      <CheckCircle color="green" size="16" />
+      {item}
+    </div>
+  ))}
+</div>
         </div>
       </div>
     </div>

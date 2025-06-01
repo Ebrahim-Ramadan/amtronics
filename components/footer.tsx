@@ -1,7 +1,7 @@
 "use client"
 
 import { useCart } from "@/lib/context"
-import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react"
+import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, Copyright } from "lucide-react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -29,8 +29,8 @@ export default function Footer() {
         <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold">
-              {isArabic ? "أمترونيكس" : "Amtronics"}
+            <h3 className="text-xl font-bold flex">
+              {isArabic ? "أمترونيكس" : "Amtronics"} <Copyright size={12} color="#FEEE00" />
             </h3>
             <p className="text-sm">
               {isArabic 
