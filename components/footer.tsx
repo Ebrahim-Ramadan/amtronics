@@ -52,7 +52,8 @@ export default function Footer() {
                 alt="WhatsApp Icon"
                 width={20}
                 height={20}
-                quality={100}
+                quality={10}
+                priority = {false}
                 className="h-5 w-5"
                 />
               <p className="text-sm">+9 655 550 1387</p>
