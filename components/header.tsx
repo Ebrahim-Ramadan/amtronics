@@ -3,7 +3,7 @@ import Fuse from 'fuse.js';
 import type React from "react"
 import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
-import { Search, ShoppingCart, Globe, Menu, ChevronLeft, ChevronRight, Heart } from "lucide-react"
+import { Search, ShoppingCart, Globe, Menu, ChevronLeft, ChevronRight, Heart, SearchIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -212,14 +212,15 @@ export default function Header() {
                   <Search className="h-4 w-4" />
                 </Button>
                 {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 bg-white shadow-md rounded-md mt-1 z-20">
+                  <div className="absolute top-full left-0 right-0 bg-white shadow-md rounded-md mt-1 z-50">
                     <ul>
                       {suggestions.map((suggestion) => (
                         <li
                           key={suggestion}
-                          className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                          className="flex flex-row items-center px-4 py-2 font-medium text-neutral-800 hover:bg-neutral-100 cursor-pointer"
                           onClick={() => handleSuggestionClick(suggestion)}
                         >
+                          <SearchIcon size={16} className="mr-2 text-neutral-400" />
                           {suggestion}
                         </li>
                       ))}
@@ -305,7 +306,7 @@ export default function Header() {
       </div>
 
       {/* Navigation - Teal */}
-      <div className="bg-[#091638]/90 backdrop-blur-lg text-white relative">
+      <div className="bg-[#091638]/90 backdrop-blur-lg text-white relative -z-40">
         <div className=" mx-auto md:px-4">
           <div className="relative flex items-center">
             {/* Left Arrow */}
