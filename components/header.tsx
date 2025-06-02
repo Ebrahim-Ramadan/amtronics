@@ -175,7 +175,7 @@ export default function Header() {
 
 
   const isArabic = state.language === "ar"
-  const wishlistCount = wishlistState.items.length
+  const wishlistCount = wishlistState.items?.length || 0
 
   return (
     <header className="sticky top-0 z-50">
@@ -253,7 +253,7 @@ export default function Header() {
               <Link href="/cart">
                 <Button variant="ghost" size="sm" className="relative text-gray-800 z-0">
                   <ShoppingCart className="h-5 w-5" />
-                  {state.items.length > 0 && (
+                  {state.items?.length > 0 && (
                     <Badge
                       className={`font-medium absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs bg-[#00B8DB] transition-transform duration-300 ${badgeAnimate ? 'cart-badge-animate' : ''}`}
                     >
@@ -281,7 +281,7 @@ export default function Header() {
                   className="pr-10 rounded-full border-0 shadow-md bg-white"
                   dir={isArabic ? "rtl" : "ltr"}
                 />
-                <Button type="submit" size="sm" className="absolute right-1 top-1 h-8 w-8 p-0 rounded-full">
+                <Button type="submit" size="sm" className="absolute right-1 top-1/2  -translate-y-1/2 h-8 w-8 p-0 rounded-full">
                   <Search className="h-4 w-4" />
                 </Button>
                 {showSuggestions && suggestions.length > 0 && (

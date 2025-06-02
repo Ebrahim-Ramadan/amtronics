@@ -203,6 +203,8 @@ export default function EnhancedHeroSlider() {
                       alt={product.name}
                       width={150}
                       height={60}
+                      quality={50}
+                      priority
                       className="mx-auto mb-2 rounded-sm"
                     />
                     <p className="text-xs md:text-sm font-medium text-balance">{product.name}</p>
@@ -225,7 +227,9 @@ export default function EnhancedHeroSlider() {
                 alt={isArabic ? slideData.ar_title : slideData.en_title}
                 width={400}
                 height={350}
-                className="object-contain rounded-sm"
+                quality={50}
+                priority
+                className="bg-neutral-400 object-contain rounded-sm"
               />
             </div>
           </div>
