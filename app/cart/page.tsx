@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Trash2, Plus, Minus, CheckCircle, HeartPlus } from "lucide-react"
+import { Trash2, Plus, Minus, CheckCircle, HeartPlus, Trash, XIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -204,7 +204,7 @@ console.log('state.items', state.items)
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
-                      <Button
+                      {/* <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => removeItem(item.product._id)}
@@ -212,12 +212,21 @@ console.log('state.items', state.items)
                         aria-label={isArabic ? "إزالة المنتج" : "Remove product"}
                       >
                         <Trash2 className="h-5 w-5" />
-                      </Button>
+                      </Button> */}
                       
                     </div>
                   </div>
 
-                  <div className="text-right">
+                  <div className="flex flex-col items-end justify-between">
+                  <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeItem(item.product._id)}
+                        className="bg-neutral-50 rounded-full text-red-600 hover:text-red-700"
+                        aria-label={isArabic ? "إزالة المنتج" : "Remove product"}
+                      >
+                        <XIcon className="h-5 w-5" />
+                      </Button>
                     <p className="font-semibold text-lg">
                       {(item.product.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                     </p>
