@@ -1,5 +1,5 @@
 "use client"
-
+import Fuse from 'fuse.js';
 import type React from "react"
 import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
@@ -120,10 +120,15 @@ export default function Header() {
     const value = e.target.value;
     setSearchQuery(value);
     if (value) {
-      const filteredSuggestions = productSuggestions.filter(suggestion =>
-        suggestion.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions.slice(0, 5)); // Limit to a few suggestions
+      // const filteredSuggestions = productSuggestions.filter(suggestion =>
+      //   suggestion.toLowerCase().includes(value.toLowerCase())
+      // );
+      // setSuggestions(filteredSuggestions.slice(0, 5)); // Limit to a few suggestions
+      // setShowSuggestions(true);
+      const fuse = new Fuse(productSuggestions, {threshold: 0.6});
+      const results = fuse.search(value).map(result => result.item);
+      
+      setSuggestions(results.slice(0, 5));
       setShowSuggestions(true);
     } else {
       setSuggestions([]);
