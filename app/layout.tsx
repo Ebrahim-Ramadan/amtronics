@@ -171,6 +171,12 @@ export default function RootLayout({
   const isArabic = locale === "ar";
   return (
     <html lang={isArabic ? "ar" : "en"} dir={isArabic ? "rtl" : "ltr"}>
+      {/* <head>
+<script
+  crossOrigin="anonymous"
+  src="//unpkg.com/react-scan/dist/auto.global.js"
+></script>
+      </head> */}
       <body>
         <WishlistProvider>
           <CartProvider>

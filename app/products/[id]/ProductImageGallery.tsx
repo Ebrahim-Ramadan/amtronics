@@ -60,24 +60,25 @@ export default function ProductImageGallery({
         height={500}
         className="w-full h-auto rounded-lg shadow-sm"
         priority
+        quality={100}
       />
 
       {/* Navigation Buttons */}
       {imageUrls.length > 1 && (
         <>
           <button
-            className="cursor-pointer absolute left-2 top-9/20 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-1 shadow-md opacity-0 backdrop-blur-xl hover:bg-[#FEEE00]/90 group-hover:opacity-100 transition-all z-10"
+            className="cursor-pointer absolute left-2 border-2 border-neutral-100 top-9/20 transform -translate-y-1/2 bg-white/80 bg-opacity-50 rounded-full p-1 shadow-md opacity-0 backdrop-blur-lg hover:bg-[#FEEE00]/90 group-hover:opacity-100 transition-all z-10"
             onClick={handlePrevious}
             aria-label={isArabic ? "الصورة السابقة" : "Previous image"}
           >
-            <ChevronLeft className="h-6 w-6 text-gray-800" />
+            <ChevronLeft className="h-6 w-6  " />
           </button>
           <button
-            className="cursor-pointer absolute right-2 top-9/20 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-1 shadow-md opacity-0 backdrop-blur-xl hover:bg-[#FEEE00]/90 group-hover:opacity-100 transition-all z-10"
+            className="cursor-pointer absolute right-2 border-2 border-neutral-100 top-9/20 transform -translate-y-1/2 bg-white/80 bg-opacity-50 rounded-full p-1 shadow-md opacity-0 backdrop-blur-lg hover:bg-[#FEEE00]/90 group-hover:opacity-100 transition-all z-10"
             onClick={handleNext}
             aria-label={isArabic ? "الصورة التالية" : "Next image"}
           >
-            <ChevronRight className="h-6 w-6 text-gray-800" />
+            <ChevronRight className="h-6 w-6 " />
           </button>
         </>
       )}
@@ -91,7 +92,7 @@ export default function ProductImageGallery({
           {imageUrls.map((url, index) => (
             <button
               key={index}
-              onClick={() => setSelectedImage(url)}
+              onClick={() => setCurrentIndex(index)}
               className={`flex-shrink-0 focus:outline-none rounded-md ${
                 url === selectedImage ? "ring-2 ring-blue-500" : "hover:opacity-80"
               } transition-opacity`}
