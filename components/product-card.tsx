@@ -50,11 +50,11 @@ export default function ProductCard({ product }: ProductCardProps) {
   const discountedPrice = product.discount ? product.price - product.price * (product.discount / 100) : product.price
 
   return (
-    <Card className="group hover:shadow-lg transition-shadow duration-300">
+    <Card className="group hover:shadow-md transition-shadow duration-300">
       <div className="relative overflow-hidden">
         <Link href={`/products/${product._id}`}>
           <Image
-            src={product.image.split(',')[0] || "/placeholder.svg?height=250&width=250"}
+            src={(product.image && product.image.split(',')[0]) || "/placeholder.svg?height=250&width=250"}
             alt={isArabic ? product.ar_name : product.en_name}
             width={250}
             height={250}

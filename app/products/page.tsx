@@ -1,79 +1,82 @@
-"use client"
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import ProductCard from "@/components/product-card"
-import type { Product } from "@/lib/types"
-import { useCart } from "@/lib/context"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { categories } from "@/lib/utils"
+"use client";
+import type React from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import ProductCard from "@/components/product-card";
+import type { Product } from "@/lib/types";
+import { useCart } from "@/lib/context";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { categories } from "@/lib/utils";
 
 export default function ProductsPage() {
-  const { state } = useCart()
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "")
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "")
-  const isArabic = state.language === "ar"
+  const { state } = useCart();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+  const selectedCategory = searchParams.get("category") || "all";
+  const isArabic = state.language === "ar";
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true)
+      console.log('fetching');
+      setLoading(true);
       try {
-        let url = "/api/products?"
-        const params = new URLSearchParams()
-        if (searchQuery) params.append("search", searchQuery)
-        if (selectedCategory) params.append("category", selectedCategory)
-        if (searchParams.get("featured")) params.append("featured", "true")
-        if (searchParams.get("recent")) params.append("recent", "true")
+        let url = "/api/products?";
+        const params = new URLSearchParams();
+        if (searchQuery) params.append("search", searchQuery);
+        if (selectedCategory !== "all") params.append("category", selectedCategory);
+        if (searchParams.get("featured")) params.append("featured", "true");
+        if (searchParams.get("recent")) params.append("recent", "true");
 
-        url += params.toString()
+        url += params.toString();
 
-        const response = await fetch(url)
-        const data = await response.json()
-        setProducts(data)
+        const response = await fetch(url);
+        
+        const data = await response.json();
+        console.log("data", data);
+        setProducts(data);
       } catch (error) {
-        console.error("Error fetching products:", error)
+        console.error("Error fetching products:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProducts()
-
-  }, [searchQuery, selectedCategory, searchParams])
+    fetchProducts();
+  }, [searchParams, searchQuery]);
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    const params = new URLSearchParams(searchParams.toString())
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
     if (searchQuery) {
-      params.set("search", searchQuery)
+      params.set("search", searchQuery);
     } else {
-      params.delete("search")
+      params.delete("search");
     }
-    router.push(`/products?${params.toString()}`)
-  }
+    router.push(`/products?${params.toString()}`);
+  };
 
   const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value)
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(searchParams.toString());
     if (value === "all") {
-      params.delete("category")
+      params.delete("category");
     } else {
-      params.set("category", value)
+      params.set("category", value);
     }
-    router.push(`/products?${params.toString()}`)
-  }
+    router.push(`/products?${params.toString()}`);
+  };
 
   const clearFilters = () => {
-    setSearchQuery("")
-    setSelectedCategory("")
-    router.push("/products")
-  }
+    setSearchQuery("");
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    params.delete("category");
+    router.push(`/products?${params.toString()}`);
+  };
 
   return (
     <div className="container mx-auto px-2 py-4 md:px-4 md:py-6">
@@ -104,11 +107,8 @@ export default function ProductsPage() {
           </SelectContent>
         </Select>
 
-        {(searchQuery || selectedCategory) && (
-          <Button
-            variant="outline"
-            onClick={clearFilters}
-          >
+        {(searchQuery || selectedCategory !== "all") && (
+          <Button variant="outline" onClick={clearFilters}>
             {isArabic ? "مسح الفلاتر" : "Clear Filters"}
           </Button>
         )}
@@ -133,5 +133,5 @@ export default function ProductsPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

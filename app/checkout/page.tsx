@@ -110,8 +110,8 @@ if(state.items.length === 0){
 }
 
   return (
-    <div className="mx-auto md:px-4 py-4 md:py-6" dir={dir}>
-      <a href="/cart" className="text-neutral-500 hover:text-[#00B8DB] text-xs md:text-sm flex justify-start items-center mb-2 text-center ">
+    <div className="mx-auto md:px-20 py-4 md:py-6" dir={dir}>
+      <a href="/cart" className="font-medium text-neutral-500 hover:text-[#00B8DB] text-xs md:text-sm flex justify-start items-center mb-2 text-center ">
       <ChevronLeft className="h-4 w-4 " />
       Back to Cart
       </a>
@@ -307,7 +307,7 @@ if(state.items.length === 0){
         </Card>
 
 
-        <Card>
+        <Card className="border-2 border-[#FEEE00]">
   <CardHeader>
     <CardTitle className="text-xl md:text-3xl">{isArabic ? "ملخص الطلب" : "Order Summary"}</CardTitle>
   </CardHeader>

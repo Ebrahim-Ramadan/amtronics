@@ -26,7 +26,7 @@ export const  categories = [
   "Service",
   "Transistor",
   "IC",
-  "3D Print & Accessories",
+  "3D Print",
   "Capacitors",
   "Batteries & Power Supply",
   "Tools",

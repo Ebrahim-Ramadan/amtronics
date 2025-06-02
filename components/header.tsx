@@ -15,6 +15,7 @@ import { useWishlist } from "@/lib/wishlist-context"
 
 // Placeholder for robotics/maker electronics suggestions
 const productSuggestions = [
+  "Arduino",
   "Capacitor",
   "Resistor",
   "Inductor",
@@ -42,6 +43,19 @@ const productSuggestions = [
   "Wire",
   "Connector",
   "Fuse",
+  "Bread board",
+  "Jumper Wires",
+  "Power Supply",
+  "Voltage Regulator",
+  "Integrated Circuit (IC)",
+  "Development Board", // e.g., Arduino Uno, Raspberry Pi Pico
+  "Shield", // e.g., Arduino Motor Shield
+  "Breakout Board",
+  "Oscilloscope",
+  "Multimeter",
+  "Soldering Iron",
+  "Wire",
+  "Connector",
 ];
 
 export default function Header() {
