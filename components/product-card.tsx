@@ -164,7 +164,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <Card className="group hover:shadow-md transition-shadow duration-300 gap-4">
+    <Card className="group hover:shadow-md transition-shadow duration-300 gap-4 md:px-2">
       <div
         ref={sliderRef}
         className="relative overflow-hidden h-48"
@@ -264,8 +264,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           }
         `}</style>
       </div>
+     
       <div className="w-full justify-center items-center flex gap-1">
-              {images.map((_, index) => (
+              {images.length > 1 && images.map((_, index) => (
                 <button
                   key={index}
                   className={`h-1 rounded-full transition-all ${
