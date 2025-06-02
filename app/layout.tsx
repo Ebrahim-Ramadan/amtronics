@@ -119,10 +119,10 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://amtronics.co",
+    canonical: "https://amtronics.vercel.app",
     languages: {
-      "en-US": "https://amtronics.co/en",
-      "ar-KW": "https://amtronics.co/ar",
+      "en-US": "https://amtronics.vercel.app/",
+      "ar-KW": "https://amtronics.vercel.app/",
     },
   },
   openGraph: {
@@ -133,19 +133,19 @@ export const metadata: Metadata = {
     description:
       "Shop premium electronics, educational kits, Raspberry Pi, and lab equipment. Free delivery in Kuwait. أمترونيكس - متجر الإلكترونيات والأطقم التعليمية",
     type: "website",
-    url: "https://amtronics.co",
+    url: "https://amtronics.vercel.app",
     locale: "en_US",
     alternateLocale: "ar_KW",
     siteName: "Amtronics",
     images: [
       {
-        url: "https://amtronics.co/og-image-en.jpg",
+        url: "https://amtronics.vercel.app/og-image-en.jpg",
         width: 1200,
         height: 630,
         alt: "Amtronics Electronics Store",
       },
       {
-        url: "https://amtronics.co/og-image-ar.jpg",
+        url: "https://amtronics.vercel.app/og-image-ar.jpg",
         width: 1200,
         height: 630,
         alt: "أمترونيكس - متجر الإلكترونيات",
@@ -157,7 +157,7 @@ export const metadata: Metadata = {
     title: "Amtronics - Electronics & Educational Kits Store",
     description:
       "Shop premium electronics, educational kits, Raspberry Pi, and lab equipment. Free delivery in Kuwait.",
-    images: ["https://amtronics.co/og-image-en.jpg"],
+    images: ["https://amtronics.vercel.app/og-image-en.jpg"],
   },
 };
 
