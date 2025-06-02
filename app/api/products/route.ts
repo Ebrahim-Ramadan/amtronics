@@ -9,6 +9,7 @@ export async function GET(request: Request) {
     const featured = searchParams.get("featured")
     const recent = searchParams.get("recent")
     const limit = Number.parseInt(searchParams.get("limit") || "20")
+    const skip = Number.parseInt(searchParams.get("skip") || "0")
 
     const client = await clientPromise
     const db = client.db("amtronics")
@@ -60,9 +61,10 @@ export async function GET(request: Request) {
       // add more summary fields if needed
     }
 
-    const products = await db.collection("products").find(query, { projection }).limit(limit).toArray()
-    
-    return NextResponse.json(products)
+    const products = await db.collection("products").find(query, { projection }).sort(sort).skip(skip).limit(limit).toArray()
+    const total = await db.collection("products").countDocuments(query);
+
+    return NextResponse.json({ products, total })
   } catch (error) {
     console.error("Error fetching products:", error)
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 })

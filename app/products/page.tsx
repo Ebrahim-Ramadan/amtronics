@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { categories } from "@/lib/utils";
+import { Pagination } from "@/components/ui/pagination"; // Assuming you have a Pagination component
+
+const ITEMS_PER_PAGE = 12;
 
 export default function ProductsPage() {
   const { state } = useCart();
@@ -18,6 +21,8 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   const selectedCategory = searchParams.get("category") || "all";
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const [totalProducts, setTotalProducts] = useState(0);
   const isArabic = state.language === "ar";
 
   useEffect(() => {
@@ -31,14 +36,16 @@ export default function ProductsPage() {
         if (selectedCategory !== "all") params.append("category", selectedCategory);
         if (searchParams.get("featured")) params.append("featured", "true");
         if (searchParams.get("recent")) params.append("recent", "true");
+        params.append("limit", String(ITEMS_PER_PAGE));
+        params.append("skip", String((currentPage - 1) * ITEMS_PER_PAGE));
 
         url += params.toString();
 
         const response = await fetch(url);
-        
         const data = await response.json();
         console.log("data", data);
-        setProducts(data);
+        setProducts(data.products);
+        setTotalProducts(data.total);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -47,7 +54,7 @@ export default function ProductsPage() {
     };
 
     fetchProducts();
-  }, [searchParams, searchQuery]);
+  }, [searchParams, searchQuery, currentPage]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +64,7 @@ export default function ProductsPage() {
     } else {
       params.delete("search");
     }
+    params.delete("page"); // Reset to page 1 on new search
     router.push(`/products?${params.toString()}`);
   };
 
@@ -67,6 +75,7 @@ export default function ProductsPage() {
     } else {
       params.set("category", value);
     }
+    params.delete("page"); // Reset to page 1 on category change
     router.push(`/products?${params.toString()}`);
   };
 
@@ -75,8 +84,17 @@ export default function ProductsPage() {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("search");
     params.delete("category");
+    params.delete("page"); // Reset to page 1 on clearing filters
     router.push(`/products?${params.toString()}`);
   };
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(newPage));
+    router.push(`/products?${params.toString()}`);
+  };
+
+  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
 
   return (
     <div className="container mx-auto px-2 py-4 md:px-4 md:py-6">
@@ -117,7 +135,7 @@ export default function ProductsPage() {
       {/* Products Grid */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(12)].map((_, i) => (
+          {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
             <div key={i} className="bg-gray-200 animate-pulse h-80 rounded-lg"></div>
           ))}
         </div>
@@ -130,6 +148,16 @@ export default function ProductsPage() {
       ) : (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">{isArabic ? "لم يتم العثور على منتجات" : "No products found"}</p>
+        </div>
+      )}
+
+      {totalPages > 1 && !loading && products.length > 0 && (
+        <div className="mt-6 flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       )}
     </div>
