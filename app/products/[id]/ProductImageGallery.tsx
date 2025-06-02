@@ -1,9 +1,9 @@
-
 "use client"
 
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface ProductImageGalleryProps {
   image: string | null | undefined
@@ -27,11 +27,31 @@ export default function ProductImageGallery({
     ? image.split(",").map(url => url.trim()).filter(url => url)
     : ["/placeholder.svg?height=500&width=500"]
 
-  // State for selected primary image
+  // State for selected primary image index
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  // Update selected image based on index
+  useEffect(() => {
+    setSelectedImage(imageUrls[currentIndex]);
+  }, [currentIndex, imageUrls]);
+
+  const handlePrevious = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? imageUrls.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === imageUrls.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  // State for selected primary image (keeping this for consistency with the return block for now)
   const [selectedImage, setSelectedImage] = useState(imageUrls[0])
 
   return (
-    <div className="relative">
+    <div className="relative group">
       {/* Primary Image */}
       <Image
         src={selectedImage}
@@ -41,6 +61,27 @@ export default function ProductImageGallery({
         className="w-full h-auto rounded-lg shadow-sm"
         priority
       />
+
+      {/* Navigation Buttons */}
+      {imageUrls.length > 1 && (
+        <>
+          <button
+            className="cursor-pointer absolute left-2 top-9/20 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-1 shadow-md opacity-0 backdrop-blur-xl hover:bg-[#FEEE00]/90 group-hover:opacity-100 transition-all z-10"
+            onClick={handlePrevious}
+            aria-label={isArabic ? "الصورة السابقة" : "Previous image"}
+          >
+            <ChevronLeft className="h-6 w-6 text-gray-800" />
+          </button>
+          <button
+            className="cursor-pointer absolute right-2 top-9/20 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-1 shadow-md opacity-0 backdrop-blur-xl hover:bg-[#FEEE00]/90 group-hover:opacity-100 transition-all z-10"
+            onClick={handleNext}
+            aria-label={isArabic ? "الصورة التالية" : "Next image"}
+          >
+            <ChevronRight className="h-6 w-6 text-gray-800" />
+          </button>
+        </>
+      )}
+
       {/* Thumbnails */}
       {imageUrls.length > 1 && (
         <div
@@ -67,15 +108,17 @@ export default function ProductImageGallery({
                     ? `${ar_name} - صورة ${index + 1}`
                     : `${en_name} - Image ${index + 1}`
                 }
-                width={100}
-                height={100}
+                width={10}
+                height={10}
+                quality={10}
+                priority={false}
                 className="w-10 h-10 object-cover rounded-md"
               />
             </button>
           ))}
         </div>
       )}
-      {discount !=0 && (
+      {discount && (
         <Badge
           className="absolute top-4 left-4 bg-red-500 text-white"
           aria-label={isArabic ? `خصم ${discount}%` : `${discount}% off`}

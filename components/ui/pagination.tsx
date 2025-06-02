@@ -14,6 +14,8 @@ interface PaginationProps extends React.ComponentProps<"nav"> {
   onPageChange: (newPage: number) => void;
 }
 
+const MAX_VISIBLE_PAGES = 5;
+
 function Pagination({
   className,
   currentPage,
@@ -21,7 +23,41 @@ function Pagination({
   onPageChange,
   ...props
 }: PaginationProps) {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  // Calculate visible pages
+  const pagesToShow: (number | 'ellipsis')[] = [];
+
+  // Always show first page
+  pagesToShow.push(1);
+
+  if (totalPages <= MAX_VISIBLE_PAGES) {
+    // Show all pages if total pages are within the limit
+    for (let i = 2; i <= totalPages; i++) {
+      pagesToShow.push(i);
+    }
+  } else {
+    const start = Math.max(2, currentPage - Math.floor((MAX_VISIBLE_PAGES - 3) / 2));
+    const end = Math.min(totalPages - 1, currentPage + Math.ceil((MAX_VISIBLE_PAGES - 3) / 2));
+
+    // Add start ellipsis if needed
+    if (start > 2) {
+      pagesToShow.push('ellipsis');
+    }
+
+    // Add pages around current page
+    for (let i = start; i <= end; i++) {
+      pagesToShow.push(i);
+    }
+
+    // Add end ellipsis if needed
+    if (end < totalPages - 1) {
+      pagesToShow.push('ellipsis');
+    }
+
+    // Always show last page
+    if (totalPages > 1) {
+        pagesToShow.push(totalPages);
+    }
+  }
 
   const handlePageClick = (page: number) => {
     onPageChange(page);
@@ -40,14 +76,18 @@ function Pagination({
         disabled={currentPage === 1}
       />
       <PaginationContent>
-        {pages.map((page) => (
-          <PaginationItem key={page}>
-            <PaginationLink
-              isActive={page === currentPage}
-              onClick={() => handlePageClick(page)}
-            >
-              {page}
-            </PaginationLink>
+        {pagesToShow.map((page) => (
+          <PaginationItem key={page === 'ellipsis' ? `ellipsis-${Math.random()}` : page}>
+            {page === 'ellipsis' ? (
+              <PaginationEllipsis />
+            ) : (
+              <PaginationLink
+                isActive={page === currentPage}
+                onClick={() => handlePageClick(page)}
+              >
+                {page}
+              </PaginationLink>
+            )}
           </PaginationItem>
         ))}
       </PaginationContent>
@@ -78,6 +118,7 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean;
+  disabled?: boolean;
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
   React.ComponentProps<"a">;
 

@@ -97,7 +97,7 @@ export default function ProductsPage() {
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
 
   return (
-    <div className="container mx-auto px-2 py-4 md:px-4 md:py-6">
+    <div className=" mx-auto px-2 py-4 md:px-12 md:py-6">
       <h1 className="text-3xl font-bold mb-2 md:mb-4">{isArabic ? "المنتجات" : "Products"}</h1>
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-8">
@@ -140,7 +140,7 @@ export default function ProductsPage() {
           ))}
         </div>
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {products.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}

@@ -71,6 +71,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
   const discountedPrice = product.discount
     ? product.price - product.price * (product.discount / 100)
     : product.price
+console.log('discountedPrice', discountedPrice);
 
   // Breadcrumbs
   const category = isArabic ? product.ar_main_category : product.en_main_category
