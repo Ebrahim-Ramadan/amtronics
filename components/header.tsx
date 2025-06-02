@@ -87,16 +87,16 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50">
       {/* Top bar - Yellow */}
-      <div className="bg-[#FEEE00] py-2">
+      <div className="bg-[#FEEE00] py-1  md:py-2">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="text-2xl font-bold text-gray-800">
               <Image
                 src="/amtronics-logo.png"
-                width={100}
-                className="w-12"
-                height={100}
+                width={200}
+                className="w-12 md:w-20"
+                height={200}
                 alt="Amtronics Logo"
               />
             </Link>
@@ -155,7 +155,7 @@ export default function Header() {
           </div>
 
           {/* Mobile search */}
-          <div className="md:hidden mt-3">
+          <div className="md:hidden mt-1">
             <form onSubmit={handleSearch}>
               <div className="relative">
                 <Input

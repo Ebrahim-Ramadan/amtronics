@@ -142,7 +142,7 @@ export default function Footer() {
               <a href="https://twitter.com/amtronics" aria-label="Twitter" className="hover:opacity-80">
                 <Twitter className="h-6 w-6"  color="#FEEE00"/>
               </a>
-              <a href="https://instagram.com/amtronics" aria-label="Instagram" className="hover:opacity-80">
+              <a href="https://www.instagram.com/amtronics_kw/" aria-label="Instagram" className="hover:opacity-80">
                 <Instagram className="h-6 w-6"  color="#FEEE00"/>
               </a>
             </div>

@@ -101,12 +101,12 @@ export default function EnhancedHeroSlider() {
   }, [])
 
   // Slide auto-advance
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     handleNextSlide()
-  //   }, 6000)
-  //   return () => clearInterval(timer)
-  // }, [currentSlide])
+  useEffect(() => {
+    const timer = setInterval(() => {
+      handleNextSlide()
+    }, 6000)
+    return () => clearInterval(timer)
+  }, [currentSlide])
 
   // Slide transition helpers
   const handleNextSlide = () => {
