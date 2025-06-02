@@ -10,12 +10,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { useCart } from "@/lib/context"
 import type { CustomerInfo } from "@/lib/types"
 import { useSavedAddresses } from "@/lib/saved-addresses-context"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { MapPin, PlusCircle } from "lucide-react"
+import {  ChevronLeft, PlusCircle } from "lucide-react"
 import Image from "next/image"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
+  console.log('state.items', state.items)
+  
   const { state: savedAddressesState, dispatch: savedAddressesDispatch } = useSavedAddresses()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -31,10 +32,20 @@ export default function CheckoutPage() {
     house: "",
   })
   const [selectedAddressIndex, setSelectedAddressIndex] = useState<number | "new">("new")
-
+    const [isCartEmpty, setIsCartEmpty] = useState(state.items.length === 0);
   const isArabic = state.language === "ar"
   const dir = isArabic ? "rtl" : "ltr"
-
+    // Update isCartEmpty when state.items changes
+    useEffect(() => {
+      setIsCartEmpty(state.items.length === 0);
+    }, [state.items]);
+  
+    // Redirect to cart only once when the component mounts and the cart is empty
+    useEffect(() => {
+      if (isCartEmpty) {
+        router.push("/cart");
+      }
+    }, [isCartEmpty, router]);
   // Load selected address if available
   useEffect(() => {
     if (selectedAddressIndex !== "new" && savedAddressesState.addresses[selectedAddressIndex]) {
@@ -103,13 +114,14 @@ export default function CheckoutPage() {
     }
   }
 
-  if (state.items.length === 0) {
-    router.push("/cart")
-    return null
-  }
+
 
   return (
-    <div className="mx-auto md:px-4 py-4 md:py-8" dir={dir}>
+    <div className="mx-auto md:px-4 py-4 md:py-6" dir={dir}>
+      <a href="/cart" className="text-neutral-500 hover:text-[#00B8DB] text-xs md:text-sm flex justify-start items-center mb-2 text-center ">
+      <ChevronLeft className="h-4 w-4 " />
+      Back to Cart
+      </a>
       <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-8 text-center">{isArabic ? "إتمام الطلب" : "Checkout"}</h1>
 
       <div className="grid lg:grid-cols-2 gap-8 [&>*]:py-6">
@@ -301,38 +313,69 @@ export default function CheckoutPage() {
           </CardContent>
         </Card>
 
-        {/* Order Summary */}
+
         <Card>
-          <CardHeader>
-            <CardTitle className="text-xl md:text-3xl">{isArabic ? "ملخص الطلب" : "Order Summary"}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {state.items.map((item) => (
-              <div key={item.product._id} className="flex justify-between gap-2">
-                <span className="line-clamp-2 leading-6">
-                  {isArabic ? item.product.ar_name : item.product.en_name} × {item.quantity}
-                </span>
-                <span>
-                  {(item.product.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                </span>
+  <CardHeader>
+    <CardTitle className="text-xl md:text-3xl">{isArabic ? "ملخص الطلب" : "Order Summary"}</CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-6">
+    {state.items.map((item) => (
+      <div key={item.product._id} className="flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
+        <div className="flex items-center gap-3 w-full">
+          <div className="relative w-24 h-24  rounded-xl shadow-sm">
+            {item.product.image ? (
+              <img
+                src={item.product.image.split(',')[0]}
+                alt={isArabic ? item.product.ar_name : item.product.en_name}
+                className="object-cover w-full h-full"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-500">
+                {/* Placeholder if no image */}
+                <span>{isArabic ? "لا صورة" : "No Image"}</span>
               </div>
-            ))}
+            )}
+         <span className="z-10 absolute -top-2 -right-2 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
+  x{item.quantity}
+</span>
+          </div>
+          <div className="flex flex-col leading-tight">
+            <span className="font-semibold">
+              {isArabic ? item.product.ar_name : item.product.en_name}
+            </span>
+            {/* You might want to add other product details here if available */}
+          </div>
+        </div>
+        <span className="font-semibold ">
+          {(item.product.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+        </span>
+      </div>
+    ))}
 
-            <div className="border-t pt-4">
-              <div className="flex justify-between text-lg font-bold">
-                <span>{isArabic ? "المجموع" : "Total"}</span>
-                <span>
-                  {state.total.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                </span>
-              </div>
-            </div>
+    <div className="border-t border-[#00B8DB] pt-4">
+      <div className="flex justify-between text-lg font-bold">
+        <span>{isArabic ? "المجموع" : "Total"}</span>
+        <span>
+          {state.total.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+        </span>
+      </div>
+    </div>
 
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">{isArabic ? "طريقة الدفع" : "Payment Method"}</h3>
-              <p className="text-sm text-gray-600">{isArabic ? "الدفع عند التسليم - نقداً" : "Cash on Delivery"}</p>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="bg-blue-50 p-4 rounded-lg">
+      <h3 className="font-semibold mb-2">{isArabic ? "طريقة الدفع" : "Payment Method"}</h3>
+      <div className="flex items-center justify-between">
+      <p className="text-sm text-gray-600">{isArabic ? "الدفع عند التسليم - نقداً" : "Cash on Delivery"}</p>
+      <Image
+      src='/cash-on-delivery.svg'
+      width={40}
+      height={40}
+      alt="Cash on Delivery"
+      />
+      </div>
+    </div>
+  </CardContent>
+</Card>
+
       </div>
     </div>
   )

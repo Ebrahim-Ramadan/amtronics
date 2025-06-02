@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import {  Star,  CheckCheck, Heart } from "lucide-react"
+import {  Star,  CheckCheck, Heart, HeartPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -54,7 +54,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="relative overflow-hidden">
         <Link href={`/products/${product._id}`}>
           <Image
-            src={product.image || "/placeholder.svg?height=250&width=250"}
+            src={product.image.split(',')[0] || "/placeholder.svg?height=250&width=250"}
             alt={isArabic ? product.ar_name : product.en_name}
             width={250}
             height={250}
@@ -108,11 +108,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            className={`ml-auto ${isWishlisted ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}
+            className={`hover:bg-[#FEEE00]  ml-auto ${isWishlisted ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}
             onClick={toggleWishlist}
             aria-label={isArabic ? (isWishlisted ? "إزالة من قائمة الرغبات" : "أضف إلى قائمة الرغبات") : (isWishlisted ? "Remove from wishlist" : "Add to wishlist")}
           >
-            <Heart className={`h-6 w-6 fill-current ${isWishlisted ? '' : 'fill-transparent'}`} />
+            <HeartPlus className={`h-6 w-6 fill-current ${isWishlisted ? '' : 'fill-transparent'}`} />
           </Button>
         </div>
       </CardContent>

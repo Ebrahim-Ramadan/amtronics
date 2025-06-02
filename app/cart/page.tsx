@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Trash2, Plus, Minus, ShoppingCart, Heart, CheckCircle } from "lucide-react"
+import { Trash2, Plus, Minus, CheckCircle, HeartPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { useCart } from "@/lib/context"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
@@ -113,6 +113,7 @@ export default function CartPage() {
       toast.success(isArabic ? "تمت الإضافة إلى قائمة الرغبات" : "Added to wishlist")
     }
   }
+console.log('state.items', state.items)
 
   if (state.items.length === 0) {
     return (
@@ -160,10 +161,10 @@ export default function CartPage() {
                 <div className="flex flex-col sm:flex-row gap-6">
                   <div className="relative h-32 w-full md:w-32">
                     <Image
-                      src={item.product.image || "/placeholder.svg?height=128&width=128"}
+                      src={item.product.image.split(',')[0] || "/placeholder.svg?height=128&width=128"}
                       alt={isArabic ? item.product.ar_name : item.product.en_name}
                       fill
-                      className="rounded-lg object-cover"
+                      className="rounded-lg object-contain"
                       sizes="(max-width: 640px) 100vw, 128px"
                       priority
                     />
@@ -171,10 +172,10 @@ export default function CartPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => toggleWishlist(item.product)}
-                        className={`rounded-full w-fit absolute top-0 right-0 text-gray-500 hover:text-red-500 ${wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? 'text-red-500' : ''}`}
+                        className={`hover:bg-[#FEEE00] border-neutral-100 border-1 backdrop-blur-xl rounded-full w-fit absolute -top-2 -right-2 text-gray-500 hover:text-red-500 ${wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? 'text-red-500' : ''}`}
                         aria-label={isArabic ? (wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? "إزالة من قائمة الرغبات" : "أضف إلى قائمة الرغبات") : (wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? "Remove from wishlist" : "Add to wishlist")}
                       >
-                        <Heart className={`h-5 w-5 ${wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? 'fill-red-500' : 'fill-transparent'}`} />
+                        <HeartPlus className={`h-5 w-5 ${wishlistState.items.some(wishlistItem => wishlistItem._id === item.product._id) ? 'fill-red-500' : 'fill-transparent'}`} />
                       </Button>
                   </div>
 
@@ -183,10 +184,6 @@ export default function CartPage() {
                       <h3 className="font-semibold text-lg">
                         {isArabic ? item.product.ar_name : item.product.en_name}
                       </h3>
-                      <p className="text-sm text-gray-600">
-  {(isArabic ? item.product.ar_description : item.product.en_description).slice(0, 50)}
-  {(isArabic ? item.product.ar_description : item.product.en_description).length > 50 && '...'}
-</p>
 
                     </div>
                     <div className="flex items-center gap-4">
