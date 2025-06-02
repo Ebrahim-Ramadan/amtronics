@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,13 +11,13 @@ import type { CustomerInfo } from "@/lib/types"
 import { useSavedAddresses } from "@/lib/saved-addresses-context"
 import {  ChevronLeft, PlusCircle } from "lucide-react"
 import Image from "next/image"
+import { EmptyCart } from "@/components/empty-cart"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
   console.log('state.items', state.items)
   
   const { state: savedAddressesState, dispatch: savedAddressesDispatch } = useSavedAddresses()
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: "",
@@ -32,20 +31,9 @@ export default function CheckoutPage() {
     house: "",
   })
   const [selectedAddressIndex, setSelectedAddressIndex] = useState<number | "new">("new")
-    const [isCartEmpty, setIsCartEmpty] = useState(state.items.length === 0);
   const isArabic = state.language === "ar"
   const dir = isArabic ? "rtl" : "ltr"
-    // Update isCartEmpty when state.items changes
-    useEffect(() => {
-      setIsCartEmpty(state.items.length === 0);
-    }, [state.items]);
-  
-    // Redirect to cart only once when the component mounts and the cart is empty
-    useEffect(() => {
-      if (isCartEmpty) {
-        router.push("/cart");
-      }
-    }, [isCartEmpty, router]);
+
   // Load selected address if available
   useEffect(() => {
     if (selectedAddressIndex !== "new" && savedAddressesState.addresses[selectedAddressIndex]) {
@@ -114,7 +102,12 @@ export default function CheckoutPage() {
     }
   }
 
-
+// Redirect to cart only once when the component mounts and the cart is empty
+if(state.items.length === 0){
+  return (
+  <EmptyCart isArabic={isArabic} />
+)
+}
 
   return (
     <div className="mx-auto md:px-4 py-4 md:py-6" dir={dir}>

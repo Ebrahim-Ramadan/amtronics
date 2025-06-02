@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { useWishlist } from "@/lib/wishlist-context"
 import type { Product } from "@/lib/types"
+import { EmptyCart } from "@/components/empty-cart"
 
 const policyItems = {
   en: [
@@ -117,29 +118,30 @@ console.log('state.items', state.items)
 
   if (state.items.length === 0) {
     return (
-      <div className="mx-auto px-4 py-8 min-h-[60vh] flex items-center justify-center">
-        <div className="text-center py-12 space-y-2 md:space-y-6 flex flex-col items-center justify-center">
-          <Image src="/empty-cart.png" width={200} height={200} alt="shopping cart" />
-          <h1 className="text-xl md:text-3xl font-bold">{isArabic ? "سلة التسوق فارغة" : "Your Amtronics Cart is Empty"}</h1>
-          <p className="text-xs md:text-sm text-gray-600  mx-auto">
-            {isArabic
-              ? "ابدأ التسوق الآن لإضافة منتجات رائعة إلى سلتك!"
-              : "Start shopping now to add amazing products to your cart!"}
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link href="/products">
-              <Button size="lg" className="bg-primary hover:bg-primary/90">
-                {isArabic ? "تسوق الآن" : "Shop Now"}
-              </Button>
-            </Link>
-            <Link href="/">
-              <Button size="lg" variant="outline">
-                {isArabic ? "العودة إلى الرئيسية" : "Return to Home"}
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
+      // <div className="mx-auto px-4 py-8 min-h-[60vh] flex items-center justify-center">
+      //   <div className="text-center py-12 space-y-2 md:space-y-6 flex flex-col items-center justify-center">
+      //     <Image src="/empty-cart.png" width={200} height={200} alt="shopping cart" />
+      //     <h1 className="text-xl md:text-3xl font-bold">{isArabic ? "سلة التسوق فارغة" : "Your Amtronics Cart is Empty"}</h1>
+      //     <p className="text-xs md:text-sm text-gray-600  mx-auto">
+      //       {isArabic
+      //         ? "ابدأ التسوق الآن لإضافة منتجات رائعة إلى سلتك!"
+      //         : "Start shopping now to add amazing products to your cart!"}
+      //     </p>
+      //     <div className="flex justify-center gap-4">
+      //       <Link href="/products">
+      //         <Button size="lg" className="bg-primary hover:bg-primary/90">
+      //           {isArabic ? "تسوق الآن" : "Shop Now"}
+      //         </Button>
+      //       </Link>
+      //       <Link href="/">
+      //         <Button size="lg" variant="outline">
+      //           {isArabic ? "العودة إلى الرئيسية" : "Return to Home"}
+      //         </Button>
+      //       </Link>
+      //     </div>
+      //   </div>
+      // </div>
+      <EmptyCart isArabic={isArabic} />
     )
   }
 
