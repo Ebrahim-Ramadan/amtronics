@@ -166,7 +166,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50">
       {/* Top bar - Yellow */}
-      <div className="bg-[#FEEE00] py-1  md:py-2">
+      <div className="bg-[#FEEE00]/90 backdrop-blur-lg py-1  md:py-2">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -291,7 +291,7 @@ export default function Header() {
       </div>
 
       {/* Navigation - Teal */}
-      <div className="bg-[#091638] text-white relative">
+      <div className="bg-[#091638]/90 backdrop-blur-lg text-white relative">
         <div className=" mx-auto md:px-4">
           <div className="relative flex items-center">
             {/* Left Arrow */}
