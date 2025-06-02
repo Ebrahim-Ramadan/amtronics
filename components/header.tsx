@@ -13,9 +13,42 @@ import Image from "next/image"
 import { categories } from "@/lib/utils"
 import { useWishlist } from "@/lib/wishlist-context"
 
+// Placeholder for robotics/maker electronics suggestions
+const productSuggestions = [
+  "Capacitor",
+  "Resistor",
+  "Inductor",
+  "Diode",
+  "Transistor",
+  "Potentiometer",
+  "LED",
+  "Motor",
+  "Servo Motor",
+  "Stepper Motor",
+  "Microcontroller", // e.g., Arduino, ESP32
+  "Sensor", // e.g., Ultrasonic, Infrared
+  "Relay",
+  "Breadboard",
+  "Jumper Wires",
+  "Power Supply",
+  "Voltage Regulator",
+  "Integrated Circuit (IC)",
+  "Development Board", // e.g., Arduino Uno, Raspberry Pi Pico
+  "Shield", // e.g., Arduino Motor Shield
+  "Breakout Board",
+  "Oscilloscope",
+  "Multimeter",
+  "Soldering Iron",
+  "Wire",
+  "Connector",
+  "Fuse",
+];
+
 export default function Header() {
   const { state, dispatch } = useCart()
   const [searchQuery, setSearchQuery] = useState("")
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [badgeAnimate, setBadgeAnimate] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
@@ -23,6 +56,7 @@ export default function Header() {
   const searchParams = useSearchParams()
   const navRef = useRef<HTMLDivElement | null>(null)
   const { state: wishlistState } = useWishlist()
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
 
   useEffect(() => {
@@ -46,6 +80,7 @@ export default function Header() {
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
     }
+    setShowSuggestions(false);
   }
 
   const toggleLanguage = () => {
@@ -81,6 +116,45 @@ export default function Header() {
     }
   }, [])
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    if (value) {
+      const filteredSuggestions = productSuggestions.filter(suggestion =>
+        suggestion.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions.slice(0, 5)); // Limit to a few suggestions
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    router.push(`/search?q=${encodeURIComponent(suggestion)}`);
+  };
+
+  const handleInputBlur = () => {
+    // Keep suggestions visible for a short moment to allow clicking
+    setTimeout(() => {
+      setShowSuggestions(false);
+    }, 100);
+  };
+
+  const handleInputFocus = () => {
+    if (searchQuery) {
+      const filteredSuggestions = productSuggestions.filter(suggestion =>
+        suggestion.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions.slice(0, 5));
+      setShowSuggestions(true);
+    }
+  };
+
+
   const isArabic = state.language === "ar"
   const wishlistCount = wishlistState.items.length
 
@@ -105,16 +179,34 @@ export default function Header() {
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-8">
               <div className="relative w-full">
                 <Input
+                  ref={searchInputRef}
                   type="search"
                   placeholder={isArabic ? "البحث عن المنتجات..." : "What are you looking for?"}
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  onFocus={handleInputFocus}
                   className="pr-12 rounded-full border-0 shadow-md h-11 bg-white"
                   dir={isArabic ? "rtl" : "ltr"}
                 />
                 <Button type="submit" size="sm" className="absolute right-1 top-1 h-9 w-9 p-0 rounded-full">
                   <Search className="h-4 w-4" />
                 </Button>
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 bg-white shadow-md rounded-md mt-1 z-20">
+                    <ul>
+                      {suggestions.map((suggestion) => (
+                        <li
+                          key={suggestion}
+                          className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                          {suggestion}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </form>
 
@@ -159,16 +251,34 @@ export default function Header() {
             <form onSubmit={handleSearch}>
               <div className="relative">
                 <Input
+                  ref={searchInputRef}
                   type="search"
                   placeholder={isArabic ? "البحث عن المنتجات..." : "What are you looking for?"}
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  onFocus={handleInputFocus}
                   className="pr-10 rounded-full border-0 shadow-md bg-white"
                   dir={isArabic ? "rtl" : "ltr"}
                 />
                 <Button type="submit" size="sm" className="absolute right-1 top-1 h-8 w-8 p-0 rounded-full">
                   <Search className="h-4 w-4" />
                 </Button>
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 bg-white shadow-md rounded-md mt-1 z-20">
+                    <ul>
+                      {suggestions.map((suggestion) => (
+                        <li
+                          key={suggestion}
+                          className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                          {suggestion}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </form>
           </div>
@@ -222,7 +332,7 @@ export default function Header() {
         </div>
       </div>
 
-    
+
     </header>
   )
 }
