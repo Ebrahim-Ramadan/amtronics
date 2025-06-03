@@ -7,7 +7,7 @@ export const EmptyCart = ({isArabic} : {isArabic: boolean}) => {
   return (
     <div className="mx-auto px-4 py-8 min-h-[60vh] flex items-center justify-center">
         <div className="text-center py-12 space-y-2 md:space-y-6 flex flex-col items-center justify-center">
-          <Image src="/empty-cart.png" width={200} height={200} alt="shopping cart" />
+          <Image src="/empty-cart.webp" width={200} height={200} alt="shopping cart" />
           <h1 className="text-xl md:text-3xl font-bold">{isArabic ? "سلة التسوق فارغة" : "Your Amtronics Cart is Empty"}</h1>
           <p className="text-xs md:text-sm text-gray-600  mx-auto">
             {isArabic

@@ -75,6 +75,11 @@ export default function Header() {
 
   useEffect(() => {
     const query = searchParams.get('q')
+    // const category = searchParams.get('category')
+    // console.log('category', category)
+//     if (category) {
+// // the selected category have little hightlight or udnelrine in nav
+//     }
     if (query) {
       setSearchQuery(query)
     }
@@ -134,11 +139,6 @@ export default function Header() {
     const value = e.target.value;
     setSearchQuery(value);
     if (value) {
-      // const filteredSuggestions = productSuggestions.filter(suggestion =>
-      //   suggestion.toLowerCase().includes(value.toLowerCase())
-      // );
-      // setSuggestions(filteredSuggestions.slice(0, 5)); // Limit to a few suggestions
-      // setShowSuggestions(true);
       const fuse = new Fuse(productSuggestions, {threshold: 0.6});
       const results = fuse.search(value).map(result => result.item);
       
@@ -186,7 +186,7 @@ export default function Header() {
             {/* Logo */}
             <Link href="/" className="text-2xl font-bold text-gray-800">
               <Image
-                src="/amtronics-logo.png"
+                src="/amtronics-logo.webp"
                 width={200}
                 className="w-12 md:w-20"
                 height={200}
@@ -330,7 +330,7 @@ export default function Header() {
                   <Link
                     key={category}
                     href={`/products?category=${encodeURIComponent(category)}`}
-                    className="py-1 hover:text-[#FEEE00] border-b-2 border-transparent hover:border-[#FEEE00] transition-all duration-300 font-medium inline-block"
+                    className={`py-1 hover:text-[#FEEE00] border-b-2 transition-all duration-300 font-medium inline-block ${searchParams.get('category') === category ? 'border-[#FEEE00] text-[#FEEE00]' : 'border-transparent'}`}
                   >
                     {category}
                   </Link>
