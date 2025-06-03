@@ -198,7 +198,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className={`absolute top-1/2 left-2 transform -translate-y-1/2 border-2 border-neutral-100 backdrop-blur-xl bg-white/80 hover:bg-yellow-400 rounded-full transition-all duration-300 z-30 ${
+              className={`absolute top-1/2 left-2 transform -translate-y-1/2 border-1 border-neutral-100 backdrop-blur-xl bg-white/80 hover:bg-yellow-400 rounded-full transition-all duration-300 z-30 ${
                 arrowHover.left ? 'scale-110 bg-yellow-400 text-black shadow-lg' : ''
               }`}
               onClick={handlePrevImage}
@@ -212,7 +212,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className={`absolute top-1/2 right-2 transform -translate-y-1/2 border-2 border-neutral-100 backdrop-blur-xl bg-white/80 hover:bg-yellow-400 rounded-full transition-all duration-300 z-30 ${
+              className={`absolute top-1/2 right-2 transform -translate-y-1/2 border-1 border-neutral-100 backdrop-blur-xl bg-white/80 hover:bg-yellow-400 rounded-full transition-all duration-300 z-30 ${
                 arrowHover.right ? 'scale-110 bg-yellow-400 text-black shadow-lg' : ''
               }`}
               onClick={handleNextImage}
