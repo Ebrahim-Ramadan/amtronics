@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
     // Start a session for transaction
     const session = client.startSession()
-    let newORderID
+    let newOrderID
     try {
       await session.withTransaction(async () => {
         // Insert order
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
           },
           { session },
         )
-        newORderID = orderResult["insertedId"];
+        newOrderID = orderResult["insertedId"];
         
 
         // // bulkupdate unstead of Update product quantities
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
         // }
       })
 
-      return NextResponse.json({ newORderID, success: true, message: "Order placed successfully" ,})
+      return NextResponse.json({ newOrderID, success: true, message: "Order placed successfully" ,})
     } finally {
       await session.endSession()
     }
