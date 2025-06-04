@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
     // Start a session for transaction
     const session = client.startSession()
-
+    let newORderID
     try {
       await session.withTransaction(async () => {
         // Insert order
@@ -23,32 +23,22 @@ export async function POST(request: Request) {
           },
           { session },
         )
+        newORderID = orderResult["insertedId"];
+        
 
-        // bulkupdate unstead of Update product quantities
-        // for (const item of orderData.items) {
-        //   await db.collection("products").updateOne(
-        //     { _id: new ObjectId(item.product._id) },
-        //     {
+        // // bulkupdate unstead of Update product quantities
+        // const productUpdates = orderData.items.map((item: any) => ({
+        //   updateOne: {
+        //     filter: { _id: new ObjectId(item.product._id) },
+        //     update: {
         //       $inc: {
         //         quantity_on_hand: -item.quantity,
         //         sold_quantity: item.quantity,
         //       },
         //     },
-        //     { session },
-        //   )
-        // }
-        const productUpdates = orderData.items.map((item: any) => ({
-          updateOne: {
-            filter: { _id: new ObjectId(item.product._id) },
-            update: {
-              $inc: {
-                quantity_on_hand: -item.quantity,
-                sold_quantity: item.quantity,
-              },
-            },
-          },
-        }))
-        await db.collection("products").bulkWrite(productUpdates, { session })
+        //   },
+        // }))
+        // await db.collection("products").bulkWrite(productUpdates, { session })
 
 
         // Insert subscriber if email provided
@@ -68,7 +58,7 @@ export async function POST(request: Request) {
         // }
       })
 
-      return NextResponse.json({ success: true, message: "Order placed successfully" })
+      return NextResponse.json({ newORderID, success: true, message: "Order placed successfully" ,})
     } finally {
       await session.endSession()
     }

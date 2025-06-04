@@ -11,7 +11,7 @@ export default function OrderSuccessPage() {
   const isArabic = state.language === "ar"
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-2 md:px-4 py-8">
       <div className="max-w-md mx-auto">
         <Card>
           <CardHeader className="text-center">
@@ -20,7 +20,7 @@ export default function OrderSuccessPage() {
             </div>
             <CardTitle className="text-2xl">{isArabic ? "تم تأكيد طلبك!" : "Order Confirmed!"}</CardTitle>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
+          <CardContent className="text-center px-2 md:px-4 space-y-4">
             <p className="text-gray-600">
               {isArabic
                 ? "شكراً لك! تم استلام طلبك وسيتم التواصل معك قريباً لتأكيد التوصيل."

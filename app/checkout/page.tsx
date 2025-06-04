@@ -12,11 +12,13 @@ import { useSavedAddresses } from "@/lib/saved-addresses-context"
 import {  ChevronLeft, PlusCircle } from "lucide-react"
 import Image from "next/image"
 import { EmptyCart } from "@/components/empty-cart"
+import { useRouter } from "next/navigation"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
   console.log('state.items', state.items)
   
+  const router = useRouter()
   const { state: savedAddressesState, dispatch: savedAddressesDispatch } = useSavedAddresses()
   const [loading, setLoading] = useState(false)
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
@@ -79,21 +81,33 @@ export default function CheckoutPage() {
       console.log('orderData', orderData)
       
 
-      // const response = await fetch("/api/orders", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(orderData),
-      // })
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      })
 
-      // if (response.ok) {
-      //   if (selectedAddressIndex === "new" && customerInfo.phone && customerInfo.name) {
-      //     savedAddressesDispatch({ type: "ADD_ADDRESS", payload: customerInfo })
-      //   }
-      //   dispatch({ type: "CLEAR_CART" })
-      //   router.push("/order-success")
-      // } else {
-      //   alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
-      // }
+      if (response.ok) {
+        if (selectedAddressIndex === "new" && customerInfo.phone && customerInfo.name) {
+          savedAddressesDispatch({ type: "ADD_ADDRESS", payload: customerInfo })
+        }
+        const orderResult = await response.json();
+        console.log('orderResult', orderResult);
+        
+        // Get existing order IDs from local storage
+        const existingOrderIds = JSON.parse(localStorage.getItem('orderIds') || '[]') as string[];
+
+        // Add the new order ID
+        const updatedOrderIds = [...existingOrderIds, orderResult.newORderID];
+
+        // Store updated list back in local storage
+        localStorage.setItem('orderIds', JSON.stringify(updatedOrderIds));
+
+        dispatch({ type: "CLEAR_CART" })
+        router.push("/myorders") // Redirect to the new /myorders route
+      } else {
+        alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
+      }
     } catch (error) {
       console.error("Error placing order:", error)
       alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
