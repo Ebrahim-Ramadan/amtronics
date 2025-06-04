@@ -11,6 +11,7 @@ import { useSearchParams, useRouter } from 'next/navigation'; // Import navigati
 import { Pagination } from '@/components/ui/pagination'; // Import Pagination component
 import { Badge } from '@/components/ui/badge'; // Import Badge component
 import { toast } from 'sonner';
+import LoadingDots from '@/components/ui/loading-spinner';
 
 const ITEMS_PER_PAGE = 5; // Define items per page for pagination
 
@@ -52,7 +53,7 @@ export default function MyOrdersPage() {
         setLoadingOrders(true);
         const skip = (currentPage - 1) * ITEMS_PER_PAGE;
         try {
-          const response = await fetch(`/api/orders?ids fuzzy=${orderIds.join(',')}&limit=${ITEMS_PER_PAGE}&skip=${skip}`);
+          const response = await fetch(`/api/orders?ids=${orderIds.join(',')}&limit=${ITEMS_PER_PAGE}&skip=${skip}`);
           if (response.ok) {
             const data = await response.json() as { orders: Order[], total: number }; // Expecting orders and total
             console.log('orderdata', data);
@@ -100,7 +101,7 @@ export default function MyOrdersPage() {
   const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE); // Calculate total pages
 
   // Helper function to get status badge variant
-  const getStatusVariant = (status: string) => {
+  const getStatusVariant = (status: string): 'secondary' | 'warning' | 'info' | 'success' | 'destructive' => {
     switch (status) {
       case 'pending':
         return 'secondary';
@@ -137,25 +138,24 @@ export default function MyOrdersPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-2 md:py-8" dir={dir}>
+    <div className="container mx-auto px-4 py-8 md:py-12" dir={dir}>
       <Link
         href="/"
-        className="inline-flex items-center text-sm md:text-base text-neutral-600 hover:text-[#00B8DB] transition-colors duration-200 mb-3 md:mb-4"
+        className="inline-flex items-center text-sm md:text-base text-neutral-600 hover:text-[#00B8DB] transition-colors duration-200 mb-6"
       >
         <ChevronLeft className="h-5 w-5 mr-1" />
         {isArabic ? "العودة للرئيسية" : "Back to Home"}
       </Link>
-      <div className="flex justify-center mb-4">
-              <CheckCircle className="h-16 md:h-32 w-16 md:w-32 text-green-500" />
-            </div>
-      <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-4 md:mb-8 text-neutral-800">
+      <div className="flex justify-center mb-8">
+        <CheckCircle className="h-16 md:h-24 w-16 md:w-24 text-green-500" />
+      </div>
+      <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 md:mb-12 text-neutral-800">
         {isArabic ? "طلباتي" : "My Orders"}
       </h1>
 
       {loadingOrders ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00B8DB] mx-auto"></div>
-              <p className="mt-4 text-neutral-600">{isArabic ? "جاري تحميل الطلبات..." : "Loading orders..."}</p>
+             <LoadingDots/>
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-12 space-y-6">
@@ -172,16 +172,19 @@ export default function MyOrdersPage() {
                 {orders.map((order) => (
                   <li
                     key={order._id}
-                    className="bg-white p-3 md:p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-neutral-100"
+                    className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-neutral-100"
                   >
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
                       <div className="flex items-center gap-2 font-semibold text-lg text-neutral-800 break-all">
-                        {isArabic ? `رقم الطلب: ${order._id}` : `Order ID: ${order._id}`} <Copy 
-                        onClick={() => {
-                          navigator.clipboard.writeText(order._id as string)
-                          toast.success(isArabic ? "تم نسخ رقم الطلب" : "Copied order ID")
-                        }}
-                        size={14} className="text-neutral-500" />
+                        {isArabic ? `رقم الطلب: ${order._id}` : `Order ID: ${order._id}`}
+                        <Copy
+                          onClick={() => {
+                            navigator.clipboard.writeText(order._id as string);
+                            toast.success(isArabic ? "تم نسخ رقم الطلب" : "Copied order ID");
+                          }}
+                          size={14}
+                          className="text-neutral-500 cursor-pointer hover:text-[#00B8DB] transition-colors"
+                        />
                       </div>
                       <Badge
                         variant={getStatusVariant(order.status)}
@@ -201,8 +204,9 @@ export default function MyOrdersPage() {
                     <div className="text-sm text-neutral-500 mt-2 space-y-1">
                       <p>{isArabic ? `الاسم: ${order.customerInfo.name}` : `Name: ${order.customerInfo.name}`}</p>
                       <p>{isArabic ? `الهاتف: ${order.customerInfo.phone}` : `Phone: ${order.customerInfo.phone}`}</p>
-                      <p>To: {order.customerInfo.block} | {order.customerInfo.area} | {order.customerInfo.city} | {order.customerInfo.country}</p>
-                    
+                      <p>
+                        {isArabic ? `العنوان: ${order.customerInfo.block} | ${order.customerInfo.area} | ${order.customerInfo.city} | ${order.customerInfo.country}` : `To: ${order.customerInfo.block} | ${order.customerInfo.area} | ${order.customerInfo.city} | ${order.customerInfo.country}`}
+                      </p>
                     </div>
                   </li>
                 ))}
