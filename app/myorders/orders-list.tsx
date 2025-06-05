@@ -24,7 +24,6 @@ export default function OrdersList() {
   const [totalOrders, setTotalOrders] = useState(0)
 
   const isArabic = cartState.language === "ar"
-  const dir = isArabic ? "rtl" : "ltr"
 
   const currentPage = Number(searchParams.get("page")) || 1
 
@@ -133,8 +132,8 @@ export default function OrdersList() {
                   : "border border-neutral-100"
               }`}
             >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 md:p-6">
-                <CardTitle className="flex flex-col">
+              <CardHeader dir = {isArabic ? "rtl" : "ltr"} className="flex flex-row items-center justify-between space-y-0 p-4 md:p-6">
+                <CardTitle className="flex flex-col" >
                   <div 
                    onClick={(e) => {
                     e.stopPropagation() // Prevent card click when copying
@@ -143,6 +142,7 @@ export default function OrdersList() {
                       isArabic ? "تم نسخ رقم الطلب" : "Copied order ID",
                     )
                   }}
+                  
                   className="group/id flex items-center gap-2 text-base font-semibold text-neutral-800 md:text-lg">
                     {isArabic ? "رقم الطلب:" : "Order ID:"}
                     <span className="break-all font-normal">
@@ -198,7 +198,7 @@ export default function OrdersList() {
                 </div>
 
                 <div className="mb-4">
-                  <h3 className="mb-3 text-sm font-semibold text-neutral-800">
+                  <h3 className="mb-3 text-sm font-semibold text-neutral-800" dir = {isArabic ? "rtl" : "ltr"}>
                     {isArabic ? "تفاصيل العناصر" : "Item Details"}
                   </h3>
                   <ul className="space-y-3">
@@ -252,7 +252,7 @@ export default function OrdersList() {
                   </ul>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-4">
+  <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-4" dir = {isArabic ? "rtl" : "ltr"} >
                   <span className="text-lg font-bold text-neutral-800">
                     {isArabic ? "المجموع الكلي:" : "Total Amount:"}
                   </span>

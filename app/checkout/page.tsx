@@ -12,6 +12,7 @@ import { ChevronLeft, PlusCircle } from "lucide-react"
 import Image from "next/image"
 import { EmptyCart } from "@/components/empty-cart"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -64,9 +65,13 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+      if (state.items.length === 0) {
+        toast.error(isArabic ? "السلة فارغة" : "Cart is empty")
+    return;
+  }
     setLoading(true)
 
-    try {
+    try { 
       const orderData = {
         items: state.items,
         customerInfo,
@@ -173,11 +178,10 @@ export default function CheckoutPage() {
                     onClick={() => handleAddressSelect(index.toString())}
                   >
                     <div className="flex items-center">
-                      <Image
+                      <img
                         src="/checkoutAddressLatLngIndicator.gif"
-                        width={50}
-                        height={50}
-                        alt="Checkout Address LatLng Indicator"
+                        className="w-10 h-10 -ml-2 md:ml-0"
+                        alt="Checkout Address LatLng Indicator "
                       />
                       <div>
                         <div className="text-sm font-medium leading-4" dir={isArabic ? "rtl" : "ltr"}>
@@ -202,7 +206,7 @@ export default function CheckoutPage() {
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer"
                   onClick={() => handleAddressSelect("new")}
                 >
-                  <span dir={isArabic ? "rtl" : "ltr"} className="flex items-center gap-2 px-4 text-sm font-medium">
+                  <span dir={isArabic ? "rtl" : "ltr"} className="flex items-center gap-2 md:px-4 text-sm font-medium">
                     <PlusCircle size={16} color="#FFEE01" className="bg-[#3F4553] rounded-full" />
                     {isArabic ? "إضافة عنوان جديد" : "Add New Address"}
                   </span>

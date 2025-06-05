@@ -310,6 +310,12 @@ console.log('state.items', state.items)
                   className="w-full h-12 text-base font-semibold bg-[#0F172B] hover:bg-primary/90 transition-colors"
                   size="lg"
                 >
+                  <Image
+                  src="/payment_menu_icon.svg"
+                  alt={isArabic ? "إتمام الطلب" : "Proceed to Checkout"}
+                  width={20}    
+                  height={20}
+                  />
                   {isArabic ? "إتمام الطلب" : "Proceed to Checkout"}
                 </Button>
               </Link>

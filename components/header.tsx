@@ -246,18 +246,19 @@ export default function Header() {
             </form>
 
             {/* Right side icons */}
-            <div className="flex items-center md:gap-4">
-              <Button variant="ghost" size="sm" onClick={toggleLanguage} className="text-gray-800">
-                <Globe className="h-5 w-5 mr-1" />
+            <div className="flex items-center">
+              <Button variant="ghost" size="sm" onClick={toggleLanguage} className="items-center flex p-0 text-gray-800">
+                <Globe size={20} />
                 {isArabic ? "English" : "العربية"}
               </Button>
 
+              <div className="flex items-center gap-2 md:gap-4">
               <Link href="/wishlist">
                 <Button variant="ghost" size="sm" className="relative text-gray-800 z-10">
                   <Heart className="h-5 w-5" />
                   {wishlistCount > 0 && (
                     <Badge
-                      className={`absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs bg-red-500 text-white transition-transform duration-300 cart-badge-animate`}
+                      className={`absolute -top-1 md:-top-2 -right-1 md:-right-2  h-4 md:h-5 w-4 md:w-5  rounded-full p-0 text-xs bg-red-500 text-white transition-transform duration-300 cart-badge-animate`}
                     >
                       {wishlistCount}
                     </Badge>
@@ -270,7 +271,7 @@ export default function Header() {
                   <ShoppingCart className="h-5 w-5" />
                   {state.items?.length > 0 && (
                     <Badge
-                      className={`font-medium absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs bg-[#00B8DB] transition-transform duration-300 ${
+                      className={`font-medium absolute -top-1 md:-top-2 -right-1 md:-right-2  h-4 md:h-5 w-4 md:w-5 rounded-full p-0 text-xs bg-[#00B8DB] transition-transform duration-300 ${
                         badgeAnimate ? "cart-badge-animate" : ""
                       }`}
                     >
@@ -279,6 +280,18 @@ export default function Header() {
                   )}
                 </Button>
               </Link>
+              <Link href="/myorders" 
+              className="hover:bg-white p-2 rounded-md"
+              > 
+              <Image
+              src='/orders_menu_icon.svg'
+              width={20}
+              height={20}
+              alt="Orders"
+              />
+              </Link>
+              </div>
+              
             </div>
           </div>
 

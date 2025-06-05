@@ -11,10 +11,9 @@ export default function MyOrdersPage() {
   const { state: cartState } = useCart()
 
   const isArabic = cartState.language === "ar"
-  const dir = isArabic ? "rtl" : "ltr"
 
   return (
-    <div className="container mx-auto px-4 py-4 md:py-12" dir={dir}>
+    <div className="container mx-auto px-4 py-4 md:py-12" >
       <Link
         href="/"
         className="mb-6 inline-flex items-center text-sm text-neutral-600 transition-colors duration-200 hover:text-[#00B8DB] md:text-base"
@@ -29,7 +28,7 @@ export default function MyOrdersPage() {
         {isArabic ? "طلباتي" : "My Orders"}
       </h1>
 
-      <Suspense fallback={<LoadingDots />}>
+      <Suspense fallback={<div className="flex items-center justify-center w-full"><LoadingDots /></div>}>
         <OrdersList />
       </Suspense>
     </div>
