@@ -65,10 +65,21 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-      if (state.items.length === 0) {
-        toast.error(isArabic ? "السلة فارغة" : "Cart is empty")
-    return;
-  }
+    if (state.items.length === 0) {
+      toast.error(isArabic ? "السلة فارغة" : "Cart is empty")
+      return;
+    }
+
+    // Validate required fields
+    const requiredFields: (keyof CustomerInfo)[] = ["name", "phone", "country", "city", "area", "block", "street", "house"];
+    for (const field of requiredFields) {
+      if (!customerInfo[field].trim()) {
+        toast.error(isArabic ? `يرجى ملء حقل ${field === "name" ? "الاسم الكامل" : field === "phone" ? "رقم الهاتف" : field === "country" ? "الدولة" : field === "city" ? "المدينة" : field === "area" ? "المنطقة" : field === "block" ? "القطعة" : field === "street" ? "الشارع" : field === "house" ? "رقم المنزل" : field}` : `Please fill in the ${field === "name" ? "Full Name" : field === "phone" ? "Phone Number" : field === "country" ? "Country" : field === "city" ? "City" : field === "area" ? "Area" : field === "block" ? "Block" : field === "street" ? "Street" : field === "house" ? "House Number" : field} field.`);
+        setLoading(false);
+        return;
+      }
+    }
+
     setLoading(true)
 
     try { 

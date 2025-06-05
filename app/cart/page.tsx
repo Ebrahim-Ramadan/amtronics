@@ -204,15 +204,15 @@ console.log('state.items', state.items)
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
-                      {/* <Button
+                      <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => removeItem(item.product._id)}
-                        className="text-red-600 hover:text-red-700"
+                        className="block md:hidden text-red-600 hover:text-red-700"
                         aria-label={isArabic ? "إزالة المنتج" : "Remove product"}
                       >
                         <Trash2 className="h-5 w-5" />
-                      </Button> */}
+                      </Button>
                       
                     </div>
                   </div>
@@ -222,7 +222,7 @@ console.log('state.items', state.items)
                         variant="ghost"
                         size="sm"
                         onClick={() => removeItem(item.product._id)}
-                        className="bg-neutral-50 rounded-full text-red-600 hover:text-red-700"
+                        className="hidden md:block bg-neutral-50 rounded-full text-red-600 hover:text-red-700"
                         aria-label={isArabic ? "إزالة المنتج" : "Remove product"}
                       >
                         <XIcon className="h-5 w-5" />
