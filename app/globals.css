@@ -161,3 +161,8 @@
   height: 0;
   border-radius: 0;
 }
+
+::selection {
+  background-color: #00B8DB;
+  color: white;
+}
