@@ -20,18 +20,18 @@ export default function WishlistPage() {
     dispatch({ type: "REMOVE_ITEM", payload: productId })
   }
 
-  const [showCheck, setShowCheck] = useState<{[key: string]: boolean}>({})
-  const [addToCartLoading, setAddToCartLoading] = useState<{[key: string]: boolean}>({})
+  const [showCheck, setShowCheck] = useState<{ [key: string]: boolean }>({})
+  const [addToCartLoading, setAddToCartLoading] = useState<{ [key: string]: boolean }>({})
 
   const addToCart = (product: Product) => {
-    setAddToCartLoading(prevState => ({...prevState, [product._id]: true}))
-    setShowCheck(prevState => ({...prevState, [product._id]: false}))
+    setAddToCartLoading((prevState) => ({ ...prevState, [product._id]: true }))
+    setShowCheck((prevState) => ({ ...prevState, [product._id]: false }))
     setTimeout(() => {
       cartDispatch({ type: "ADD_ITEM", payload: product })
       toast.success(isArabic ? "تمت إضافة المنتج إلى السلة" : "Product Added to Cart")
-      setAddToCartLoading(prevState => ({...prevState, [product._id]: false}))
-      setShowCheck(prevState => ({...prevState, [product._id]: true}))
-      setTimeout(() => setShowCheck(prevState => ({...prevState, [product._id]: false})), 2000)
+      setAddToCartLoading((prevState) => ({ ...prevState, [product._id]: false }))
+      setShowCheck((prevState) => ({ ...prevState, [product._id]: true }))
+      setTimeout(() => setShowCheck((prevState) => ({ ...prevState, [product._id]: false })), 2000)
     }, 200)
   }
 
@@ -49,12 +49,7 @@ export default function WishlistPage() {
     return (
       <div className="bg-[#FBFAF9] mx-auto px-2 md:px-4 py-8 min-h-[60vh] flex items-center justify-center">
         <div className="text-center py-12 space-y-2 md:space-y-6 flex flex-col items-center justify-center">
-        <Image
-        src='/empty-wishlist-1.webp'
-        width={100}
-        height={100}
-        alt="My Durves"
-        />
+          <Image src="/empty-wishlist-1.webp" width={100} height={100} alt="My Durves" />
           <h1 className="text-xl md:text-3xl font-bold">{isArabic ? "قائمة الرغبات فارغة" : "Your Wishlist is Empty"}</h1>
           <p className="text-xs md:text-sm text-gray-600 max-w-md mx-auto">
             {isArabic
@@ -89,7 +84,7 @@ export default function WishlistPage() {
               <div className="flex flex-col items-center text-center space-y-2">
                 <Link href={`/products/${item._id}`}>
                   <Image
-                    src={item.image || "/placeholder.svg?height=150&width=150"}
+                    src={item.image.split(",")[0] || "/placeholder.svg?height=150&width=150"}
                     alt={isArabic ? item.ar_name : item.en_name}
                     width={150}
                     height={150}
@@ -101,9 +96,23 @@ export default function WishlistPage() {
                     {isArabic ? item.ar_name : item.en_name}
                   </h3>
                 </Link>
-                <p className="text-gray-600 text-sm">
-                  {item.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                </p>
+                <p className="text-gray-500 text-sm">{isArabic ? item.ar_brand : item.en_brand}</p>
+              
+                <div className="flex items-center gap-2">
+  <p className="text-gray-600 font-semibold text-base">
+    {Number(item.price - (item.discount && item.discount > 0
+      ? item.discount_type === "percentage"
+        ? item.price * (item.discount / 100)
+        : item.discount
+      : 0
+    )).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+  </p>
+  {/* {item.discount && item.discount > 0 && (
+    <p className="text-red-500 text-sm line-through">
+      {item.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+    </p>
+  )} */}
+</div>
                 <div className="flex w-full gap-2">
                   <Button
                     onClick={() => addToCart(item)}
@@ -114,15 +123,18 @@ export default function WishlistPage() {
                     {addToCartLoading[item._id] ? (
                       <span className="h-4 w-4 mr-2 animate-spin border-2 border-gray-300 border-t-transparent rounded-full inline-block align-middle"></span>
                     ) : showCheck[item._id] ? (
-                      <><CheckCheck className="h-4 w-4 mr-2 text-green-500" />{isArabic ? "تمت الإضافة" : "Added"}</>
+                      <>
+                        <CheckCheck className="h-4 w-4 mr-2 text-green-500" />
+                        {isArabic ? "تمت الإضافة" : "Added"}
+                      </>
                     ) : (
                       <>
                         <Image
-                src="/quick-atc-add-to-cart-grey.svg"
-                width={20}
-                height={20}
-                alt={isArabic ? "أضف إلى السلة" : "Add to Cart"}
-              />
+                          src="/quick-atc-add-to-cart-grey.svg"
+                          width={20}
+                          height={20}
+                          alt={isArabic ? "أضف إلى السلة" : "Add to Cart"}
+                        />
                         {isArabic ? "أضف للسلة" : "Add to Cart"}
                       </>
                     )}
@@ -144,4 +156,4 @@ export default function WishlistPage() {
       </div>
     </div>
   )
-} 
+}
