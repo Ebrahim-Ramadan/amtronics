@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Trash2, Plus, Minus, CheckCircle, HeartPlus, Trash, XIcon } from "lucide-react"
+import { Trash2, Plus, Minus, CheckCircle, HeartPlus, Trash, XIcon, CheckCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -30,7 +30,6 @@ const policyItems = {
 export default function CartPage() {
   const { state, dispatch } = useCart()
   const [promoCode, setPromoCode] = useState("")
-  const [discount, setDiscount] = useState(0)
   const [promoError, setPromoError] = useState("")
   const [isApplyingPromo, setIsApplyingPromo] = useState(false)
   const isArabic = state.language === "ar"
@@ -83,14 +82,13 @@ export default function CartPage() {
       })
 
       if (response.ok) {
-        const promo = await response.json()
-        setDiscount(promo.percentage)
+        // Promo logic moved to checkout
         setPromoError("")
         toast.info("Discount Applied")
       } else {
         const error = await response.json()
         setPromoError(error.error)
-        setDiscount(0)
+        // Promo logic moved to checkout
       }
     } catch (error) {
       setPromoError(isArabic ? "خطأ في التحقق من الكود" : "Error validating promo code")
@@ -100,8 +98,6 @@ export default function CartPage() {
   }
 
   const subtotal = state.total
-  const discountAmount = (subtotal * discount) / 100
-  const total = subtotal - discountAmount
   const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0)
 
   const toggleWishlist = (product: Product) => {
@@ -245,37 +241,7 @@ console.log('state.items', state.items)
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Promo Code */}
-              <div>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder={isArabic ? "كود الخصم" : "Promo Code"}
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    className="h-10"
-                    disabled={isApplyingPromo}
-                  />
-                  <Button
-                    onClick={applyPromoCode}
-                    variant="outline"
-                    className="h-10"
-                    disabled={isApplyingPromo}
-                  >
-                    {isApplyingPromo ? (
-                      <span className="animate-pulse">{isArabic ? "جارٍ التطبيق..." : "Applying..."}</span>
-                    ) : (
-                      <span>{isArabic ? "تطبيق" : "Apply"}</span>
-                    )}
-                  </Button>
-                </div>
-                {promoError && (
-                  <p className="text-red-600 text-sm mt-2 animate-fade-in">{promoError}</p>
-                )}
-                {discount > 0 && (
-                  <p className="text-green-600 text-sm mt-2 animate-fade-in">
-                    {isArabic ? `خصم ${discount}% مطبق` : `${discount}% discount applied`}
-                  </p>
-                )}
-              </div>
+              
 
               {/* Totals */}
               <div className="space-y-4 pt-4 border-t">
@@ -289,18 +255,10 @@ console.log('state.items', state.items)
                   <span>{isArabic ? "عدد العناصر" : "Items"}</span>
                   <span>{itemCount}</span>
                 </div>
-                {discount > 0 && (
-                  <div className="flex justify-between text-sm text-green-600">
-                    <span>{isArabic ? "الخصم" : "Discount"}</span>
-                    <span>
-                      -{discountAmount.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                    </span>
-                  </div>
-                )}
                 <div className="flex justify-between text-lg font-bold pt-4 border-t">
                   <span>{isArabic ? "المجموع الكلي" : "Total"}</span>
                   <span>
-                    {total.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                    {subtotal.toFixed(2)} {isArabic ? "د.ك" : "KD"}
                   </span>
                 </div>
               </div>

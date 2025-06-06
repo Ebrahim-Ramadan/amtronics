@@ -234,32 +234,71 @@ export default function OrdersList() {
                                 ? item.product.ar_name
                                 : item.product.en_name}
                             </span>
-                            <span className="text-sm text-neutral-500">
-                              {isArabic
-                                ? `سعر الوحدة: ${item.product.price.toFixed(2)} د.ك`
-                                : `Unit Price: ${item.product.price.toFixed(
-                                    2,
-                                  )} KD`}
-                            </span>
+                            {/* Display individual item price (discounted if applicable) */}
+                            <div className="flex flex-col items-end leading-tight">
+                              {item.product.discount && item.product.discount > 0 ? (
+                                <>
+                                  <span className="font-semibold text-green-600">
+                                    {(item.product.price - (item.product.discount_type === "percentage" ? item.product.price * (item.product.discount / 100) : item.product.discount)).toFixed(2)}{isArabic ? " د.ك" : " KD"}
+                                  </span>
+                                  <span className="text-sm text-neutral-500 line-through">
+                                    {item.product.price.toFixed(2)}{isArabic ? " د.ك" : " KD"}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="text-sm text-neutral-500">
+                                  {isArabic
+                                    ? `سعر الوحدة: ${item.product.price.toFixed(2)} د.ك`
+                                    : `Unit Price: ${item.product.price.toFixed(2)} KD`}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <span className="font-semibold text-neutral-800">
-                          {(item.product.price * item.quantity).toFixed(2)}{" "}
-                          {isArabic ? "د.ك" : "KD"}
-                        </span>
+                        <div className="flex flex-col items-end leading-tight">
+                          {item.product.discount && item.product.discount > 0 ? (
+                            <>
+                              <span className="font-semibold text-green-600">
+                                {(item.product.price - (item.product.discount_type === "percentage" ? item.product.price * (item.product.discount / 100) : item.product.discount)).toFixed(2)}{isArabic ? " د.ك" : " KD"}
+                              </span>
+                              <span className="text-sm text-neutral-500 line-through">
+                                {item.product.price.toFixed(2)}{isArabic ? " د.ك" : " KD"}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-sm text-neutral-500">
+                              {/* {isArabic
+                                ? `سعر الوحدة: ${item.product.price.toFixed(2)} د.ك`
+                                : `Unit Price: ${item.product.price.toFixed(2)} KD`} */}
+                            </span>
+                          )}
+                          {/* Display individual item total price (discounted if applicable) */}
+                          <span className="font-semibold text-neutral-800 mt-1">
+                            {(((item.product.discount && item.product.discount > 0) ? (item.product.price - (item.product.discount_type === "percentage" ? item.product.price * (item.product.discount / 100) : item.product.discount)) : item.product.price) * item.quantity).toFixed(2)}{' '}{isArabic ? "د.ك" : "KD"}
+                          </span>
+                        </div>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-  <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-4" dir = {isArabic ? "rtl" : "ltr"} >
+                <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-4" dir = {isArabic ? "rtl" : "ltr"} >
                   <span className="text-lg font-bold text-neutral-800">
                     {isArabic ? "المجموع الكلي:" : "Total Amount:"}
                   </span>
                   <span className="text-lg font-bold text-[#00B8DB]">
-                    {order.total.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                    {(order.total - (order.discount || 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                   </span>
                 </div>
+
+                {order.discount && order.discount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600" dir = {isArabic ? "rtl" : "ltr"}>
+                    <span>{isArabic ? "الخصم المطبق:" : "Applied Discount:"}</span>
+                    <span>
+                      -{order.discount.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                    </span>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

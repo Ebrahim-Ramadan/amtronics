@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const promoCode = await db.collection("promocodes").findOne({
       code: code,
       active: true,
-      expiry: { $gte: new Date() },
+      expiry: { $gte: new Date().toISOString() },
     })
 
     if (!promoCode) {

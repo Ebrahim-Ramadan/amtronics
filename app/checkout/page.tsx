@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { useCart } from "@/lib/context"
 import type { CustomerInfo, Order } from "@/lib/types"
 import { useSavedAddresses } from "@/lib/saved-addresses-context"
-import { ChevronLeft, PlusCircle } from "lucide-react"
+import { ChevronLeft, PlusCircle, CheckCheck } from "lucide-react"
 import Image from "next/image"
 import { EmptyCart } from "@/components/empty-cart"
 import { useRouter } from "next/navigation"
@@ -18,6 +18,10 @@ export default function CheckoutPage() {
   const { state, dispatch } = useCart()
   const router = useRouter()
   const { state: savedAddressesState, dispatch: savedAddressesDispatch } = useSavedAddresses()
+  const [promoCode, setPromoCode] = useState("")
+  const [discountAmount, setDiscountAmount] = useState(0)
+  const [promoError, setPromoError] = useState("")
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false)
   const [loading, setLoading] = useState(false)
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: "",
@@ -37,6 +41,10 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (selectedAddressIndex !== "new" && savedAddressesState.addresses[selectedAddressIndex]) {
       setCustomerInfo(savedAddressesState.addresses[selectedAddressIndex])
+      setPromoCode("")
+      setDiscountAmount(0)
+      setPromoError("")
+      setIsApplyingPromo(false)
     } else if (selectedAddressIndex === "new") {
       setCustomerInfo({
         name: "",
@@ -49,6 +57,10 @@ export default function CheckoutPage() {
         street: "",
         house: "",
       })
+      setPromoCode("")
+      setDiscountAmount(0)
+      setPromoError("")
+      setIsApplyingPromo(false)
     }
   }, [selectedAddressIndex, savedAddressesState.addresses])
 
@@ -61,6 +73,40 @@ export default function CheckoutPage() {
 
   const handleAddressSelect = (value: string) => {
     setSelectedAddressIndex(value === "new" ? "new" : parseInt(value, 10))
+  }
+
+  const applyPromoCode = async () => {
+    if (!promoCode) {
+      setPromoError(isArabic ? "الرجاء إدخال كود خصم" : "Please enter a promo code")
+      return
+    }
+    setIsApplyingPromo(true)
+    try {
+      const response = await fetch("/api/promo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode }),
+      })
+
+      if (response.ok) {
+        const promo = await response.json()
+        const calculatedDiscountAmount = (state.total * promo.percentage) / 100;
+        setDiscountAmount(calculatedDiscountAmount)
+        setPromoError("")
+        toast.info(isArabic ? "تم تطبيق الخصم" : "Discount Applied")
+      } else {
+        const error = await response.json()
+        setPromoError(error.error)
+        setDiscountAmount(0)
+        toast.error(isArabic ? "كود خصم غير صالح أو منتهي الصلاحية" : "Invalid or expired promo code")
+      }
+    } catch (error) {
+      console.error("Error validating promo code:", error)
+      setPromoError(isArabic ? "حدث خطأ في التحقق من الكود" : "Error validating promo code")
+      setDiscountAmount(0)
+    } finally {
+      setIsApplyingPromo(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,10 +133,11 @@ export default function CheckoutPage() {
         items: state.items,
         customerInfo,
         total: state.total,
-        discount: 0,
-        promoCode: "",
+        discount: discountAmount,
+        promoCode: promoCode || "",
       }
-
+      console.log('back orderData', orderData);
+      
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -101,8 +148,9 @@ export default function CheckoutPage() {
         const orderResult = await response.json()
         console.log('orderResult', orderResult);
         
-        const newOrderID = orderResult.newOrderID  // Fallback to UUID if API doesn't provide an ID
-
+        const newOrderID = orderResult.newOrderID  
+        console.log('newOrderID', newOrderID);
+        
         const newOrder: Order = {
           _id: newOrderID,
           items: state.items,
@@ -110,9 +158,11 @@ export default function CheckoutPage() {
           total: state.total,
           status: "pending",
           createdAt: new Date(),
-          discount: 0,
-          promoCode: "",
+          discount: discountAmount,
+          promoCode: promoCode || "",
         }
+      console.log('local orderData', orderData);
+
 
         // Get existing orders from localStorage
         let orders: { [key: string]: Order } = {}
@@ -356,6 +406,40 @@ export default function CheckoutPage() {
             <CardTitle className="text-xl md:text-3xl">{isArabic ? "ملخص الطلب" : "Order Summary"}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Promo Code */}
+            <div>
+              <div className="flex gap-2">
+                <Input
+                  placeholder={isArabic ? "كود الخصم" : "Promo Code"}
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  className="h-10"
+                  disabled={isApplyingPromo}
+                />
+                <Button
+                  onClick={applyPromoCode}
+                  variant="outline"
+                  className="h-10"
+                  disabled={isApplyingPromo}
+                >
+                  {isApplyingPromo ? (
+                    <span className="animate-pulse">{isArabic ? "جارٍ التطبيق..." : "Applying..."}</span>
+                  ) : (
+                    <span>{isArabic ? "تطبيق" : "Apply"}</span>
+                  )}
+                </Button>
+              </div>
+              {promoError && (
+                <p className="text-red-600 text-sm mt-2 animate-fade-in">{promoError}</p>
+              )}
+              {discountAmount > 0 && ( // Use local discountAmount here
+                <p className="text-green-600 text-sm mt-2 animate-fade-in flex items-center gap-1">
+                  {isArabic ? `خصم مطبق: ${discountAmount.toFixed(2)} د.ك` : `Applied Discount: ${discountAmount.toFixed(2)} KD`} <CheckCheck size={16} className="text-green-600" />
+                </p>
+              )}
+            </div>
+
+            {/* Item List in Order Summary */}
             {state.items.map((item) => (
               <div key={item.product._id} className="flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
                 <div className="flex items-center gap-3 w-full">
@@ -375,9 +459,12 @@ export default function CheckoutPage() {
                       x{item.quantity}
                     </span>
                   </div>
-                  <div className="flex flex-col leading-tight">
+                  <div className="flex flex-col gap-2 leading-tight">
                     <span className="font-semibold">
                       {isArabic ? item.product.ar_name : item.product.en_name}
+                    </span>
+                    <span >
+                      {item.product.price} {isArabic ? "د.ك" : "KD"}
                     </span>
                   </div>
                 </div>
@@ -386,14 +473,25 @@ export default function CheckoutPage() {
                 </span>
               </div>
             ))}
+            {/* Totals */}
             <div className="border-t border-[#00B8DB] pt-4">
               <div className="flex justify-between text-lg font-bold">
                 <span>{isArabic ? "المجموع" : "Total"}</span>
                 <span>
-                  {state.total.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                  {(state.total - discountAmount).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                 </span>
               </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-sm text-green-600">
+                  <span>{isArabic ? "الخصم المطبق" : "Applied Discount"}</span>
+                  <span>
+                    -{discountAmount.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                  </span>
+                </div>
+              )}
             </div>
+
+            {/* Payment Method */}
             <div className="bg-blue-50 p-4 rounded-lg">
               <h3 className="font-semibold mb-2">{isArabic ? "طريقة الدفع" : "Payment Method"}</h3>
               <div className="flex items-center justify-between">

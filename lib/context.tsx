@@ -63,6 +63,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         total: state.total + item.product.price * quantityDiff,
       }
     case "CLEAR_CART":
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("amtronics_promo_code");
+      }
       return {
         ...state,
         items: [],
