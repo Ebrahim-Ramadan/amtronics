@@ -76,9 +76,14 @@ export default function CheckoutPage() {
   }
 
   const applyPromoCode = async () => {
-    if (!promoCode) {
+    if (!promoCode.trim()) {
       setPromoError(isArabic ? "الرجاء إدخال كود خصم" : "Please enter a promo code")
-      return
+      return;
+    }
+    if (state.items.length === 0) {
+      setPromoError(isArabic ? "السلة فارغة" : "Cart is empty")
+      toast.error(isArabic ? "السلة فارغة" : "Cart is empty")
+      return;
     }
     setIsApplyingPromo(true)
     try {
@@ -434,7 +439,8 @@ export default function CheckoutPage() {
               )}
               {discountAmount > 0 && ( // Use local discountAmount here
                 <p className="text-green-600 text-sm mt-2 animate-fade-in flex items-center gap-1">
-                  {isArabic ? `خصم مطبق: ${discountAmount.toFixed(2)} د.ك` : `Applied Discount: ${discountAmount.toFixed(2)} KD`} <CheckCheck size={16} className="text-green-600" />
+                  <CheckCheck size={16} className="text-green-600" />
+                  {isArabic ? `خصم مطبق: -${discountAmount.toFixed(2)} د.ك` : `Applied Discount: -${discountAmount.toFixed(2)} KD`} 
                 </p>
               )}
             </div>
