@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Copy } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpCircle, Copy } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { Order } from "@/lib/types"
@@ -132,7 +132,14 @@ export default function OrdersList() {
                   : "border border-neutral-100"
               }`}
             >
-              <CardHeader dir = {isArabic ? "rtl" : "ltr"} className="flex flex-row items-center justify-between space-y-0 p-4 md:p-6">
+              <CardHeader dir = {isArabic ? "rtl" : "ltr"} className="flex flex-row items-center justify-between space-y-0 p-4 md:p-6 relative">
+                {index === 0 && currentPage === 1 &&
+                <div className="flex items-center text-[10px] md:text-xs px-2 py-1 text-[#52A8FF] bg-neutral-100 font-semibold rounded-md gap-1 absolute -top-3 md:top-2 right-0 md:right-2">
+                  <ArrowUpCircle size={12} className="text-[#52A8FF] " />
+                  Current
+
+                </div>
+}
                 <CardTitle className="flex flex-col" >
                   <div 
                    onClick={(e) => {
