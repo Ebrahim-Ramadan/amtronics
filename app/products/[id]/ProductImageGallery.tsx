@@ -67,14 +67,14 @@ export default function ProductImageGallery({
       {imageUrls.length > 1 && (
         <>
           <button
-            className="cursor-pointer absolute left-2 border-2 border-neutral-100 top-9/20 transform -translate-y-1/2 bg-white/80 bg-opacity-50 rounded-full p-1 shadow-md opacity-0 backdrop-blur-lg hover:bg-[#FEEE00]/90 group-hover:opacity-100 transition-all z-10"
+            className="cursor-pointer absolute left-2 border-2 border-neutral-100 top-9/20 transform -translate-y-1/2 bg-white/80 bg-opacity-50 rounded-full p-1 shadow-md backdrop-blur-lg hover:bg-[#FEEE00]/90 transition-all z-10"
             onClick={handlePrevious}
             aria-label={isArabic ? "الصورة السابقة" : "Previous image"}
           >
             <ChevronLeft className="h-6 w-6  " />
           </button>
           <button
-            className="cursor-pointer absolute right-2 border-2 border-neutral-100 top-9/20 transform -translate-y-1/2 bg-white/80 bg-opacity-50 rounded-full p-1 shadow-md opacity-0 backdrop-blur-lg hover:bg-[#FEEE00]/90 group-hover:opacity-100 transition-all z-10"
+            className="cursor-pointer absolute right-2 border-2 border-neutral-100 top-9/20 transform -translate-y-1/2 bg-white/80 bg-opacity-50 rounded-full p-1 shadow-md  backdrop-blur-lg hover:bg-[#FEEE00]/90  transition-all z-10"
             onClick={handleNext}
             aria-label={isArabic ? "الصورة التالية" : "Next image"}
           >
