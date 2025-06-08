@@ -56,17 +56,7 @@ export default function ProductsPage() {
     fetchProducts();
   }, [searchParams, searchQuery, currentPage]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams(searchParams.toString());
-    if (searchQuery) {
-      params.set("search", searchQuery);
-    } else {
-      params.delete("search");
-    }
-    params.delete("page"); // Reset to page 1 on new search
-    router.push(`/products?${params.toString()}`);
-  };
+
 
   const handleCategoryChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -100,16 +90,8 @@ export default function ProductsPage() {
     <div className=" mx-auto px-2 py-4 md:px-12 md:py-6">
       <h1 className="text-3xl font-bold mb-2 md:mb-4">{isArabic ? "المنتجات" : "Products"}</h1>
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-8">
-        <form onSubmit={handleSearch} className="flex-1">
-          <Input
-            type="search"
-            placeholder={isArabic ? "البحث عن المنتجات..." : "Search products..."}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            dir={isArabic ? "rtl" : "ltr"}
-          />
-        </form>
+      <div className="flex justify-end flex-row gap-2 md:gap-4 mb-2 md:mb-8">
+      
 
         <Select value={selectedCategory} onValueChange={handleCategoryChange}>
           <SelectTrigger className="w-full md:w-[200px]">
@@ -151,15 +133,16 @@ export default function ProductsPage() {
         </div>
       )}
 
-      {totalPages > 1 && !loading && products.length > 0 && (
-        <div className="mt-6 flex justify-center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </div>
-      )}
+{totalPages > 1 && !loading && products.length > 0 && (
+  <div className="mt-6 flex justify-center">
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={handlePageChange}
+      disabled={loading} // Pass loading state
+    />
+  </div>
+)}
     </div>
   );
 }

@@ -12,6 +12,7 @@ interface PaginationProps extends React.ComponentProps<"nav"> {
   currentPage: number;
   totalPages: number;
   onPageChange: (newPage: number) => void;
+  disabled?: boolean; // Add disabled prop
 }
 
 const MAX_VISIBLE_PAGES = 5;
@@ -21,6 +22,7 @@ function Pagination({
   currentPage,
   totalPages,
   onPageChange,
+  disabled,
   ...props
 }: PaginationProps) {
   // Calculate visible pages
@@ -60,7 +62,9 @@ function Pagination({
   }
 
   const handlePageClick = (page: number) => {
-    onPageChange(page);
+    if (!disabled) {
+      onPageChange(page);
+    }
   };
 
   return (
@@ -73,7 +77,7 @@ function Pagination({
     >
       <PaginationPrevious
         onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+        disabled={disabled || currentPage === 1}
       />
       <PaginationContent>
         {pagesToShow.map((page) => (
@@ -84,6 +88,7 @@ function Pagination({
               <PaginationLink
                 isActive={page === currentPage}
                 onClick={() => handlePageClick(page)}
+                disabled={disabled}
               >
                 {page}
               </PaginationLink>
@@ -93,7 +98,7 @@ function Pagination({
       </PaginationContent>
       <PaginationNext
         onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        disabled={disabled || currentPage === totalPages}
       />
     </nav>
   );
@@ -125,12 +130,15 @@ type PaginationLinkProps = {
 function PaginationLink({
   className,
   isActive,
+  disabled,
   size = "icon",
+  onClick,
   ...props
 }: PaginationLinkProps) {
   return (
     <a
       aria-current={isActive ? "page" : undefined}
+      aria-disabled={disabled}
       data-slot="pagination-link"
       data-active={isActive}
       className={cn(
@@ -138,8 +146,10 @@ function PaginationLink({
           variant: isActive ? "outline" : "ghost",
           size,
         }),
+        disabled && "cursor-not-allowed opacity-50",
         className
       )}
+      onClick={disabled ? undefined : onClick}
       {...props}
     />
   );
@@ -147,6 +157,8 @@ function PaginationLink({
 
 function PaginationPrevious({
   className,
+  disabled,
+  onClick,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
   return (
@@ -154,6 +166,7 @@ function PaginationPrevious({
       aria-label="Go to previous page"
       size="default"
       className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
+      onClick={disabled ? undefined : onClick}
       {...props}
     >
       <ChevronLeftIcon className="size-4" />
@@ -164,6 +177,8 @@ function PaginationPrevious({
 
 function PaginationNext({
   className,
+  disabled,
+  onClick,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
   return (
@@ -171,6 +186,7 @@ function PaginationNext({
       aria-label="Go to next page"
       size="default"
       className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
+      onClick={disabled ? undefined : onClick}
       {...props}
     >
       <span className="hidden sm:block">Next</span>

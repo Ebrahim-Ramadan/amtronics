@@ -67,6 +67,15 @@ export default function OrdersList() {
 
   const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE)
 
+  const dateTimeOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  };
+
   // const getStatusVariant = (
   //   status: string,
   // ): "secondary" | "warning" | "info" | "success" | "destructive" => {
@@ -163,8 +172,8 @@ export default function OrdersList() {
                   </div>
                   <div className="mt-1 text-sm text-neutral-500">
                     {isArabic
-                      ? `التاريخ: ${new Date(order.createdAt).toLocaleDateString("ar-KW")}`
-                      : `Date: ${new Date(order.createdAt).toLocaleDateString()}`}
+                      ? `التاريخ: ${new Date(order.createdAt).toLocaleString("ar-KW", dateTimeOptions)}`
+                      : `Date: ${new Date(order.createdAt).toLocaleString(undefined, dateTimeOptions)}`}
                   </div>
                 </CardTitle>
                 {/* <Badge
