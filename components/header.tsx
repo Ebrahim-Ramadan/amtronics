@@ -319,6 +319,8 @@ export default function Header() {
             {/* Logo */}
             <Link href="/" className="text-2xl font-bold text-gray-800">
               <Image
+              priority={true}
+              quality={50}
                 src="/amtronics-logo.webp"
                 width={200}
                 className="w-12 md:w-20"
