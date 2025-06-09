@@ -376,7 +376,7 @@ export default function Header() {
               </Button>
 
               <div className="flex items-center gap-2 md:gap-4">
-              <Link href="/wishlist">
+              <Link href="/wishlist" prefetch={false}>
                 <Button variant="ghost" size="sm" className="relative text-gray-800 z-10">
                   <Heart className="h-5 w-5" />
                   {wishlistCount > 0 && (
@@ -389,7 +389,7 @@ export default function Header() {
                 </Button>
               </Link>
 
-              <Link href="/cart">
+              <Link href="/cart" prefetch={false}>
                 <Button variant="ghost" size="sm" className="relative text-gray-800 z-0">
                   <ShoppingCart className="h-5 w-5" />
                   {state.items?.length > 0 && (
@@ -403,7 +403,7 @@ export default function Header() {
                   )}
                 </Button>
               </Link>
-              <Link href="/myorders" 
+              <Link href="/myorders" prefetch={false}
               className="hover:bg-white p-2 rounded-md"
               > 
               <Image
@@ -486,6 +486,7 @@ export default function Header() {
               <div className="flex gap-4 md:gap-8 py-1">
                 {categories.map((category) => (
                   <Link
+                  prefetch={false}
                     key={category}
                     href={`/products?category=${encodeURIComponent(category)}`}
                     className={`py-1 hover:text-[#FEEE00] border-b-2 transition-all duration-300 font-medium inline-block ${
