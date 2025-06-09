@@ -166,3 +166,9 @@
   background-color: #00B8DB;
   color: white;
 }
+
+
+html, body{
+  
+scroll-behavior: smooth;
+}

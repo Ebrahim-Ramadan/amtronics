@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import {  Star, Truck, Shield, RefreshCw } from "lucide-react"
+import { Star, Truck, Shield, RefreshCw } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -71,7 +71,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
   const discountedPrice = product.discount
     ? product.price - product.price * (product.discount / 100)
     : product.price
-console.log('discountedPrice', discountedPrice);
+  console.log('discountedPrice', discountedPrice);
 
   // Breadcrumbs
   const category = isArabic ? product.ar_main_category : product.en_main_category
@@ -85,7 +85,7 @@ console.log('discountedPrice', discountedPrice);
     <div className="container mx-auto px-4 py-2 md:py-4">
       {/* Breadcrumbs */}
       <nav className="mb-6 text-[10px] md:text-xs" aria-label="Breadcrumb">
-        <ol className="flex  rtl:space-x-reverse text-gray-500">
+        <ol className="flex rtl:space-x-reverse text-gray-500">
           <li>
             <Link
               href={isArabic ? `/?lang=ar` : `/`}
@@ -134,8 +134,14 @@ console.log('discountedPrice', discountedPrice);
                 {isArabic ? product.ar_brand : product.en_brand}
               </h1>
             )}
-            <h1 className="text-xl md:text-3xl leading-6 md:leading-9 tracking-[.02em]  font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
-            <p className="text-gray-600 leading-4 md:leading-5 text-sm md:text-base">{isArabic ? product.ar_description : product.en_description}</p>
+            <h1 className="text-xl md:text-3xl leading-6 md:leading-9 tracking-[.02em] font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
+            <p className="text-gray-600 leading-4 md:leading-5 text-sm md:text-base">{isArabic ? product.ar_description.substring(0, 200) : product.en_description.substring(0, 200)}
+              {isArabic ? (
+                <Link href="#description" className="text-blue-600 cursor-pointer ml-2 hover:underline">عرض المزيد</Link>
+              ) : (
+                <Link href="#description" className="text-blue-600 cursor-pointer ml-2 hover:underline">See More</Link>
+              )}
+            </p>
           </div>
 
           {/* Rating */}
@@ -226,7 +232,7 @@ console.log('discountedPrice', discountedPrice);
       </div>
 
       {/* Product Description */}
-      <div className="mt-12">
+      <div id="description" className="scroll-mt-[10rem] md:scroll-ml-[24rem] scroll-smooth mt-12">
         <h2 className="text-2xl font-bold mb-4">{isArabic ? "وصف المنتج" : "Product Description"}</h2>
         <Separator className="mb-6" />
         <div
