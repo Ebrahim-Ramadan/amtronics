@@ -185,7 +185,7 @@ export default function RootLayout({
               <Suspense>
                 <Header />
               </Suspense>
-              <main className="min-h-screen w-full px-1 md:px-2 bg-[#FBFAF9]">{children}</main>
+              <main className="min-h-screen w-full md:px-2 bg-[#FBFAF9]">{children}</main>
               <Footer />
             </SavedAddressesProvider>
           </CartProvider>
