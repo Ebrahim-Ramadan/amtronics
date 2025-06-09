@@ -108,22 +108,22 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/faq" className="hover:underline">
+                <Link href="/faq" className="hover:underline" prefetch={false}>
                   {isArabic ? "الأسئلة الشائعة" : "FAQ"}
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:underline">
+                <Link href="/shipping" className="hover:underline" prefetch={false}>
                   {isArabic ? "الشحن والتوصيل" : "Shipping & Delivery"}
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="hover:underline">
+                <Link href="/returns" className="hover:underline" prefetch={false}>
                   {isArabic ? "سياسة الإرجاع" : "Return Policy"}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:underline">
+                <Link href="/contact" className="hover:underline" prefetch={false}>
                   {isArabic ? "اتصل بنا" : "Contact Us"}
                 </Link>
               </li>

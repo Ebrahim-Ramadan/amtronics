@@ -317,7 +317,7 @@ export default function Header() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="text-2xl font-bold text-gray-800">
+            <Link href="/" prefetch={false} className="text-2xl font-bold text-gray-800">
               <Image
               priority={true}
               quality={50}
