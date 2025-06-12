@@ -137,15 +137,15 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
             <h1 className="text-xl md:text-3xl leading-6 md:leading-9 tracking-[.02em] font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
             <p className="text-gray-600 leading-4 md:leading-5 text-sm md:text-base">{isArabic ? product.ar_description.substring(0, 200) : product.en_description.substring(0, 200)}
               {isArabic ? (
-                <Link href="#description" className="text-[#FEEE00] cursor-pointer ml-2 hover:underline">عرض المزيد</Link>
+                <Link href="#description" className="text-[#00B9DA] cursor-pointer ml-2 hover:underline">عرض المزيد</Link>
               ) : (
-                <Link href="#description" className="text-[#FEEE00] cursor-pointer ml-2 hover:underline">See More</Link>
+                <Link href="#description" className="text-[#00B9DA] cursor-pointer ml-2 hover:underline">See More</Link>
               )}
             </p>
           </div>
 
           {/* Rating */}
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
                 <Star
@@ -158,7 +158,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
             <span className="text-gray-500">
               ({product.sold_quantity ?? 0} {isArabic ? "مبيع" : "sold"})
             </span>
-          </div>
+          </div> */}
 
           {/* Price */}
           <div className="space-y-2">

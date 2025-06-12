@@ -23,7 +23,6 @@ export const  categories = [
   "Servo & Stepper Motor",
   "Led & Diode",
   "Battery",
-  "Service",
   "Transistor",
   "IC",
   "3D Print",

@@ -38,14 +38,14 @@ export default function Footer() {
                 ? " أمترونيكس حيث تتحول الأفكار إلى واقع"
                 : "AMtronics where ideas become reality"}
             </p>
-            <div className="flex items-center gap-2">
+            <a href="http://maps.google.com/maps/search/Al-Rihab%20Complex/@29.3359203338623,48.0256233215332,17z" className="flex items-center gap-2">
               <MapPin className="h-5 w-5" color="#FEEE00" />
               <p className="text-sm">
                 {isArabic 
-                  ? "شارع السور، مدينة الكويت، الكويت"
-                  : "Al Soor Street, Kuwait City, Kuwait"}
+                  ? "مجمع الرحاب، الكويت"
+                  : "Al Rihab Complex, Kuwait"}
               </p>
-            </div>
+            </a>
             <a className="flex items-center gap-2" href="https://wa.me/+96555501387" target="_blank" rel="noopener noreferrer">
               <Image
                 src="/whatsapp.webp"
