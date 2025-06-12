@@ -92,6 +92,7 @@ export default function HeroBanner() {
         </div>
         <div className="flex-1 flex justify-center">
           <Image
+          unoptimized
             src={currentBanner.image || "/placeholder.svg"}
             alt={isArabic ? currentBanner.ar_title : currentBanner.en_title}
             width={400}

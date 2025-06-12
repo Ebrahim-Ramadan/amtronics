@@ -131,6 +131,7 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
                 <Link href={`/products/${product._id}`}>
                   <div className="relative mb-3">
                     <Image
+                    unoptimized
                       src={product.image || "/placeholder.svg?height=200&width=200"}
                       alt={isArabic ? product.ar_name : product.en_name}
                       width={200}

@@ -117,6 +117,7 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
           ) : (
             <>
               <Image
+              unoptimized
                 src="/quick-atc-add-to-cart-grey.svg"
                 width={20}
                 height={20}

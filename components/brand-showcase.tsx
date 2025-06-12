@@ -44,6 +44,7 @@ export default function BrandShowcase() {
             className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-md transition-shadow group"
           >
             <Image
+            unoptimized
               src={brand.logo || "/placeholder.svg"}
               alt={brand.name}
               width={120}

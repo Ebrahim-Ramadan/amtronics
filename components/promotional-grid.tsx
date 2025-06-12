@@ -109,6 +109,7 @@ function PromotionalGridSection({ section }: PromotionalGridProps) {
             <Link key={product._id} href={`/products/${product._id}`} className="group">
               <div className="bg-white/70 rounded-lg p-3 hover:shadow-md transition-shadow">
                 <Image
+                unoptimized
                   src={product.image || "/placeholder.svg?height=80&width=80"}
                   alt={isArabic ? product.ar_name : product.en_name}
                   width={80}

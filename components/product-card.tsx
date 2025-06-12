@@ -330,6 +330,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <Button onClick={addToCart} className="w-full" disabled={product.quantity_on_hand === 0 || addToCartLoading}>
           {!addToCartLoading && !showCheck &&
             <Image
+            unoptimized
               src='/quick-atc-add-to-cart-grey.svg'
               width={20}
               height={20}

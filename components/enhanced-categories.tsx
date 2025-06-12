@@ -87,6 +87,7 @@ export default function EnhancedCategories() {
               className={`${category.color} rounded-xl p-2 md:p-4 mb-2 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300 shadow-sm`}
             >
               <Image
+              unoptimized
                 src={category.image || "/placeholder.svg"}
                 alt={isArabic ? category.ar_name : category.en_name}
                 width={200}

@@ -73,6 +73,7 @@ export default function DealsSection({ title, arTitle, bgColor, dealType }: Deal
               <Link href={`/products/${product._id}`}>
                 <div className="relative mb-3">
                   <Image
+                  unoptimized
                     src={product.image || "/placeholder.svg?height=150&width=150"}
                     alt={isArabic ? product.ar_name : product.en_name}
                     width={150}
