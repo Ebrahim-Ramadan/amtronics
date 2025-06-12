@@ -131,6 +131,20 @@ export default function CheckoutPage() {
       }
     }
 
+    // Validate name (no numbers)
+    if (/[0-9]/.test(customerInfo.name)) {
+      toast.error(isArabic ? "الاسم لا يمكن أن يحتوي على أرقام" : "Name cannot contain numbers.");
+      setLoading(false);
+      return;
+    }
+
+    // Validate phone (only numbers)
+    if (/[a-zA-Z]/.test(customerInfo.phone)) {
+      toast.error(isArabic ? "رقم الهاتف لا يمكن أن يحتوي على أحرف" : "Phone number cannot contain letters.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true)
 
     try { 
