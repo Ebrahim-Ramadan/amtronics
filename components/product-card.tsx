@@ -288,7 +288,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {isArabic ? product.ar_description : product.en_description}
         </p>
 
-        <div className="flex items-center gap-2 mb-1">
+        {/* <div className="flex items-center gap-2 mb-1">
           <div className="flex">
             {[...Array(5)].map((_, i) => (
               <Star key={i} className={`h-2 w-2 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
@@ -297,7 +297,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <span className="text-sm text-gray-500">
             ({product.sold_quantity} {isArabic ? "مبيع" : "sold"})
           </span>
-        </div>
+        </div> */}
 
         <div className="flex items-center gap-2">
           {product.discount ? (
