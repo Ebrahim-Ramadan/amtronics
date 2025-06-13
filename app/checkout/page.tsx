@@ -22,6 +22,7 @@ export default function CheckoutPage() {
   const [discountAmount, setDiscountAmount] = useState(0)
   const [promoError, setPromoError] = useState("")
   const [isApplyingPromo, setIsApplyingPromo] = useState(false)
+  const [isPromoApplied, setIsPromoApplied] = useState(false) // New state to track if promo is applied
   const [loading, setLoading] = useState(false)
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: "",
@@ -45,6 +46,7 @@ export default function CheckoutPage() {
       setDiscountAmount(0)
       setPromoError("")
       setIsApplyingPromo(false)
+      setIsPromoApplied(false) // Reset promo applied status
     } else if (selectedAddressIndex === "new") {
       setCustomerInfo({
         name: "",
@@ -61,6 +63,7 @@ export default function CheckoutPage() {
       setDiscountAmount(0)
       setPromoError("")
       setIsApplyingPromo(false)
+      setIsPromoApplied(false) // Reset promo applied status
     }
   }, [selectedAddressIndex, savedAddressesState.addresses])
 
@@ -98,17 +101,20 @@ export default function CheckoutPage() {
         const calculatedDiscountAmount = (state.total * promo.percentage) / 100;
         setDiscountAmount(calculatedDiscountAmount)
         setPromoError("")
+        setIsPromoApplied(true) // Set promo applied status to true
         toast.info(isArabic ? "تم تطبيق الخصم" : "Discount Applied")
       } else {
         const error = await response.json()
         setPromoError(error.error)
         setDiscountAmount(0)
+        setIsPromoApplied(false) // Reset promo applied status on failure
         toast.error(isArabic ? "كود خصم غير صالح أو منتهي الصلاحية" : "Invalid or expired promo code")
       }
     } catch (error) {
       console.error("Error validating promo code:", error)
       setPromoError(isArabic ? "حدث خطأ في التحقق من الكود" : "Error validating promo code")
       setDiscountAmount(0)
+      setIsPromoApplied(false) // Reset promo applied status on error
     } finally {
       setIsApplyingPromo(false)
     }
@@ -180,8 +186,7 @@ export default function CheckoutPage() {
           discount: discountAmount,
           promoCode: promoCode || "",
         }
-      console.log('local orderData', orderData);
-
+        console.log('local orderData', orderData);
 
         // Get existing orders from localStorage
         let orders: { [key: string]: Order } = {}
@@ -213,6 +218,7 @@ export default function CheckoutPage() {
         }
 
         dispatch({ type: "CLEAR_CART" })
+        setIsPromoApplied(false) // Reset promo applied status after order is placed
         router.push("/myorders")
       } else {
         alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
@@ -224,10 +230,6 @@ export default function CheckoutPage() {
       setLoading(false)
     }
   }
-
-  // if (state.items.length === 0) {
-  //   return <EmptyCart isArabic={isArabic} />
-  // }
 
   return (
     <div className="mx-auto md:px-20 py-4 md:py-6" dir={dir}>
@@ -261,7 +263,7 @@ export default function CheckoutPage() {
                       <img
                         src="/checkoutAddressLatLngIndicator.gif"
                         className="w-10 h-10 -ml-2 md:ml-0"
-                        alt="Checkout Address LatLng Indicator "
+                        alt="Checkout Address LatLng Indicator"
                       />
                       <div>
                         <div className="text-sm font-medium leading-4" dir={isArabic ? "rtl" : "ltr"}>
@@ -433,13 +435,13 @@ export default function CheckoutPage() {
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
                   className="h-10"
-                  disabled={isApplyingPromo}
+                  disabled={isApplyingPromo || isPromoApplied} // Disable input if promo is applied
                 />
                 <Button
                   onClick={applyPromoCode}
                   variant="outline"
                   className="h-10"
-                  disabled={isApplyingPromo}
+                  disabled={isApplyingPromo || isPromoApplied} // Disable button if promo is applied
                 >
                   {isApplyingPromo ? (
                     <span className="animate-pulse">{isArabic ? "جارٍ التطبيق..." : "Applying..."}</span>
@@ -451,10 +453,10 @@ export default function CheckoutPage() {
               {promoError && (
                 <p className="text-red-600 text-sm mt-2 animate-fade-in">{promoError}</p>
               )}
-              {discountAmount > 0 && ( // Use local discountAmount here
+              {discountAmount > 0 && (
                 <p className="text-green-600 text-sm mt-2 animate-fade-in flex items-center gap-1">
                   <CheckCheck size={16} className="text-green-600" />
-                  {isArabic ? `خصم مطبق: -${discountAmount.toFixed(2)} د.ك` : `Applied Discount: -${discountAmount.toFixed(2)} KD`} 
+                  {isArabic ? `خصم مطبق: -${discountAmount.toFixed(2)} د.ك` : `Applied Discount: -${discountAmount.toFixed(2)} KD`}
                 </p>
               )}
             </div>
@@ -483,7 +485,7 @@ export default function CheckoutPage() {
                     <span className="font-semibold">
                       {isArabic ? item.product.ar_name : item.product.en_name}
                     </span>
-                    <span >
+                    <span>
                       {item.product.price} {isArabic ? "د.ك" : "KD"}
                     </span>
                   </div>
@@ -516,7 +518,7 @@ export default function CheckoutPage() {
               <h3 className="font-semibold mb-2">{isArabic ? "طريقة الدفع" : "Payment Method"}</h3>
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">{isArabic ? "الدفع عند التسليم - نقداً" : "Cash on Delivery"}</p>
-                <Image src="/cash-on-delivery.svg" width={40} height={40} alt="Cash on Delivery" />
+                <Image src="/cash-on-delivery.svg" width={40} height={40} alt="Cash on Delivery" unoptimized/>
               </div>
             </div>
           </CardContent>
