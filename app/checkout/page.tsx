@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { useCart } from "@/lib/context"
 import type { CustomerInfo, Order } from "@/lib/types"
 import { useSavedAddresses } from "@/lib/saved-addresses-context"
-import { ChevronLeft, PlusCircle, CheckCheck } from "lucide-react"
+import { ChevronLeft, PlusCircle, CheckCheck, XIcon } from "lucide-react"
 import Image from "next/image"
 import { EmptyCart } from "@/components/empty-cart"
 import { useRouter } from "next/navigation"
@@ -454,9 +454,27 @@ export default function CheckoutPage() {
                 <p className="text-red-600 text-sm mt-2 animate-fade-in">{promoError}</p>
               )}
               {discountAmount > 0 && (
-                <p className="text-green-600 text-sm mt-2 animate-fade-in flex items-center gap-1">
-                  <CheckCheck size={16} className="text-green-600" />
-                  {isArabic ? `خصم مطبق: -${discountAmount.toFixed(2)} د.ك` : `Applied Discount: -${discountAmount.toFixed(2)} KD`}
+                <p className="text-green-600 text-sm mt-2 animate-fade-in flex items-center justify-between">
+                  <span className="flex items-center gap-1">
+                    <CheckCheck size={16} className="text-green-600" />
+                    {isArabic ? `خصم مطبق: -${discountAmount.toFixed(2)} د.ك` : `Applied Discount: -${discountAmount.toFixed(2)} KD`}
+                  </span>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      setPromoCode("");
+                      setDiscountAmount(0);
+                      setPromoError("");
+                      setIsPromoApplied(false);
+                      toast.info(isArabic ? "تم إلغاء الخصم" : "Discount Canceled");
+                    }}
+                    className="h-auto p-1 "
+                    aria-label={isArabic ? "إلغاء الخصم" : "Cancel Discount"}
+                  >
+                    {/* remove discount */}
+                    <XIcon />
+                  </Button>
                 </p>
               )}
             </div>

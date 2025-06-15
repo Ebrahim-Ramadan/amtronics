@@ -16,12 +16,12 @@ import { EmptyCart } from "@/components/empty-cart"
 
 const policyItems = {
   en: [
-    "Free shipping on orders over 50 KD",
+    // "Free shipping on orders over 50 KD",
     "Secure payment guaranteed",
     "30-day return policy",
   ],
   ar: [
-    "الشحن المجاني للطلبات فوق 50 د.ك",
+    // "الشحن المجاني للطلبات فوق 50 د.ك",
     "الدفع الآمن مضمون",
     "سياسة الإرجاع خلال 30 يومًا",
   ],
