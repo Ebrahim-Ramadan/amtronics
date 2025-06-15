@@ -58,11 +58,11 @@ export default function Footer() {
                 priority = {false}
                 className="h-5 w-5"
                 />
-              <p className="text-sm">+9 655 550 1387</p>
+              <p className="text-sm">+965 555 01387</p>
             </a>
             <a className="flex items-center gap-2" href="tel:+96555501493">
               <Phone className="h-5 w-5" color="#FEEE00" />
-              <p className="text-sm">+9 655 550 1493</p>
+              <p className="text-sm">+965 555 01493</p>
             </a>
             <div className="flex items-center gap-2">
               <Mail className="h-5 w-5" color="#FEEE00" />
