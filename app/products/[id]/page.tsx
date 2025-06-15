@@ -211,12 +211,12 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
           <Card>
             <CardContent className="p-4">
               <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                   <Truck className="h-5 w-5 text-blue-600" />
                   <span className="text-sm">
                     {isArabic ? "توصيل مجاني للطلبات أكثر من 50 د.ك" : "Free delivery for orders over 50 KD"}
                   </span>
-                </div>
+                </div> */}
                 <div className="flex items-center gap-3">
                   <Shield className="h-5 w-5 text-green-600" />
                   <span className="text-sm">{isArabic ? "ضمان الجودة" : "Quality guarantee"}</span>
