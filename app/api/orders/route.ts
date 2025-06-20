@@ -1,17 +1,20 @@
 import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
+import { sendOrderConfirmationEmail } from "@/lib/mailer"
+import { sendWhatsAppTemplate } from "@/lib/twilio"
 
 export async function POST(request: Request) {
   try {
     const orderData = await request.json()
+    const { customerInfo } = orderData
 
     const client = await clientPromise
     const db = client.db("amtronics")
 
     // Start a session for transaction
     const session = client.startSession()
-    let newOrderID
+    let newOrderID: ObjectId | undefined
     try {
       await session.withTransaction(async () => {
         // Insert order
@@ -23,42 +26,25 @@ export async function POST(request: Request) {
           },
           { session },
         )
-        newOrderID = orderResult["insertedId"];
-        
-
-        // // bulkupdate unstead of Update product quantities
-        // const productUpdates = orderData.items.map((item: any) => ({
-        //   updateOne: {
-        //     filter: { _id: new ObjectId(item.product._id) },
-        //     update: {
-        //       $inc: {
-        //         quantity_on_hand: -item.quantity,
-        //         sold_quantity: item.quantity,
-        //       },
-        //     },
-        //   },
-        // }))
-        // await db.collection("products").bulkWrite(productUpdates, { session })
-
-
-        // Insert subscriber if email provided
-        // if (orderData.customerInfo.email) {
-        //   await db.collection("subscribers").updateOne(
-        //     { email: orderData.customerInfo.email },
-        //     {
-        //       $set: {
-        //         name: orderData.customerInfo.name,
-        //         phone: orderData.customerInfo.phone,
-        //         email: orderData.customerInfo.email,
-        //         lastOrderDate: new Date(),
-        //       },
-        //     },
-        //     { upsert: true, session },
-        //   )
-        // }
+        newOrderID = orderResult.insertedId
       })
 
-      return NextResponse.json({ newOrderID, success: true, message: "Order placed successfully" ,})
+      if (newOrderID) {
+        // Do not await these, let them run in the background
+        if (customerInfo.email) {
+          sendOrderConfirmationEmail(customerInfo.email, newOrderID.toHexString(), customerInfo.name)
+        }
+
+        const total = (orderData.total - orderData.discount).toFixed(2)
+
+        // sendWhatsAppTemplate(customerInfo.phone, {
+        //   "1": customerInfo.name,
+        //   "2": newOrderID.toHexString(),
+        //   "3": `${total} KD`,
+        // })
+      }
+
+      return NextResponse.json({ newOrderID, success: true, message: "Order placed successfully" })
     } finally {
       await session.endSession()
     }

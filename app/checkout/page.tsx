@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -13,6 +14,7 @@ import Image from "next/image"
 import { EmptyCart } from "@/components/empty-cart"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { LoadingDots } from "@/components/ui/loading-spinner"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -24,6 +26,7 @@ export default function CheckoutPage() {
   const [isApplyingPromo, setIsApplyingPromo] = useState(false)
   const [isPromoApplied, setIsPromoApplied] = useState(false) // New state to track if promo is applied
   const [loading, setLoading] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState("")
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: "",
     phone: "",
@@ -124,36 +127,86 @@ export default function CheckoutPage() {
     e.preventDefault()
     if (state.items.length === 0) {
       toast.error(isArabic ? "السلة فارغة" : "Cart is empty")
-      return;
+      return
     }
 
     // Validate required fields
-    const requiredFields: (keyof CustomerInfo)[] = ["name", "phone", "country", "city", "area", "block", "street", "house"];
+    const requiredFields: (keyof CustomerInfo)[] = ["name", "phone", "email", "country", "city", "area", "block", "street", "house"]
     for (const field of requiredFields) {
       if (!customerInfo[field].trim()) {
-        toast.error(isArabic ? `يرجى ملء حقل ${field === "name" ? "الاسم الكامل" : field === "phone" ? "رقم الهاتف" : field === "country" ? "الدولة" : field === "city" ? "المدينة" : field === "area" ? "المنطقة" : field === "block" ? "القطعة" : field === "street" ? "الشارع" : field === "house" ? "رقم المنزل" : field}` : `Please fill in the ${field === "name" ? "Full Name" : field === "phone" ? "Phone Number" : field === "country" ? "Country" : field === "city" ? "City" : field === "area" ? "Area" : field === "block" ? "Block" : field === "street" ? "Street" : field === "house" ? "House Number" : field} field.`);
-        setLoading(false);
-        return;
+        toast.error(
+          isArabic
+            ? `يرجى ملء حقل ${
+                field === "name"
+                  ? "الاسم الكامل"
+                  : field === "phone"
+                    ? "رقم الهاتف"
+                    : field === "email"
+                      ? "البريد الإلكتروني"
+                      : field === "country"
+                        ? "الدولة"
+                        : field === "city"
+                          ? "المدينة"
+                          : field === "area"
+                            ? "المنطقة"
+                            : field === "block"
+                              ? "القطعة"
+                              : field === "street"
+                                ? "الشارع"
+                                : field === "house"
+                                  ? "رقم المنزل"
+                                  : field
+              }`
+            : `Please fill in the ${
+                field === "name"
+                  ? "Full Name"
+                  : field === "phone"
+                    ? "Phone Number"
+                    : field === "email"
+                      ? "Email Address"
+                      : field === "country"
+                        ? "Country"
+                        : field === "city"
+                          ? "City"
+                          : field === "area"
+                            ? "Area"
+                            : field === "block"
+                              ? "Block"
+                              : field === "street"
+                                ? "Street"
+                                : field === "house"
+                                  ? "House Number"
+                                  : field
+              } field.`,
+        )
+        setLoading(false)
+        return
       }
     }
 
     // Validate name (no numbers)
     if (/[0-9]/.test(customerInfo.name)) {
-      toast.error(isArabic ? "الاسم لا يمكن أن يحتوي على أرقام" : "Name cannot contain numbers.");
-      setLoading(false);
-      return;
+      toast.error(isArabic ? "الاسم لا يمكن أن يحتوي على أرقام" : "Name cannot contain numbers.")
+      setLoading(false)
+      return
     }
 
-    // Validate phone (only numbers)
-    if (/[a-zA-Z]/.test(customerInfo.phone)) {
-      toast.error(isArabic ? "رقم الهاتف لا يمكن أن يحتوي على أحرف" : "Phone number cannot contain letters.");
-      setLoading(false);
-      return;
+    // Validate phone (must start with country code)
+    const phoneRegex = /^\+\d{8,}$/
+    if (!phoneRegex.test(customerInfo.phone.replace(/\s/g, ""))) {
+      toast.error(
+        isArabic
+          ? "رقم الهاتف يجب أن يبدأ برمز الدولة ويحتوي على أرقام فقط (مثال: +96512345678)."
+          : "Phone number must start with a country code and contain only digits (e.g., +96512345678).",
+      )
+      setLoading(false)
+      return
     }
 
     setLoading(true)
+    setLoadingMessage(isArabic ? "جاري معالجة طلبك..." : "Processing your order...")
 
-    try { 
+    try {
       const orderData = {
         items: state.items,
         customerInfo,
@@ -161,21 +214,20 @@ export default function CheckoutPage() {
         discount: discountAmount,
         promoCode: promoCode || "",
       }
-      console.log('back orderData', orderData);
       
-      const response = await fetch("/api/orders", {
+      setLoadingMessage(isArabic ? "جاري تقديم الطلب..." : "Placing order...")
+      
+      const response = await fetch( "/api/orders", {        
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       })
 
       if (response.ok) {
+        setLoadingMessage(isArabic ? "تم تأكيد الطلب بنجاح!" : "Order confirmed successfully!")
         const orderResult = await response.json()
-        console.log('orderResult', orderResult);
-        
-        const newOrderID = orderResult.newOrderID  
-        console.log('newOrderID', newOrderID);
-        
+        const newOrderID = orderResult.newOrderID
+
         const newOrder: Order = {
           _id: newOrderID,
           items: state.items,
@@ -186,7 +238,6 @@ export default function CheckoutPage() {
           discount: discountAmount,
           promoCode: promoCode || "",
         }
-        console.log('local orderData', orderData);
 
         // Get existing orders from localStorage
         let orders: { [key: string]: Order } = {}
@@ -217,8 +268,23 @@ export default function CheckoutPage() {
           savedAddressesDispatch({ type: "ADD_ADDRESS", payload: customerInfo })
         }
 
+//         const orderDetails = `
+// Order ID: ${newOrderID}
+// Name: ${customerInfo.name}
+// Phone: ${customerInfo.phone}
+// Total: ${(state.total - discountAmount).toFixed(2)} KD
+// Address: ${customerInfo.area}, Block ${customerInfo.block}, Street ${customerInfo.street}, House ${customerInfo.house}
+// Items:
+// ${state.items.map((item) => `- ${isArabic ? item.product.ar_name : item.product.en_name} (x${item.quantity})`).join("\n")}
+// `
+//         const whatsappUrl = `https://wa.me/${customerInfo.phone.replace(/\s/g, "")}?text=${encodeURIComponent(orderDetails)}`
+
+//         // Open WhatsApp chat
+//         window.open(whatsappUrl, "_blank")
+
         dispatch({ type: "CLEAR_CART" })
         setIsPromoApplied(false) // Reset promo applied status after order is placed
+        setLoadingMessage(isArabic ? "جاري إعادة توجيهك..." : "Redirecting...")
         router.push("/myorders")
       } else {
         alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
@@ -329,9 +395,10 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <div>
-                <Label className="mb-1" htmlFor="email">{isArabic ? "البريد الإلكتروني" : "Email Address"}</Label>
+                <Label className="mb-1" htmlFor="email">{isArabic ? "البريد الإلكتروني" : "Email Address"} *</Label>
                 <Input
                   id="email"
+                  required
                   type="email"
                   value={customerInfo.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
@@ -410,13 +477,16 @@ export default function CheckoutPage() {
               </div>
               <div className="pt-4">
                 <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                  {loading
-                    ? isArabic
-                      ? "جاري إتمام الطلب..."
-                      : "Processing Order..."
-                    : isArabic
-                      ? "تأكيد الطلب - دفع عند التسليم"
-                      : "Confirm Order - Cash on Delivery"}
+                  {loading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <LoadingDots />
+                      <span>{loadingMessage}</span>
+                    </div>
+                  ) : isArabic ? (
+                    "تأكيد الطلب - دفع عند التسليم"
+                  ) : (
+                    "Confirm Order - Cash on Delivery"
+                  )}
                 </Button>
               </div>
             </form>
@@ -460,20 +530,19 @@ export default function CheckoutPage() {
                     {isArabic ? `خصم مطبق: -${discountAmount.toFixed(2)} د.ك` : `Applied Discount: -${discountAmount.toFixed(2)} KD`}
                   </span>
                   <Button
-                    variant="destructive"
+                    variant="ghost"
                     size="sm"
                     onClick={() => {
-                      setPromoCode("");
-                      setDiscountAmount(0);
-                      setPromoError("");
-                      setIsPromoApplied(false);
-                      toast.info(isArabic ? "تم إلغاء الخصم" : "Discount Canceled");
+                      setPromoCode("")
+                      setDiscountAmount(0)
+                      setPromoError("")
+                      setIsPromoApplied(false)
+                      toast.info(isArabic ? "تم إلغاء الخصم" : "Discount Canceled")
                     }}
-                    className="h-auto p-1 "
+                    className="h-auto p-1 text-red-600 hover:text-red-700"
                     aria-label={isArabic ? "إلغاء الخصم" : "Cancel Discount"}
                   >
-                    {/* remove discount */}
-                    <XIcon />
+                    <XIcon className="h-4 w-4" />
                   </Button>
                 </p>
               )}
