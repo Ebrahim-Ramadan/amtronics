@@ -16,9 +16,37 @@ async function getProduct(id: string): Promise<Product | null> {
   try {
     const client = await clientPromise
     const db = client.db("amtronics")
-    const product = await db.collection("products").findOne({
-      _id: new ObjectId(id),
-    })
+    const product = await db.collection("products").findOne(
+      { _id: new ObjectId(id) },
+      {
+        projection: {
+          _id: 1,
+          id: 1,
+          sku: 1,
+          en_name: 1,
+          ar_name: 1,
+          en_description: 1,
+          ar_description: 1,
+          en_long_description: 1,
+          ar_long_description: 1,
+          en_main_category: 1,
+          ar_main_category: 1,
+          en_category: 1,
+          ar_category: 1,
+          price: 1,
+          image: 1,
+          quantity_on_hand: 1,
+          sold_quantity: 1,
+          visible_in_catalog: 1,
+          visible_in_search: 1,
+          slug_url: 1,
+          discount: 1,
+          discount_type: 1,
+          ar_brand: 1,
+          en_brand: 1,
+        }
+      }
+    )
     return product as Product | null
   } catch (error) {
     console.error("Error fetching product:", error)
