@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { useCart } from "@/lib/context"
 import type { CustomerInfo, Order } from "@/lib/types"
 import { useSavedAddresses } from "@/lib/saved-addresses-context"
-import { ChevronLeft, PlusCircle, CheckCheck, XIcon } from "lucide-react"
+import { ChevronLeft, PlusCircle, CheckCheck, XIcon, Trash2 } from "lucide-react"
 import Image from "next/image"
 import { EmptyCart } from "@/components/empty-cart"
 import { useRouter } from "next/navigation"
@@ -307,7 +307,7 @@ export default function CheckoutPage() {
       console.error("Error placing order:", error)
       alert(isArabic ? "حدث خطأ في الطلب" : "Error placing order")
     } finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }
 
@@ -365,14 +365,27 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                     </div>
-                    <input
-                      type="radio"
-                      name="address"
-                      value={index.toString()}
-                      checked={selectedAddressIndex === index}
-                      onChange={() => handleAddressSelect(index.toString())}
-                      className="w-4 h-4 text-[#00B8DB] border-[#00B8DB] focus:ring-[#00B8DB] bg-[#00B8DB]"
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="address"
+                        value={index.toString()}
+                        checked={selectedAddressIndex === index}
+                        onChange={() => handleAddressSelect(index.toString())}
+                        className="w-4 h-4 text-[#00B8DB] border-[#00B8DB] focus:ring-[#00B8DB] bg-[#00B8DB]"
+                      />
+                      <button
+                        type="button"
+                        className="ml-2 text-red-500 hover:text-red-700"
+                        onClick={e => {
+                          e.stopPropagation();
+                          savedAddressesDispatch({ type: "REMOVE_ADDRESS", payload: address.phone })
+                        }}
+                        aria-label={isArabic ? "حذف العنوان" : "Delete address"}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </div>
                 ))}
                 <div
@@ -404,7 +417,7 @@ export default function CheckoutPage() {
                     value={customerInfo.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
-                    disabled={selectedAddressIndex !== "new"}
+                    // Always editable
                   />
                 </div>
                 <div>
@@ -415,7 +428,7 @@ export default function CheckoutPage() {
                     required
                     value={customerInfo.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
-                    disabled={selectedAddressIndex !== "new"}
+                    // Always editable
                   />
                 </div>
               </div>
@@ -427,7 +440,7 @@ export default function CheckoutPage() {
                   type="email"
                   value={customerInfo.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  disabled={selectedAddressIndex !== "new"}
+                  // Always editable
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -453,7 +466,7 @@ export default function CheckoutPage() {
                     value={selectedGovernorate}
                     onChange={e => handleGovernorateChange(e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
-                    disabled={selectedAddressIndex !== "new"}
+                    // Always editable
                     className="w-full border rounded px-2 py-2"
                   >
                     <option value="">{isArabic ? "اختر المحافظة" : "Select Governorate"}</option>
@@ -474,7 +487,7 @@ export default function CheckoutPage() {
                     value={customerInfo.area}
                     onChange={e => handleAreaChange(e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
-                    disabled={selectedAddressIndex !== "new" || !selectedGovernorate}
+                    disabled={!selectedGovernorate}
                     className="w-full border rounded px-2 py-2"
                   >
                     <option value="">{isArabic ? "اختر المنطقة" : "Select Area"}</option>
@@ -492,7 +505,7 @@ export default function CheckoutPage() {
                     required
                     value={customerInfo.block}
                     onChange={(e) => handleInputChange("block", e.target.value)}
-                    disabled={selectedAddressIndex !== "new"}
+                    // Always editable
                   />
                 </div>
               </div>
@@ -505,7 +518,7 @@ export default function CheckoutPage() {
                     value={customerInfo.street}
                     onChange={(e) => handleInputChange("street", e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
-                    disabled={selectedAddressIndex !== "new"}
+                    // Always editable
                   />
                 </div>
                 <div>
@@ -515,7 +528,7 @@ export default function CheckoutPage() {
                     required
                     value={customerInfo.house}
                     onChange={(e) => handleInputChange("house", e.target.value)}
-                    disabled={selectedAddressIndex !== "new"}
+                    // Always editable
                   />
                 </div>
               </div>
