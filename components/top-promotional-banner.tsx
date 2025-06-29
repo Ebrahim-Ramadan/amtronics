@@ -13,7 +13,7 @@ export default function TopPromotionalBanner() {
   if (!isVisible) return null
 
   return (
-    <div className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white py-1 md:py-2 relative">
+    <div className="bg-[#091638]/90 text-white py-1 md:py-2 relative">
       <div className="container mx-auto px-2 md:px-4 flex items-center md:justify-center">
         <div className="text-center">
           <p className="font-bold text-sm md:text-lg">

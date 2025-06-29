@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ArrowDown, ArrowUp, ArrowUpCircle, Copy } from "lucide-react"
+import { ArrowUpCircle, Copy } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { Order } from "@/lib/types"
 import { useCart } from "@/lib/context"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Pagination } from "@/components/ui/pagination"
-import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import LoadingDots from "@/components/ui/loading-spinner"
 
@@ -298,6 +297,14 @@ export default function OrdersList() {
                   </ul>
                 </div>
 
+                <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-4" dir = {isArabic ? "rtl" : "ltr"} >
+                  <span className="text-base text-neutral-700 font-semibold">
+                    {isArabic ? "المجموع الفرعي:" : "Subtotal:"}
+                  </span>
+                  <span className="text-base text-neutral-700 font-semibold">
+                    {(order.total - (order.discount || 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                  </span>
+                </div>
                 <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-4" dir = {isArabic ? "rtl" : "ltr"} >
                   <span className="text-base text-neutral-700">
                     {isArabic ? "رسوم التوصيل:" : "Shipping Fee:"}
