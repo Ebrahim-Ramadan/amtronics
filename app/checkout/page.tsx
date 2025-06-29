@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -15,6 +14,7 @@ import { EmptyCart } from "@/components/empty-cart"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { LoadingDots } from "@/components/ui/loading-spinner"
+import { GovernateswithRegions } from "@/lib/utils"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -41,15 +41,22 @@ export default function CheckoutPage() {
   const [selectedAddressIndex, setSelectedAddressIndex] = useState<number | "new">("new")
   const isArabic = state.language === "ar"
   const dir = isArabic ? "rtl" : "ltr"
+  const [selectedGovernorate, setSelectedGovernorate] = useState<string>("")
+  const [availableAreas, setAvailableAreas] = useState<{ english: string; arabic: string }[]>([])
+  const [shippingFee] = useState(2)
 
   useEffect(() => {
     if (selectedAddressIndex !== "new" && savedAddressesState.addresses[selectedAddressIndex]) {
-      setCustomerInfo(savedAddressesState.addresses[selectedAddressIndex])
+      const addr = savedAddressesState.addresses[selectedAddressIndex]
+      setCustomerInfo(addr)
       setPromoCode("")
       setDiscountAmount(0)
       setPromoError("")
       setIsApplyingPromo(false)
-      setIsPromoApplied(false) // Reset promo applied status
+      setIsPromoApplied(false)
+      setSelectedGovernorate(addr.city)
+      const gov = GovernateswithRegions.governorates.find(g => g.english === addr.city || g.arabic === addr.city)
+      setAvailableAreas(gov ? gov.regions : [])
     } else if (selectedAddressIndex === "new") {
       setCustomerInfo({
         name: "",
@@ -66,7 +73,9 @@ export default function CheckoutPage() {
       setDiscountAmount(0)
       setPromoError("")
       setIsApplyingPromo(false)
-      setIsPromoApplied(false) // Reset promo applied status
+      setIsPromoApplied(false)
+      setSelectedGovernorate("")
+      setAvailableAreas([])
     }
   }, [selectedAddressIndex, savedAddressesState.addresses])
 
@@ -98,9 +107,12 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: promoCode }),
       })
+// console.log('response',  await response.json());
 
       if (response.ok) {
         const promo = await response.json()
+        console.log('promo', promo);
+        
         const calculatedDiscountAmount = (state.total * promo.percentage) / 100;
         setDiscountAmount(calculatedDiscountAmount)
         setPromoError("")
@@ -213,6 +225,7 @@ export default function CheckoutPage() {
         total: state.total,
         discount: discountAmount,
         promoCode: promoCode || "",
+        shippingFee,
       }
       
       setLoadingMessage(isArabic ? "جاري تقديم الطلب..." : "Placing order...")
@@ -237,6 +250,7 @@ export default function CheckoutPage() {
           createdAt: new Date(),
           discount: discountAmount,
           promoCode: promoCode || "",
+          shippingFee,
         }
 
         // Get existing orders from localStorage
@@ -295,6 +309,17 @@ export default function CheckoutPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleGovernorateChange = (value: string) => {
+    setSelectedGovernorate(value)
+    setCustomerInfo(prev => ({ ...prev, city: value, area: "" }))
+    const gov = GovernateswithRegions.governorates.find(g => (isArabic ? g.arabic : g.english) === value)
+    setAvailableAreas(gov ? gov.regions : [])
+  }
+
+  const handleAreaChange = (value: string) => {
+    setCustomerInfo(prev => ({ ...prev, area: value }))
   }
 
   return (
@@ -408,38 +433,57 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="mb-1" htmlFor="country">{isArabic ? "الدولة" : "Country"} *</Label>
-                  <Input
+                  <select
                     id="country"
                     required
                     value={customerInfo.country}
-                    onChange={(e) => handleInputChange("country", e.target.value)}
+                    onChange={e => setCustomerInfo(prev => ({ ...prev, country: e.target.value }))}
                     dir={isArabic ? "rtl" : "ltr"}
-                    disabled={selectedAddressIndex !== "new"}
-                  />
+                    disabled
+                    className="w-full border rounded px-2 py-2 bg-gray-100 cursor-not-allowed"
+                  >
+                    <option value="Kuwait">{isArabic ? "الكويت" : "Kuwait"}</option>
+                  </select>
                 </div>
                 <div>
-                  <Label className="mb-1" htmlFor="city">{isArabic ? "المدينة" : "City"} *</Label>
-                  <Input
+                  <Label className="mb-1" htmlFor="city">{isArabic ? "المحافظة" : "Governorate"} *</Label>
+                  <select
                     id="city"
                     required
-                    value={customerInfo.city}
-                    onChange={(e) => handleInputChange("city", e.target.value)}
+                    value={selectedGovernorate}
+                    onChange={e => handleGovernorateChange(e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
                     disabled={selectedAddressIndex !== "new"}
-                  />
+                    className="w-full border rounded px-2 py-2"
+                  >
+                    <option value="">{isArabic ? "اختر المحافظة" : "Select Governorate"}</option>
+                    {GovernateswithRegions.governorates.map(gov => (
+                      <option key={isArabic ? gov.arabic : gov.english} value={isArabic ? gov.arabic : gov.english}>
+                        {isArabic ? gov.arabic : gov.english}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="mb-1" htmlFor="area">{isArabic ? "المنطقة" : "Area"} *</Label>
-                  <Input
+                  <select
                     id="area"
                     required
                     value={customerInfo.area}
-                    onChange={(e) => handleInputChange("area", e.target.value)}
+                    onChange={e => handleAreaChange(e.target.value)}
                     dir={isArabic ? "rtl" : "ltr"}
-                    disabled={selectedAddressIndex !== "new"}
-                  />
+                    disabled={selectedAddressIndex !== "new" || !selectedGovernorate}
+                    className="w-full border rounded px-2 py-2"
+                  >
+                    <option value="">{isArabic ? "اختر المنطقة" : "Select Area"}</option>
+                    {availableAreas.map(region => (
+                      <option key={isArabic ? region.arabic : region.english} value={isArabic ? region.arabic : region.english}>
+                        {isArabic ? region.arabic : region.english}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <Label className="mb-1" htmlFor="block">{isArabic ? "القطعة" : "Block"} *</Label>
@@ -584,10 +628,14 @@ export default function CheckoutPage() {
             ))}
             {/* Totals */}
             <div className="border-t border-[#00B8DB] pt-4">
+              <div className="flex justify-between text-base">
+                <span>{isArabic ? "رسوم التوصيل" : "Shipping Fee"}</span>
+                <span>{shippingFee.toFixed(2)} {isArabic ? "د.ك" : "KD"}</span>
+              </div>
               <div className="flex justify-between text-lg font-bold">
                 <span>{isArabic ? "المجموع" : "Total"}</span>
                 <span>
-                  {(state.total - discountAmount).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                  {(state.total - discountAmount + shippingFee).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                 </span>
               </div>
               {discountAmount > 0 && (

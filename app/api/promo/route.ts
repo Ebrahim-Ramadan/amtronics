@@ -4,6 +4,7 @@ import clientPromise from "@/lib/mongodb"
 export async function POST(request: Request) {
   try {
     const { code } = await request.json()
+console.log('Received promo code:', code);
 
     const client = await clientPromise
     const db = client.db("amtronics")
@@ -13,6 +14,7 @@ export async function POST(request: Request) {
       active: true,
       expiry: { $gte: new Date().toISOString() },
     })
+console.log('route promoCode', promoCode);
 
     if (!promoCode) {
       return NextResponse.json({ error: "Invalid or expired promo code" }, { status: 400 })

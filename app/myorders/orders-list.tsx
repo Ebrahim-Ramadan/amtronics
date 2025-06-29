@@ -299,11 +299,19 @@ export default function OrdersList() {
                 </div>
 
                 <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-4" dir = {isArabic ? "rtl" : "ltr"} >
+                  <span className="text-base text-neutral-700">
+                    {isArabic ? "رسوم التوصيل:" : "Shipping Fee:"}
+                  </span>
+                  <span className="text-base text-neutral-700">
+                    {(order.shippingFee ?? 0).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-4" dir = {isArabic ? "rtl" : "ltr"} >
                   <span className="text-lg font-bold text-neutral-800">
                     {isArabic ? "المجموع الكلي:" : "Total Amount:"}
                   </span>
                   <span className="text-lg font-bold text-[#00B8DB]">
-                    {(order.total - (order.discount || 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                    {(order.total - (order.discount || 0) + (order.shippingFee ?? 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                   </span>
                 </div>
 

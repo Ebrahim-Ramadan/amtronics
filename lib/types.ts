@@ -47,6 +47,7 @@ export interface Order {
   promoCode?: string
   status: string
   createdAt: Date
+  shippingFee?: number
 }
 
 export interface CustomerInfo {
