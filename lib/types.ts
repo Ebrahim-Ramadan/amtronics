@@ -23,6 +23,7 @@ export interface Product {
   discount_type?: string
   ar_brand?: string
   en_brand?: string
+  ave_cost?: number
 }
 
 export interface CartItem {

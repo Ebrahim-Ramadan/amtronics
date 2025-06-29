@@ -44,6 +44,8 @@ async function getProduct(id: string): Promise<Product | null> {
           discount_type: 1,
           ar_brand: 1,
           en_brand: 1,
+          ave_cost: 1
+
         }
       }
     )

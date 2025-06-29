@@ -58,6 +58,7 @@ export async function GET(request: Request) {
       ar_name: 1,
       price: 1,
       image: 1,
+      ave_cost: 1,
       // add more summary fields if needed
     }
 

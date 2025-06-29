@@ -68,34 +68,6 @@ export default function CartPage() {
     }
   }
 
-  const applyPromoCode = async () => {
-    if (!promoCode) {
-      setPromoError(isArabic ? "الرجاء إدخال كود خصم" : "Please enter a promo code")
-      return
-    }
-    setIsApplyingPromo(true)
-    try {
-      const response = await fetch("/api/promo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: promoCode }),
-      })
-
-      if (response.ok) {
-        // Promo logic moved to checkout
-        setPromoError("")
-        toast.info("Discount Applied")
-      } else {
-        const error = await response.json()
-        setPromoError(error.error)
-        // Promo logic moved to checkout
-      }
-    } catch (error) {
-      setPromoError(isArabic ? "خطأ في التحقق من الكود" : "Error validating promo code")
-    } finally {
-      setIsApplyingPromo(false)
-    }
-  }
 
   const subtotal = state.total
   const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0)

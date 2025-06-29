@@ -7,6 +7,8 @@ import { sendWhatsAppTemplate } from "@/lib/twilio"
 export async function POST(request: Request) {
   try {
     const orderData = await request.json()
+    console.log('orderData', orderData);
+    
     const { customerInfo } = orderData
 
     const client = await clientPromise
@@ -17,10 +19,34 @@ export async function POST(request: Request) {
     let newOrderID: ObjectId | undefined
     try {
       await session.withTransaction(async () => {
+        // Ensure ave_cost is present for each product in items
+        const itemsWithAveCost = await Promise.all(
+          orderData.items.map(async (item: any) => {
+            if (item.product.ave_cost !== undefined && item.product.ave_cost !== null) {
+              return item
+            }
+            const prodId = item.product._id || item.product.id
+            let dbProduct = null
+            if (ObjectId.isValid(prodId)) {
+              dbProduct = await db.collection("products").findOne({ _id: new ObjectId(prodId) }, { projection: { ave_cost: 1 } })
+            } else {
+              dbProduct = await db.collection("products").findOne({ id: prodId }, { projection: { ave_cost: 1 } })
+            }
+            return {
+              ...item,
+              product: {
+                ...item.product,
+                ave_cost: dbProduct?.ave_cost ?? null,
+              },
+            }
+          })
+        )
+
         // Insert order
         const orderResult = await db.collection("orders").insertOne(
           {
             ...orderData,
+            items: itemsWithAveCost,
             status: "pending",
             createdAt: new Date(),
           },
