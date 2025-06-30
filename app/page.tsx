@@ -22,7 +22,7 @@ export default function Home() {
       </div>
 
       {/* Product Carousels */}
-      {/* <div className=" px-2  space-y-4 py-4">
+      <div className=" px-2  space-y-4 py-4">
         <LazyLoad>
           <ProductCarousel
             title="Best Sellers in Electronics"
@@ -44,7 +44,7 @@ export default function Home() {
         <LazyLoad>
           <ProductCarousel title="Recommended for You" arTitle="موصى لك" type="recommended" bgColor="bg-gradient-to-br from-red-50 to-red-100" />
         </LazyLoad>
-      </div> */}
+      </div>
 
       {/* Brand Showcase */}
       <BrandShowcase />

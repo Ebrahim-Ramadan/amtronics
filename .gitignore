@@ -13,6 +13,8 @@
 # testing
 /coverage
 
+ass.ts
+
 # next.js
 /.next/
 /out/
