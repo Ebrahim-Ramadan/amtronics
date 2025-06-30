@@ -80,33 +80,42 @@ export default function EnhancedCategories() {
   const isArabic = state.language === "ar";
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-8 gap-2 md:gap-4 pt-6 py-2">
-      {categories.map((category, index) => (
-        <Link key={index} href={category.link} className="group mb-1 md:mb-0">
-          <div
-              className={`${category.color} rounded-xl p-2 md:p-4 mb-2 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300 shadow-sm`}
+    <div>
+      {/* Mobile: horizontal scroll, Desktop: grid */}
+      <div className="flex md:grid md:grid-cols-8 gap-2 md:gap-4 pt-6 py-2 overflow-x-auto scrollbar-hide">
+        {categories.map((category, index) => (
+          <Link
+            key={index}
+            href={category.link}
+            className="group mb-1 md:mb-0 flex-shrink-0 md:flex-shrink md:w-auto min-w-[140px] md:min-w-0 flex flex-col items-center justify-center"
+            style={{ maxWidth: '180px' }}
+          >
+            <div
+              className={`${category.color} rounded-xl p-2 md:p-2 mb-2 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300 shadow-sm flex items-center justify-center w-full`}
             >
-              <Image
-              unoptimized
-                src={category.image || "/placeholder.svg"}
-                alt={isArabic ? category.ar_name : category.en_name}
-                width={200}
-                height={0} // Let the image determine height based on aspect ratio
-                sizes="25vw" // 25% viewport width for four columns
-                className="object-contain mx-auto rounded-xl w-full"
-              />
+              <div className="w-16 h-16 md:w-32 md:h-28 flex items-center justify-center">
+                <Image
+                  unoptimized
+                  src={category.image || "/placeholder.svg"}
+                  alt={isArabic ? category.ar_name : category.en_name}
+                  width={96}
+                  height={96}
+                  className="object-contain w-full h-full rounded-xl"
+                />
+              </div>
             </div>
-            <div className="flex items-center justify-around w-full">
-              <h3 className="font-bold text-base md:text-sm text-gray-800 md:mb-1">
+            <div className="flex flex-col items-center justify-center w-full">
+              <h3 className="font-bold text-sm md:text-sm text-gray-800 md:mb-1 text-center">
                 {isArabic ? category.ar_name : category.en_name}
               </h3>
-              <div className="flex items-center">
+              <div className="flex items-center justify-center">
                 <p className="font-semibold text-[11px] text-cyan-500">{category.count}</p>
                 <ArrowUpRight size={14} color="#00C3D1"/>
               </div>
-          </div>
-        </Link>
-      ))}
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

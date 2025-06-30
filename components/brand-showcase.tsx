@@ -7,22 +7,22 @@ import { useCart } from "@/lib/context"
 const brands = [
   {
     name: "Raspberry Pi",
-    logo: "/placeholder.svg?height=80&width=120",
+    logo: "/categories/raspberry-pi.webp",
     link: "/products?search=raspberry",
   },
   {
     name: "Arduino",
-    logo: "/placeholder.svg?height=80&width=120",
+    logo: "/categories/arduino.webp",
     link: "/products?search=arduino",
   },
   {
     name: "Adafruit",
-    logo: "/placeholder.svg?height=80&width=120",
+    logo: "/brands/adafruit.png",
     link: "/products?search=adafruit",
   },
   {
     name: "SparkFun",
-    logo: "/placeholder.svg?height=80&width=120",
+    logo: "/brands/sparkfun.png",
     link: "/products?search=sparkfun",
   },
 ]
@@ -41,14 +41,14 @@ export default function BrandShowcase() {
           <Link
             key={index}
             href={brand.link}
-            className="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-md transition-shadow group"
+            className="flex items-center justify-center  bg-white rounded-lg hover:shadow-md transition-shadow group"
           >
             <Image
             unoptimized
               src={brand.logo || "/placeholder.svg"}
               alt={brand.name}
-              width={120}
-              height={80}
+              width={200}
+              height={100}
               className="object-contain group-hover:scale-105 transition-transform"
             />
           </Link>

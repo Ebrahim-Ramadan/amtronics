@@ -177,7 +177,7 @@ export default function RootLayout({
   src="//unpkg.com/react-scan/dist/auto.global.js"
 ></script>
       </head> */}
-      <body>
+      <body className="bg-[#FBFAF9]">
         <WishlistProvider>
           <CartProvider>
             <SavedAddressesProvider>
