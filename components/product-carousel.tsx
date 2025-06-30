@@ -191,7 +191,7 @@ function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, s
               </Badge>
             )}
             {type === "bestsellers" && (
-              <Badge className="absolute top-2 left-2 bg-[#FEEE00] text-black">
+              <Badge className="absolute top-2 z-50 left-2 bg-[#FEEE00] text-black text-xs">
                 #{products.indexOf(product) + 1} {isArabic ? "الأكثر مبيعاً" : "Best Seller"}
               </Badge>
             )}
