@@ -181,7 +181,7 @@ export default function RootLayout({
         <WishlistProvider>
           <CartProvider>
             <SavedAddressesProvider>
-              <TopPromotionalBanner />
+              {/* <TopPromotionalBanner /> */}
               <Suspense>
                 <Header />
               </Suspense>
