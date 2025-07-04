@@ -244,6 +244,11 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
   const [showCheck, setShowCheck] = useState<{ [id: string]: boolean }>({})
   const [currentIndex, setCurrentIndex] = useState(0)
 
+  // Touch gesture state
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
+  const carouselRef = useRef<HTMLDivElement>(null)
+
   const addToCart = (product: Product) => {
     setAddLoading((prev) => ({ ...prev, [product._id]: true }))
     setShowCheck((prev) => ({ ...prev, [product._id]: false }))
@@ -258,6 +263,31 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
 
   const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % Math.max(1, products.length - 4))
   const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + Math.max(1, products.length - 4)) % Math.max(1, products.length - 4))
+
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const threshold = 50; // Minimum px to be considered a swipe
+    if (distance > threshold && currentIndex < products.length - 4) {
+      // Swiped left
+      nextSlide();
+    } else if (distance < -threshold && currentIndex > 0) {
+      // Swiped right
+      prevSlide();
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
 
   return (
     <div className={`${bgColor} rounded-lg p-3 md:p-6 relative shadow-xs hover:shadow-sm transition-shadow duration-300`}>
@@ -287,8 +317,12 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
 
       <div className="overflow-hidden">
         <div
+          ref={carouselRef}
           className="flex gap-4 transition-transform duration-300"
           style={{ transform: `translateX(-${currentIndex * 272}px)` }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {products.map((product) => (
             <CarouselProductCard
