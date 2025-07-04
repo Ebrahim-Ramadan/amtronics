@@ -97,7 +97,7 @@ export const metadata: Metadata = {
     "أجهزة مفتوحة المصدر الكويت",
   ],
   applicationName: "AMTRONICS",
-  authors: [{ name: "OSOSS", url: "https://ososs.com/ar" }],
+  // authors: [{ name: "OSOSS", url: "https://ososs.com/ar" }],
   generator: "OSOSS",
   creator: "OSOSS",
   publisher: "OSOSS",
@@ -119,10 +119,10 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://amtronics.vercel.app",
+    canonical: "https://amtronics.co",
     languages: {
-      "en-US": "https://amtronics.vercel.app/",
-      "ar-KW": "https://amtronics.vercel.app/",
+      "en-US": "https://amtronics.co/",
+      "ar-KW": "https://amtronics.co/",
     },
   },
   openGraph: {
@@ -133,19 +133,19 @@ export const metadata: Metadata = {
     description:
       "Shop premium electronics, educational kits, Raspberry Pi, and lab equipment. Free delivery in Kuwait. أمترونيكس - متجر الإلكترونيات والأطقم التعليمية",
     type: "website",
-    url: "https://amtronics.vercel.app",
+    url: "https://amtronics.co",
     locale: "en_US",
     alternateLocale: "ar_KW",
     siteName: "Amtronics",
     images: [
       {
-        url: "https://amtronics.vercel.app/og-image-en.jpg",
+        url: "https://amtronics.co/og-image-en.jpg",
         width: 1200,
         height: 630,
         alt: "Amtronics Electronics Store",
       },
       {
-        url: "https://amtronics.vercel.app/og-image-ar.jpg",
+        url: "https://amtronics.co/og-image-ar.jpg",
         width: 1200,
         height: 630,
         alt: "أمترونيكس - متجر الإلكترونيات",
@@ -157,7 +157,7 @@ export const metadata: Metadata = {
     title: "Amtronics - Electronics & Educational Kits Store",
     description:
       "Shop premium electronics, educational kits, Raspberry Pi, and lab equipment. Free delivery in Kuwait.",
-    images: ["https://amtronics.vercel.app/og-image-en.jpg"],
+    images: ["https://amtronics.co/og-image-en.jpg"],
   },
 };
 
