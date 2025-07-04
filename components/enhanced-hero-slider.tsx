@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/lib/context"
 import Link from "next/link"
+import { STATIC_PRODUCTS } from "@/lib/mock-products"
+
+const getRandomProducts = <T,>(arr: T[], count: number): T[] => {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random())
+  return shuffled.slice(0, count)
+}
 
 const heroSlides = [
   {
@@ -20,11 +26,12 @@ const heroSlides = [
     image: "/hero-slider/electronics-lab-essentials-slide-imae.webp",
     bgColor: "bg-gradient-to-r from-blue-800 via-purple-700 to-indigo-700",
     link: "/products?category=Kits",
-    products: [
-      { name: "Arduino Uno", price: "15.99", image: "/hero-slider/arduino.webp?height=200&width=100" },
-      { name: "Raspberry Pi 4", price: "89.99", image: "/hero-slider/Raspberry-Pi.webp?height=100&width=100" },
-      { name: "Breadboard Kit", price: "12.50", image: "/hero-slider/breadboard-kit.webp?height=100&width=100" },
-    ],
+    products: getRandomProducts(STATIC_PRODUCTS.bestsellers, 3).map(p => ({
+      id: p._id,
+      name: p.en_name,
+      price: p.price.toFixed(2),
+      image: Array.isArray(p.image) ? p.image[0] : (p.image?.split(",")[0] || "/placeholder.svg"),
+    })),
   },
   {
     id: 2,
@@ -37,11 +44,12 @@ const heroSlides = [
     image: "/hero-slider/smart-home-revolution-slide-image.webp",
     bgColor: "bg-gradient-to-r from-green-700 via-emerald-600 to-teal-700",
     link: "/products?search=sensor",
-    products: [
-      { name: "Motion Sensor", price: "8.99", image: "/hero-slider/motion-sensor.webp?height=100&width=100" },
-      { name: "WiFi Module", price: "25.99", image: "/hero-slider/wifi.webp?height=100&width=100" },
-      { name: "Smart Relay", price: "18.50", image: "/hero-slider/smart-relay.webp?height=100&width=100" },
-    ],
+    products: getRandomProducts(STATIC_PRODUCTS.deals, 3).map(p => ({
+      id: p._id,
+      name: p.en_name,
+      price: p.price.toFixed(2),
+      image: Array.isArray(p.image) ? p.image[0] : (p.image?.split(",")[0] || "/placeholder.svg"),
+    })),
   },
   {
     id: 3,
@@ -54,11 +62,12 @@ const heroSlides = [
     image: "/hero-slider/soldering-slide-image.webp",
     bgColor: "bg-gradient-to-r from-orange-700 via-red-600 to-pink-600",
     link: "/products?featured=true",
-    products: [
-      { name: "Lab Kit Pro", price: "45.99", image: "/hero-slider/lab-kit-pro.webp?height=100&width=100" },
-      { name: "Multimeter", price: "32.99", image: "/hero-slider/multimeter.webp?height=100&width=100" },
-      { name: "Soldering Kit", price: "28.50", image: "/hero-slider/soldering-kit.webp?height=100&width=100" },
-    ],
+    products: getRandomProducts(STATIC_PRODUCTS.recommended, 3).map(p => ({
+      id: p._id,
+      name: p.en_name,
+      price: p.price.toFixed(2),
+      image: Array.isArray(p.image) ? p.image[0] : (p.image?.split(",")[0] || "/placeholder.svg"),
+    })),
   },
 ]
 
@@ -197,7 +206,7 @@ export default function EnhancedHeroSlider() {
               {/* Featured Products */}
               <div className="flex gap-3 md:gap-4  overflow-x-auto py-2">
                 {slideData.products.map((product, idx) => (
-                  <div key={idx} className="bg-white/10 backdrop-blur-sm rounded-lg p-2  min-w-[100px] h-fit text-center">
+                  <a href={`/products/${product.id}`} key={idx} className="bg-white/10 backdrop-blur-sm rounded-lg p-2  min-w-[100px] h-fit text-center">
                     <Image
                       src={product.image || "/placeholder.svg"}
                       alt={product.name}
@@ -209,7 +218,7 @@ export default function EnhancedHeroSlider() {
                     />
                     <p className="text-xs md:text-sm font-medium text-balance">{product.name}</p>
                     <p className="text-sm md:text-base font-bold text-yellow-300">{product.price} KD</p>
-                  </div>
+                  </a>
                 ))}
               </div>
 

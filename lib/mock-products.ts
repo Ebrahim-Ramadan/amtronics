@@ -205,7 +205,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "ave_cost": 3.5
     },
     {
-      "_id": "2091114",
+      "_id": "6837f9ab571e0fa754eb5c2f",
       "id": 2091114,
       "sku": "12019",
       "en_name": "LCD 20x4 i2C",
@@ -219,7 +219,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "en_category": "LCD",
       "ar_category": "شاشات LCD",
       "price": 4.9,
-      "image": "/placeholder.svg",
+      "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/81735205603676d22e3095cf0_61139857.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/01735205601676d22e1b26737_55137842.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735205600676d22e0f03a71_29334887.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11735205602676d22e26d3935_54470013.jpg",
       "quantity_on_hand": 75,
       "sold_quantity": 175,
       "visible_in_catalog": 1,
@@ -230,7 +230,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "ave_cost": 3.6
     },
     {
-      "_id": "2091115",
+      "_id": "6837f9ab571e0fa754eb5c75",
       "id": 2091115,
       "sku": "6005",
       "en_name": "Force Sensor FSR406",
@@ -244,7 +244,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "en_category": "Force",
       "ar_category": "قوة",
       "price": 2.6,
-      "image": "/placeholder.svg",
+      "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735059624676ae8a85e0075_37589883.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/81735059623676ae8a7eae649_94411536.jpg",
       "quantity_on_hand": 60,
       "sold_quantity": 120,
       "visible_in_catalog": 1,
