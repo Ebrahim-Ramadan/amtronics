@@ -110,12 +110,12 @@ export default function EnhancedHeroSlider() {
   }, [])
 
   // Slide auto-advance
-  useEffect(() => {
-    const timer = setInterval(() => {
-      handleNextSlide()
-    }, 6000)
-    return () => clearInterval(timer)
-  }, [currentSlide])
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     handleNextSlide()
+  //   }, 6000)
+  //   return () => clearInterval(timer)
+  // }, [currentSlide])
 
   // Slide transition helpers
   const handleNextSlide = () => {
@@ -189,7 +189,7 @@ export default function EnhancedHeroSlider() {
         className={`absolute inset-0 w-full h-full ${slideData.bgColor} transition-all duration-700 ${transitionClass}`}
         style={{ willChange: isSliding ? 'transform' : undefined }}
       >
-        <div className="container mx-auto h-full flex items-center px-2">
+        <div className=" md:px-12 w-full h-full flex items-center px-2">
           <div className="grid lg:grid-cols-2 gap-4 items-center w-full">
             {/* Left Content */}
             <div className={`text-white ${isArabic ? "text-right" : "text-left"}`}>
@@ -204,7 +204,7 @@ export default function EnhancedHeroSlider() {
               </p>
 
               {/* Featured Products */}
-              <div className="flex gap-3 md:gap-4  overflow-x-auto py-2">
+              <div className="flex gap-2 md:gap-4  overflow-x-auto py-2">
                 {slideData.products.map((product, idx) => (
                   <a href={`/products/${product.id}`} key={idx} className="bg-white/10 backdrop-blur-sm rounded-lg p-2  min-w-[100px] h-fit text-center">
                     <Image
@@ -214,9 +214,12 @@ export default function EnhancedHeroSlider() {
                       height={60}
                       quality={50}
                       priority
-                      className="mx-auto mb-2 rounded-sm"
+                      className=" mb-2 rounded-sm"
                     />
-                    <p className="text-xs md:text-sm font-medium text-balance">{product.name}</p>
+                    <p className="text-xs md:text-sm font-medium text-balance">
+  {product.name.length > 30 ? product.name.slice(0, 30) + '...' : product.name}
+</p>
+
                     <p className="text-sm md:text-base font-bold text-yellow-300">{product.price} KD</p>
                   </a>
                 ))}
