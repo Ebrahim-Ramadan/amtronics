@@ -13,6 +13,7 @@ async function fetchProjects() {
 }
 
 export default async function Home() {
+  
   const projects = await fetchProjects();
   console.log('projects', projects);
   return (
