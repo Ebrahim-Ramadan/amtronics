@@ -9,15 +9,16 @@ import Image from "next/image"
 import { useCart } from "@/lib/context"
 import { toast } from "sonner"
 import { useState } from "react"
-import { Product } from "@/lib/types"
+import type { WishlistItem } from "@/lib/wishlist-context";
+import type { Product } from "@/lib/types";
 
 export default function WishlistPage() {
   const { state, dispatch } = useWishlist()
   const { state: cartState, dispatch: cartDispatch } = useCart()
   const isArabic = cartState.language === "ar"
 
-  const removeItem = (productId: string) => {
-    dispatch({ type: "REMOVE_ITEM", payload: productId })
+  const removeItem = (itemId: string) => {
+    dispatch({ type: "REMOVE_ITEM", payload: itemId })
   }
 
   const [showCheck, setShowCheck] = useState<{ [key: string]: boolean }>({})
@@ -33,6 +34,19 @@ export default function WishlistPage() {
       setShowCheck((prevState) => ({ ...prevState, [product._id]: true }))
       setTimeout(() => setShowCheck((prevState) => ({ ...prevState, [product._id]: false })), 2000)
     }, 200)
+  }
+
+  const addProjectToCart = (project: any) => {
+    if (!project.engineers || !Array.isArray(project.engineers)) return;
+    // Gather all products from all bundles
+    const allProducts = project.engineers.flatMap((eng: any) =>
+      (eng.bundle || []).map((b: any) => b.product).filter((p: any) => !!p)
+    );
+    if (!allProducts.length) return toast.error(isArabic ? "لا توجد منتجات في المشروع" : "No products in project");
+    allProducts.forEach((product: Product) => {
+      cartDispatch({ type: "ADD_ITEM", payload: product });
+    });
+    toast.success(isArabic ? "تمت إضافة منتجات المشروع إلى السلة" : "Project products added to cart");
   }
 
   const clearWishlist = () => {
@@ -77,82 +91,154 @@ export default function WishlistPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {state.items.map((item) => (
-          <Card key={item._id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <Link href={`/products/${item._id}`}>
-                  <Image
-                    src={item.image.split(",")[0] || "/placeholder.svg?height=150&width=150"}
-                    alt={isArabic ? item.ar_name : item.en_name}
-                    width={150}
-                    height={150}
-                    className="object-contain rounded-lg"
-                  />
-                </Link>
-                <Link href={`/products/${item._id}`} className="hover:underline">
-                  <h3 className="font-semibold text-lg line-clamp-2 leading-5">
-                    {isArabic ? item.ar_name : item.en_name}
-                  </h3>
-                </Link>
-                <p className="text-gray-500 text-sm">{isArabic ? item.ar_brand : item.en_brand}</p>
-              
-                <div className="flex items-center gap-2">
-  <p className="text-gray-600 font-semibold text-base">
-    {Number(item.price - (item.discount && item.discount > 0
-      ? item.discount_type === "percentage"
-        ? item.price * (item.discount / 100)
-        : item.discount
-      : 0
-    )).toFixed(2)} {isArabic ? "د.ك" : "KD"}
-  </p>
-  {/* {item.discount && item.discount > 0 && (
-    <p className="text-red-500 text-sm line-through">
-      {item.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-    </p>
-  )} */}
-</div>
-                <div className="flex w-full gap-2">
-                  <Button
-                    onClick={() => addToCart(item)}
-                    size="sm"
-                    className="flex-grow w-3/4"
-                    disabled={item.quantity_on_hand === 0 || addToCartLoading[item._id]}
-                  >
-                    {addToCartLoading[item._id] ? (
-                      <span className="h-4 w-4 mr-2 animate-spin border-2 border-gray-300 border-t-transparent rounded-full inline-block align-middle"></span>
-                    ) : showCheck[item._id] ? (
-                      <>
-                        <CheckCheck className="h-4 w-4 mr-2 text-green-500" />
-                        {isArabic ? "تمت الإضافة" : "Added"}
-                      </>
-                    ) : (
-                      <>
-                        <Image
-                          src="/quick-atc-add-to-cart-grey.svg"
-                          width={20}
-                          height={20}
-                          alt={isArabic ? "أضف إلى السلة" : "Add to Cart"}
-                        />
-                        {isArabic ? "أضف للسلة" : "Add to Cart"}
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeItem(item._id)}
-                    className="text-red-600 hover:text-red-700 w-1/4"
-                    aria-label={isArabic ? "إزالة من قائمة الرغبات" : "Remove from wishlist"}
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {state.items.map((item: WishlistItem) => {
+          if ((item as any).type === 'project') {
+            // Project wishlist card
+            const project = item as any;
+            const engineerCount = (project.engineers || []).length;
+            const bundleCount = (project.engineers || []).reduce((sum: number, eng: any) => sum + ((eng.bundle || []).length), 0);
+            const productCount = (project.engineers || []).reduce((sum: number, eng: any) => sum + (eng.bundle ? eng.bundle.filter((b: any) => b.product).length : 0), 0);
+            return (
+              <Card key={project._id} className="overflow-hidden hover:shadow-lg transition-shadow border-2 border-[#FEEE00]">
+                <CardContent className="p-4">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <h3 className="font-bold text-lg text-[#0F172B]">{isArabic ? "مشروع:" : "Project:"} {project.name}</h3>
+                        <div className="flex gap-2 mt-1">
+                          <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]">{engineerCount} {isArabic ? "مهندس" : "Engineers"}</span>
+                          <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-200">{bundleCount} {isArabic ? "حزمة" : "Bundles"}</span>
+                          <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium border border-green-200">{productCount} {isArabic ? "منتج" : "Products"}</span>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeItem(project._id)}
+                        className="text-red-600 hover:text-red-700"
+                        aria-label={isArabic ? "إزالة المشروع" : "Remove project"}
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {(project.engineers || []).map((eng: any, i: number) => (
+                        <span key={i} className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]">{eng.name || eng}</span>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-1 gap-2">
+                      {(project.engineers || []).flatMap((eng: any) =>
+                        (eng.bundle || []).map((b: any, bidx: number) => b.product ? (
+                          <div key={bidx} className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2">
+                            <Image
+                              src={b.product.image?.split(',')[0] || "/placeholder.svg?height=128&width=128"}
+                              alt={isArabic ? b.product.ar_name : b.product.en_name}
+                              width={48}
+                              height={48}
+                              className="rounded-md object-contain"
+                            />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-[#0F172B]">{isArabic ? b.product.ar_name : b.product.en_name}</p>
+                              <p className="text-xs text-gray-600">{b.product.price?.toFixed(2)} {isArabic ? "د.ك" : "KD"}</p>
+                            </div>
+                          </div>
+                        ) : null)
+                      )}
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        onClick={() => addProjectToCart(project)}
+                        size="sm"
+                        className="flex-1"
+                      >
+                        {isArabic ? "أضف منتجات المشروع للسلة" : "Add Project to Cart"}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          } else {
+            // Product wishlist card
+            const product = item as Product;
+            return (
+              <Card key={product._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex flex-col items-center text-center space-y-2">
+                    <Link href={`/products/${product._id}`}>
+                      <Image
+                        src={product.image.split(",")[0] || "/placeholder.svg?height=150&width=150"}
+                        alt={isArabic ? product.ar_name : product.en_name}
+                        width={150}
+                        height={150}
+                        className="object-contain rounded-lg"
+                      />
+                    </Link>
+                    <Link href={`/products/${product._id}`} className="hover:underline">
+                      <h3 className="font-semibold text-lg line-clamp-2 leading-5">
+                        {isArabic ? product.ar_name : product.en_name}
+                      </h3>
+                    </Link>
+                    <p className="text-gray-500 text-sm">{isArabic ? product.ar_brand : product.en_brand}</p>
+                  
+                    <div className="flex items-center gap-2">
+      <p className="text-gray-600 font-semibold text-base">
+        {Number(product.price - (product.discount && product.discount > 0
+          ? product.discount_type === "percentage"
+            ? product.price * (product.discount / 100)
+            : product.discount
+          : 0
+        )).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+      </p>
+      {/* {product.discount && product.discount > 0 && (
+        <p className="text-red-500 text-sm line-through">
+          {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+        </p>
+      )} */}
+    </div>
+                    <div className="flex w-full gap-2">
+                      <Button
+                        onClick={() => addToCart(product)}
+                        size="sm"
+                        className="flex-grow w-3/4"
+                        disabled={product.quantity_on_hand === 0 || addToCartLoading[product._id]}
+                      >
+                        {addToCartLoading[product._id] ? (
+                          <span className="h-4 w-4 mr-2 animate-spin border-2 border-gray-300 border-t-transparent rounded-full inline-block align-middle"></span>
+                        ) : showCheck[product._id] ? (
+                          <>
+                            <CheckCheck className="h-4 w-4 mr-2 text-green-500" />
+                            {isArabic ? "تمت الإضافة" : "Added"}
+                          </>
+                        ) : (
+                          <>
+                            <Image
+                              src="/quick-atc-add-to-cart-grey.svg"
+                              width={20}
+                              height={20}
+                              alt={isArabic ? "أضف إلى السلة" : "Add to Cart"}
+                            />
+                            {isArabic ? "أضف للسلة" : "Add to Cart"}
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeItem(product._id)}
+                        className="text-red-600 hover:text-red-700 w-1/4"
+                        aria-label={isArabic ? "إزالة من قائمة الرغبات" : "Remove from wishlist"}
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          }
+        })}
       </div>
     </div>
   )

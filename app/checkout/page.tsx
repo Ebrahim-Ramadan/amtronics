@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { LoadingDots } from "@/components/ui/loading-spinner"
 import { GovernateswithRegions } from "@/lib/utils"
+import type { Product } from "@/lib/types"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -174,21 +175,21 @@ export default function CheckoutPage() {
                   ? "Full Name"
                   : field === "phone"
                     ? "Phone Number"
-                    : field === "email"
-                      ? "Email Address"
-                      : field === "country"
-                        ? "Country"
-                        : field === "city"
-                          ? "City"
-                          : field === "area"
-                            ? "Area"
-                            : field === "block"
-                              ? "Block"
-                              : field === "street"
-                                ? "Street"
-                                : field === "house"
-                                  ? "House Number"
-                                  : field
+                  : field === "email"
+                    ? "Email Address"
+                  : field === "country"
+                    ? "Country"
+                  : field === "city"
+                    ? "City"
+                  : field === "area"
+                    ? "Area"
+                  : field === "block"
+                    ? "Block"
+                  : field === "street"
+                    ? "Street"
+                  : field === "house"
+                    ? "House Number"
+                  : field
               } field.`,
         )
         setLoading(false)
@@ -606,39 +607,90 @@ export default function CheckoutPage() {
             </div>
 
             {/* Item List in Order Summary */}
-            {state.items.map((item) => (
-              <div key={item.product._id} className="flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
-                <div className="flex items-center gap-3 w-full">
-                  <div className="relative w-24 h-24 rounded-xl shadow-sm">
-                    {item.product.image ? (
-                      <img
-                        src={item.product.image.split(",")[0]}
-                        alt={isArabic ? item.product.ar_name : item.product.en_name}
-                        className="object-cover w-full h-full"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-500">
-                        <span>{isArabic ? "لا صورة" : "No Image"}</span>
+            {/* Cast to (CartItem | ProjectCartItem)[] for mixed cart support in summary */}
+            <>
+              {((state.items as Array<any>) as (import("@/lib/types").CartItem | import("@/lib/types").ProjectCartItem)[]).map((item) => {
+                if ("type" in item && item.type === "project-bundle") {
+                  // Project bundle summary
+                  const engineerCount = (item.engineerNames || []).length;
+                  // For bundles, we don't have explicit bundle objects, so use engineerNames.length as bundle count
+                  const bundleCount = engineerCount; // If you have bundle info, adjust accordingly
+                  const productCount = item.products.length;
+                  return (
+                    <div key={item.projectId} className="flex flex-col gap-2 border-b pb-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#0F172B]">{isArabic ? "مشروع:" : "Project:"} {item.projectName}</span>
+                        <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]">{engineerCount} {isArabic ? "مهندس" : "Engineers"}</span>
+                        <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-200">{bundleCount} {isArabic ? "حزمة" : "Bundles"}</span>
+                        <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium border border-green-200">{productCount} {isArabic ? "منتج" : "Products"}</span>
                       </div>
-                    )}
-                    <span className="z-10 absolute -top-2 -right-2 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
-                      x{item.quantity}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-2 leading-tight">
-                    <span className="font-semibold">
-                      {isArabic ? item.product.ar_name : item.product.en_name}
-                    </span>
-                    <span>
-                      {item.product.price} {isArabic ? "د.ك" : "KD"}
-                    </span>
-                  </div>
-                </div>
-                <span className="font-semibold">
-                  {(item.product.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                </span>
-              </div>
-            ))}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                        {item.products.map((prod: Product, idx: number) => (
+                          <div key={prod._id + idx} className="flex items-center gap-2">
+                            <div className="relative w-14 h-14 rounded-xl shadow-sm">
+                              <img
+                                src={prod.image?.split(",")[0] || "/placeholder.svg?height=64&width=64"}
+                                alt={isArabic ? prod.ar_name : prod.en_name}
+                                className="object-cover w-full h-full rounded-md"
+                              />
+                              <span className="z-10 absolute -top-2 -right-2 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
+                                x{item.quantity}
+                              </span>
+                            </div>
+                            <div className="flex flex-col gap-1 leading-tight">
+                              <span className="font-semibold">{isArabic ? prod.ar_name : prod.en_name}</span>
+                              <span>{prod.price} {isArabic ? "د.ك" : "KD"}</span>
+                            </div>
+                            <span className="font-semibold ml-auto">
+                              {(prod.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex justify-end mt-2">
+                        <span className="font-bold text-base">{(item.products.reduce((sum: number, p: Product) => sum + p.price, 0) * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}</span>
+                      </div>
+                    </div>
+                  );
+                } else if ("product" in item) {
+                  // Regular product summary
+                  return (
+                    <div key={item.product._id} className="flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="relative w-24 h-24 rounded-xl shadow-sm">
+                          {item.product.image ? (
+                            <img
+                              src={item.product.image.split(",")[0]}
+                              alt={isArabic ? item.product.ar_name : item.product.en_name}
+                              className="object-cover w-full h-full"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-500">
+                              <span>{isArabic ? "لا صورة" : "No Image"}</span>
+                            </div>
+                          )}
+                          <span className="z-10 absolute -top-2 -right-2 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
+                            x{item.quantity}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-2 leading-tight">
+                          <span className="font-semibold">
+                            {isArabic ? item.product.ar_name : item.product.en_name}
+                          </span>
+                          <span>
+                            {item.product.price} {isArabic ? "د.ك" : "KD"}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="font-semibold">
+                        {(item.product.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                      </span>
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            </>
             {/* Totals */}
             <div className="border-t border-[#00B8DB] pt-4">
               <div className="flex justify-between text-base">

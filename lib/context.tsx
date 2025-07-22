@@ -3,10 +3,10 @@
 import type React from "react"
 
 import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react"
-import type { CartItem, Product } from "./types"
+import type { CartItem, Product, ProjectCartItem } from "./types"
 
 interface CartState {
-  items: CartItem[]
+  items: (CartItem | ProjectCartItem)[]
   total: number
   language: "en" | "ar"
 }
@@ -18,6 +18,7 @@ type CartAction =
   | { type: "CLEAR_CART" }
   | { type: "SET_LANGUAGE"; payload: "en" | "ar" }
   | { type: "LOAD_CART"; payload: CartState }
+  | { type: "ADD_PROJECT_BUNDLE"; payload: ProjectCartItem }
 
 const CartContext = createContext<{
   state: CartState
@@ -26,13 +27,20 @@ const CartContext = createContext<{
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
-    case "ADD_ITEM":
-      const existingItem = state.items.find((item) => item.product._id === action.payload._id)
+    case "ADD_ITEM": {
+      const existingItem = state.items.find((item) => {
+        if ("product" in item) {
+          return item.product._id === action.payload._id
+        }
+        return false
+      }) as CartItem | undefined
       if (existingItem) {
         return {
           ...state,
           items: state.items.map((item) =>
-            item.product._id === action.payload._id ? { ...item, quantity: item.quantity + 1 } : item,
+            "product" in item && item.product._id === action.payload._id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item,
           ),
           total: state.total + action.payload.price,
         }
@@ -43,25 +51,45 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           total: state.total + action.payload.price,
         }
       }
-    case "REMOVE_ITEM":
-      const itemToRemove = state.items.find((item) => item.product._id === action.payload)
+    }
+    case "REMOVE_ITEM": {
+      const itemToRemove = state.items.find((item) => {
+        if ("product" in item) {
+          return item.product._id === action.payload
+        }
+        return false
+      }) as CartItem | undefined
       return {
         ...state,
-        items: state.items.filter((item) => item.product._id !== action.payload),
+        items: state.items.filter((item) => {
+          if ("product" in item) {
+            return item.product._id !== action.payload
+          }
+          return true
+        }),
         total: state.total - (itemToRemove ? itemToRemove.product.price * itemToRemove.quantity : 0),
       }
-    case "UPDATE_QUANTITY":
-      const item = state.items.find((item) => item.product._id === action.payload.productId)
+    }
+    case "UPDATE_QUANTITY": {
+      const item = state.items.find((item) => {
+        if ("product" in item) {
+          return item.product._id === action.payload.productId
+        }
+        return false
+      }) as CartItem | undefined
       if (!item) return state
-
       const quantityDiff = action.payload.quantity - item.quantity
       return {
         ...state,
-        items: state.items.map((item) =>
-          item.product._id === action.payload.productId ? { ...item, quantity: action.payload.quantity } : item,
-        ),
+        items: state.items.map((item) => {
+          if ("product" in item && item.product._id === action.payload.productId) {
+            return { ...item, quantity: action.payload.quantity }
+          }
+          return item
+        }),
         total: state.total + item.product.price * quantityDiff,
       }
+    }
     case "CLEAR_CART":
       if (typeof window !== 'undefined') {
         localStorage.removeItem("amtronics_promo_code");
@@ -78,6 +106,30 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       }
     case "LOAD_CART":
       return action.payload
+    case "ADD_PROJECT_BUNDLE": {
+      // Only one project bundle of the same projectId at a time
+      const existing = state.items.find(
+        (item) => "type" in item && item.type === "project-bundle" && item.projectId === action.payload.projectId
+      ) as ProjectCartItem | undefined
+      if (existing) {
+        // If already in cart, just increase quantity
+        return {
+          ...state,
+          items: state.items.map((item) =>
+            "type" in item && item.type === "project-bundle" && item.projectId === action.payload.projectId
+              ? { ...item, quantity: item.quantity + action.payload.quantity }
+              : item
+          ),
+          total: state.total + action.payload.products.reduce((sum, p) => sum + p.price, 0) * action.payload.quantity,
+        }
+      } else {
+        return {
+          ...state,
+          items: [...state.items, action.payload],
+          total: state.total + action.payload.products.reduce((sum, p) => sum + p.price, 0) * action.payload.quantity,
+        }
+      }
+    }
     default:
       return state
   }

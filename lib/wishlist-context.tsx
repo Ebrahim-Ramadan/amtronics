@@ -5,37 +5,54 @@ import { createContext, useContext, useReducer, useEffect, type ReactNode } from
 import { Product } from "@/lib/types"
 import { toast } from "sonner"
 
+export interface WishlistProject {
+  _id: string;
+  name: string;
+  type: 'project';
+  engineers?: any[];
+  products?: import("@/lib/types").Product[];
+}
+
+export type WishlistItem = Product | WishlistProject;
+
 interface WishlistState {
-  items: Product[]
+  items: WishlistItem[];
 }
 
 type WishlistAction =
-  | { type: "ADD_ITEM"; payload: Product }
+  | { type: "ADD_ITEM"; payload: WishlistItem }
   | { type: "REMOVE_ITEM"; payload: string }
   | { type: "CLEAR_WISHLIST" }
-  | { type: "LOAD_WISHLIST"; payload: WishlistState }
+  | { type: "LOAD_WISHLIST"; payload: WishlistState };
 
 const wishlistReducer = (state: WishlistState, action: WishlistAction): WishlistState => {
   switch (action.type) {
     case "ADD_ITEM":
-      // Prevent adding duplicates
-      if (state.items.find(item => item._id === action.payload._id)) {
-        return state
+      // Prevent adding duplicates (by _id and type)
+      if (state.items.find(item => item._id === action.payload._id && (item as any).type === (action.payload as any).type)) {
+        return state;
       }
-      return { ...state, items: [...state.items, action.payload] }
+      // If adding a project, ensure products are included
+      if ((action.payload as any).type === 'project' && !(action.payload as any).products) {
+        // Try to get products from engineers if not present
+        const engineers = (action.payload as any).engineers || [];
+        const products = engineers.flatMap((eng: any) => (eng.bundle || []).map((b: any) => b.product).filter((p: any) => !!p));
+        return { ...state, items: [...state.items, { ...action.payload, products }] };
+      }
+      return { ...state, items: [...state.items, action.payload] };
     case "REMOVE_ITEM":
       return {
         ...state,
         items: state.items.filter(item => item._id !== action.payload),
-      }
+      };
     case "CLEAR_WISHLIST":
-      return { ...state, items: [] }
+      return { ...state, items: [] };
     case "LOAD_WISHLIST":
-      return action.payload
+      return action.payload;
     default:
-      return state
+      return state;
   }
-}
+};
 
 const saveWishlistToStorage = (wishlistState: WishlistState) => {
   if (typeof window !== "undefined") {

@@ -31,6 +31,17 @@ export interface CartItem {
   quantity: number
 }
 
+// New: ProjectCartItem for project bundles
+export interface ProjectCartItem {
+  type: 'project-bundle';
+  projectId: string;
+  projectName: string;
+  engineerNames: string[];
+  bundleIds: string[];
+  products: Product[];
+  quantity: number;
+}
+
 export interface PromoCode {
   _id: string
   code: string
