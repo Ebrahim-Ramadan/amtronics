@@ -10,6 +10,7 @@ import Footer from "@/components/footer";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import { SavedAddressesProvider } from "@/lib/saved-addresses-context";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ["latin"] });
 const notoSansArabic = Noto_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "700"] });
@@ -191,6 +192,7 @@ export default function RootLayout({
           </CartProvider>
         </WishlistProvider>
         <Toaster richColors={true} position="bottom-right" toastOptions={{ duration: 3000 }} />
+        <Analytics/>
       </body>
     </html>
   );
