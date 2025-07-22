@@ -182,7 +182,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
         </div>
          {/* Quick action buttons (outside dialog) */}
          <div className="flex gap-2 mt-4 flex flex-col md:flex-row items-center justify-between  w-full">
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full">
           <Button
             size="sm"
             variant="default"
@@ -221,7 +221,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
         </div>
       </div>
 
-      <DialogContent className="sm:max-w-[650px] bg-white rounded-2xl p-6 space-y-6">
+      <DialogContent className="sm:max-w-[650px] bg-white rounded-2xl p-6 ">
         <DialogHeader>
           <div className="flex items-center justify-between gap-2">
             <DialogTitle className="text-2xl font-bold text-[#0F172B]">
@@ -286,8 +286,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
           </div>
         </div>
         <div className="border-t pt-4">
-          <h4 className="text-lg font-semibold text-[#0F172B] mb-2">Total Price</h4>
-          <p className="text-lg font-semibold text-[#0F172B]">${totalPrice.toFixed(2)}</p>
+          <h4 className="text-lg font-semibold text-[#0F172B] mb-2">Total Price ${totalPrice.toFixed(2)}</h4>
         </div>
         <div className="flex gap-4 pt-4 border-t">
           <Button
