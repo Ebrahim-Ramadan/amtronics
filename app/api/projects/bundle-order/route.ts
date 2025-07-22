@@ -52,10 +52,14 @@ export async function POST(request: Request) {
       promoCode: promoCode || "",
       status: "pending",
       createdAt: new Date(),
-      projectBundle: {
+       projectBundle: {
+        type: 'project-bundle',
         projectId,
+        projectName: project.name,
         engineerIndex,
-        bundleIndex
+        bundleIndex,
+        engineerNames: [engineer.name],
+        bundleIds: [bundle.id || bundle._id?.toString()]
       }
     })
 
@@ -71,4 +75,4 @@ export async function POST(request: Request) {
     console.error("Error placing bundle order:", error)
     return NextResponse.json({ error: "Failed to place bundle order" }, { status: 500 })
   }
-} 
+}

@@ -626,7 +626,7 @@ export default function CheckoutPage() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                         {item.products.map((prod: Product, idx: number) => (
-                          <div key={prod._id + idx} className="flex items-center gap-2">
+                          <div key={prod._id + idx} className="flex items-center gap-2 shadow-xl rounded-xl p-2">
                             <div className="relative w-14 h-14 rounded-xl shadow-sm">
                               <img
                                 src={prod.image?.split(",")[0] || "/placeholder.svg?height=64&width=64"}

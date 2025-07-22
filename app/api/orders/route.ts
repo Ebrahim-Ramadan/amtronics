@@ -22,22 +22,61 @@ export async function POST(request: Request) {
         // Ensure ave_cost is present for each product in items
         const itemsWithAveCost = await Promise.all(
           orderData.items.map(async (item: any) => {
-            if (item.product.ave_cost !== undefined && item.product.ave_cost !== null) {
-              return item
-            }
-            const prodId = item.product._id || item.product.id
-            let dbProduct = null
-            if (ObjectId.isValid(prodId)) {
-              dbProduct = await db.collection("products").findOne({ _id: new ObjectId(prodId) }, { projection: { ave_cost: 1 } })
+            if (item.type === "project-bundle") {
+              // Handle project bundle items
+              const productsWithAveCost = await Promise.all(
+                item.products.map(async (product: any) => {
+                  if (product.ave_cost !== undefined && product.ave_cost !== null) {
+                    return product
+                  }
+                  const prodId = product._id || product.id
+                  let dbProduct = null
+                  if (ObjectId.isValid(prodId)) {
+                    dbProduct = await db.collection("products").findOne(
+                      { _id: new ObjectId(prodId) },
+                      { projection: { ave_cost: 1 } }
+                    )
+                  } else {
+                    dbProduct = await db.collection("products").findOne(
+                      { id: prodId },
+                      { projection: { ave_cost: 1 } }
+                    )
+                  }
+                  return {
+                    ...product,
+                    ave_cost: dbProduct?.ave_cost ?? null,
+                  }
+                })
+              )
+              return {
+                ...item,
+                products: productsWithAveCost,
+              }
             } else {
-              dbProduct = await db.collection("products").findOne({ id: prodId }, { projection: { ave_cost: 1 } })
-            }
-            return {
-              ...item,
-              product: {
-                ...item.product,
-                ave_cost: dbProduct?.ave_cost ?? null,
-              },
+              // Handle regular product items
+              if (item.product.ave_cost !== undefined && item.product.ave_cost !== null) {
+                return item
+              }
+              const prodId = item.product._id || item.product.id
+              let dbProduct = null
+              if (ObjectId.isValid(prodId)) {
+                dbProduct = await db.collection("products").findOne(
+                  { _id: new ObjectId(prodId) },
+                  { projection: { ave_cost: 1 } }
+                )
+              } else {
+                dbProduct = await db.collection("products").findOne(
+                  { id: prodId },
+                  { projection: { ave_cost: 1 } }
+                )
+              }
+              return {
+                ...item,
+                product: {
+                  ...item.product,
+                  ave_cost: dbProduct?.ave_cost ?? null,
+                },
+              }
             }
           })
         )
@@ -84,8 +123,8 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const orderIdsString = searchParams.get('ids');
-    const limit = Number.parseInt(searchParams.get('limit') || '5'); // Default limit to 5
-    const skip = Number.parseInt(searchParams.get('skip') || '0'); // Default skip to 0
+    const limit = Number.parseInt(searchParams.get('limit') || '5');
+    const skip = Number.parseInt(searchParams.get('skip') || '0');
 
     if (!orderIdsString) {
       return NextResponse.json({ error: "No order IDs provided" }, { status: 400 });
@@ -96,7 +135,6 @@ export async function GET(request: Request) {
     const client = await clientPromise;
     const db = client.db("amtronics");
 
-    // Fetch total count first (optional but good for pagination)
     const total = await db.collection("orders").countDocuments({ _id: { $in: ids } });
 
     const orders = await db.collection("orders").find(
@@ -107,7 +145,7 @@ export async function GET(request: Request) {
     .limit(limit)
     .toArray();
 
-    return NextResponse.json({ orders, total }); // Return both orders and total count
+    return NextResponse.json({ orders, total });
   } catch (error) {
     console.error("Error fetching orders:", error);
     return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });

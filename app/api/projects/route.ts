@@ -27,7 +27,7 @@ export async function GET() {
       .collection("products")
       .find(
         { _id: { $in: bundleIds.map((id) => new ObjectId(id)) } },
-        { projection: { name: 1, image: 1, price: 1, _id: 1 } }
+        { projection: { en_name: 1, ar_name: 1, image: 1, price: 1, _id: 1 } }
       )
       .toArray();
 

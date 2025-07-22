@@ -60,6 +60,15 @@ export interface Order {
   status: string
   createdAt: Date
   shippingFee?: number
+  projectBundle?: {
+    type: 'project-bundle'
+    projectId: string
+    projectName: string
+    engineerIndex: number
+    bundleIndex: number
+    engineerNames: string[]
+    bundleIds: string[]
+  }
 }
 
 export interface CustomerInfo {

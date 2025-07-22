@@ -13,9 +13,10 @@ import { useCart } from "@/lib/context";
 import { toast } from "sonner";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { HeartPlus, CheckCheck } from "lucide-react";
+import { HeartPlus } from "lucide-react";
 import { useWishlist } from "@/lib/wishlist-context";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface Bundle {
   id: string;
@@ -31,14 +32,15 @@ interface Project {
   _id: string;
   name: string;
   engineers?: Engineer[];
-  createdAt: string; // simplified since it's already a Date string
+  createdAt: string;
 }
 
 export default function ProjectDialog({ project }: { project: Project }) {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Add loading state
   const { dispatch } = useCart();
   const { state: wishlistState, dispatch: wishlistDispatch } = useWishlist();
+  const router = useRouter();
   const isWishlisted = wishlistState.items.some(item => item._id === project._id);
   const toggleWishlist = () => {
     if (isWishlisted) {
@@ -55,7 +57,6 @@ export default function ProjectDialog({ project }: { project: Project }) {
     eng.bundle.map((b) => {
       const p = b.product;
       if (!p) return null;
-      // Ensure all required Product fields exist
       return {
         _id: b.id,
         id: 0,
@@ -104,37 +105,25 @@ export default function ProjectDialog({ project }: { project: Project }) {
     setOpen(false);
   };
 
-  const handleBuyNow = async () => {
+  const handleBuyNow = () => {
     if (!allProducts.length) return toast.error("No products to buy");
-    setLoading(true);
-    try {
-      // For demo, use the first engineer and first bundle (customize as needed)
-      const engineerIndex = 0;
-      const bundleIndex = 0;
-      const customerInfo = { name: "Quick Buyer", phone: "", email: "", country: "", city: "", area: "", block: "", street: "", house: "" };
-      const res = await fetch("/api/projects/bundle-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectId: project._id,
-          engineerIndex,
-          bundleIndex,
-          customerInfo,
-          promoCode: "",
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success("Order placed successfully!");
-        setOpen(false);
-      } else {
-        toast.error(data.error || "Failed to place order");
-      }
-    } catch (e) {
-      toast.error("Failed to place order");
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true); // Set loading state
+    dispatch({
+      type: "ADD_PROJECT_BUNDLE",
+      payload: {
+        type: "project-bundle",
+        projectId: project._id,
+        projectName: project.name,
+        engineerNames: project.engineers?.map((e) => e.name) || [],
+        bundleIds: project.engineers?.flatMap((e) => e.bundle.map((b) => b.id)) || [],
+        products: allProducts,
+        quantity: 1,
+      },
+    });
+    toast.success("Project bundle added to cart!");
+    setOpen(false);
+    setLoading(false); // Reset loading state
+    router.push("/checkout");
   };
 
   const totalPrice =
@@ -148,67 +137,63 @@ export default function ProjectDialog({ project }: { project: Project }) {
       );
     }, 0) || 0;
 
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <div
         onClick={() => setOpen(true)}
-        className="min-w-[400px] max-w-xs bg-white/80 border border-[#FEEE00] rounded-2xl shadow hover:shadow-xl transition p-6 flex-shrink-0 group relative overflow-hidden  transition-all duration-200 cursor-pointer"
+        className="min-w-[400px] max-w-xs bg-white/80 border border-[#FEEE00] rounded-2xl shadow hover:shadow-xl transition p-6 flex-shrink-0 group relative overflow-hidden transition-all duration-200 cursor-pointer"
         style={{ boxShadow: "0 4px 24px 0 rgba(254,238,0,0.08)" }}
       >
         <h3 className="text-xl font-bold mb-2 text-[#0F172B] group-hover:text-[#00B8DB] transition-colors">
           {project.name}
         </h3>
-        {/* Project details badges */}
         <div className="flex gap-2 mb-2">
-          <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-[10px] font-medium border border-[#FEEE00]">{project.engineers?.length ?? 0} Engineer{(project.engineers?.length ?? 0) === 1 ? '' : 's'}</span>
-          <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-[10px] font-medium border border-blue-200">{project.engineers?.reduce((sum, eng) => sum + (eng.bundle?.length || 0), 0)} Bundles</span>
-          <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-[10px] font-medium border border-green-200">{project.engineers?.reduce((sum, eng) => sum + (eng.bundle?.filter(b => b.product).length || 0), 0)} Products</span>
+          <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-[10px] font-medium border border-[#FEEE00]">
+            {project.engineers?.length ?? 0} Engineer{(project.engineers?.length ?? 0) === 1 ? '' : 's'}
+          </span>
+          <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-[10px] font-medium border border-blue-200">
+            {project.engineers?.reduce((sum, eng) => sum + (eng.bundle?.length || 0), 0)} Bundles
+          </span>
+          <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-[10px] font-medium border border-green-200">
+            {project.engineers?.reduce((sum, eng) => sum + (eng.bundle?.filter(b => b.product).length || 0), 0)} Products
+          </span>
         </div>
-       
         <span className="text-sm text-[#00B8DB] font-semibold mb-1">
-          ({project.engineers?.map((eng, idx) => (
+          {project.engineers?.map((eng, idx) => (
             <span
               key={idx}
               className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]"
             >
               {eng.name}
             </span>
-          ))})
-          {/* {(project.engineers?.length ?? 0) === 1 ? "" : "s"} */}
+          ))}
         </span>
-        <div className="flex flex-wrap gap-1 mt-1">
-          
-        </div>
-         {/* Quick action buttons (outside dialog) */}
-         <div className="flex gap-2 mt-4 flex flex-col md:flex-row items-center justify-between  w-full">
+        <div className="flex gap-2 mt-4 flex flex-col md:flex-row items-center justify-between w-full">
           <div className="flex gap-2 w-full">
-          <Button
-            size="sm"
-            variant="default"
-            className="px-3 py-1 text-xs font-semibold"
-            onClick={e => { e.stopPropagation(); handleAddToCart(); }}
-            disabled={loading}
-          >
-            <Image
-            src={"/quick-atc-add-to-cart-grey.svg"}
-            width={20}
-            height={20}
-            alt="Add to Cart"
-            />
-            Add to Cart
-          </Button>
-         
-          <Button
-            size="sm"
-            variant="secondary"
-            className="px-3 py-1 text-xs font-semibold"
-            onClick={async e => { e.stopPropagation(); await handleBuyNow(); }}
-            disabled={loading}
-          >
-            Buy Now
-          </Button>
-            </div>
+            <Button
+              size="sm"
+              variant="default"
+              className="px-3 py-1 text-xs font-semibold"
+              onClick={e => { e.stopPropagation(); handleAddToCart(); }}
+            >
+              <Image
+                src={"/quick-atc-add-to-cart-grey.svg"}
+                width={20}
+                height={20}
+                alt="Add to Cart"
+              />
+              Add to Cart
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              className="px-3 py-1 text-xs font-semibold"
+              onClick={e => { e.stopPropagation(); handleBuyNow(); }}
+              disabled={loading}
+            >
+              {loading ? "Processing..." : "Buy Now"}
+            </Button>
+          </div>
           <Button
             size="icon"
             variant={isWishlisted ? "outline" : "ghost"}
@@ -221,25 +206,24 @@ export default function ProjectDialog({ project }: { project: Project }) {
         </div>
       </div>
 
-      <DialogContent className="sm:max-w-[650px] bg-white rounded-2xl p-6 ">
+      <DialogContent className="sm:max-w-[650px] bg-white rounded-2xl p-6">
         <DialogHeader>
           <div className="flex items-center justify-between gap-2">
             <DialogTitle className="text-2xl font-bold text-[#0F172B]">
               {project.name}
             </DialogTitle>
-            
           </div>
           <DialogDescription className="text-gray-500 flex items-center justify-between gap-2">
-            <p className="flex items-center gap-2" >
-            Project ID: {project._id}
-            <Copy
-              onClick={() => {
-                navigator.clipboard.writeText(project._id)
-                toast.success("ID Copied to clipboard")
-              }}
-              size={16}
-              className="cursor-pointer text-gray-400 hover:text-black"
-            />
+            <p className="flex items-center gap-2">
+              Project ID: {project._id}
+              <Copy
+                onClick={() => {
+                  navigator.clipboard.writeText(project._id);
+                  toast.success("ID Copied to clipboard");
+                }}
+                size={16}
+                className="cursor-pointer text-gray-400 hover:text-black"
+              />
             </p>
             <Button
               variant={isWishlisted ? "outline" : "ghost"}
@@ -293,9 +277,14 @@ export default function ProjectDialog({ project }: { project: Project }) {
             className="flex-1 font-bold"
             size="lg"
             onClick={handleAddToCart}
-            disabled={loading}
           >
-            Add Project to Cart
+            <Image
+              src={"/quick-atc-add-to-cart-grey.svg"}
+              width={20}
+              height={20}
+              alt="Add to Cart"
+            />
+            Add to Cart
           </Button>
           <Button
             className="flex-1 font-bold"
