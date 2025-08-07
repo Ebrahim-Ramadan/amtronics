@@ -144,7 +144,9 @@ export default function CheckoutPage() {
     }
 
     // Validate required fields
-    const requiredFields: (keyof CustomerInfo)[] = ["name", "phone", "email", "country", "city", "area", "block", "street", "house"]
+    const requiredFields: (keyof CustomerInfo)[] = ["name", "phone", 
+      // "email",
+      "country", "city", "area", "block", "street", "house"]
     for (const field of requiredFields) {
       if (!customerInfo[field].trim()) {
         toast.error(
@@ -154,8 +156,8 @@ export default function CheckoutPage() {
                   ? "الاسم الكامل"
                   : field === "phone"
                     ? "رقم الهاتف"
-                    : field === "email"
-                      ? "البريد الإلكتروني"
+                    // : field === "email"
+                    //   ? "البريد الإلكتروني"
                       : field === "country"
                         ? "الدولة"
                         : field === "city"
@@ -175,8 +177,8 @@ export default function CheckoutPage() {
                   ? "Full Name"
                   : field === "phone"
                     ? "Phone Number"
-                  : field === "email"
-                    ? "Email Address"
+                  // : field === "email"
+                  //   ? "Email Address"
                   : field === "country"
                     ? "Country"
                   : field === "city"
@@ -411,7 +413,7 @@ export default function CheckoutPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="mb-1" htmlFor="name">{isArabic ? "الاسم الكامل" : "Full Name"} *</Label>
+                  <Label className="mb-1" htmlFor="name">{isArabic ? "الاسم الكامل" : "Full Name"} <span className="text-red-600">*</span></Label>
                   <Input
                     id="name"
                     required
@@ -422,7 +424,7 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <Label className="mb-1" htmlFor="phone">{isArabic ? "رقم الهاتف" : "Phone Number"} *</Label>
+                  <Label className="mb-1" htmlFor="phone">{isArabic ? "رقم الهاتف" : "Phone Number"} <span className="text-red-600">*</span></Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -434,19 +436,21 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <div>
-                <Label className="mb-1" htmlFor="email">{isArabic ? "البريد الإلكتروني" : "Email Address"} *</Label>
-                <Input
-                  id="email"
-                  required
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  // Always editable
-                />
-              </div>
+  <Label className="mb-1" htmlFor="email">{isArabic ? "البريد الإلكتروني" : "Email Address"} </Label>
+  <Input
+    id="email"
+    type="email"
+    value={customerInfo.email}
+    onChange={(e) => handleInputChange("email", e.target.value)}
+    // Always editable
+  />
+  <p className="text-xs text-yellow-600 mt-1 italic">
+    {isArabic ? "حفظ هذا البريد لتتبع الطلب وتحديثات المنتجات!" : "Save this email for order tracking and product updates!"}
+  </p>
+</div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="mb-1" htmlFor="country">{isArabic ? "الدولة" : "Country"} *</Label>
+                  <Label className="mb-1" htmlFor="country">{isArabic ? "الدولة" : "Country"} <span className="text-red-600">*</span></Label>
                   <select
                     id="country"
                     required
@@ -460,7 +464,7 @@ export default function CheckoutPage() {
                   </select>
                 </div>
                 <div>
-                  <Label className="mb-1" htmlFor="city">{isArabic ? "المحافظة" : "Governorate"} *</Label>
+                  <Label className="mb-1" htmlFor="city">{isArabic ? "المحافظة" : "Governorate"} <span className="text-red-600">*</span></Label>
                   <select
                     id="city"
                     required
@@ -481,7 +485,7 @@ export default function CheckoutPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="mb-1" htmlFor="area">{isArabic ? "المنطقة" : "Area"} *</Label>
+                  <Label className="mb-1" htmlFor="area">{isArabic ? "المنطقة" : "Area"} <span className="text-red-600">*</span></Label>
                   <select
                     id="area"
                     required
@@ -500,7 +504,7 @@ export default function CheckoutPage() {
                   </select>
                 </div>
                 <div>
-                  <Label className="mb-1" htmlFor="block">{isArabic ? "القطعة" : "Block"} *</Label>
+                  <Label className="mb-1" htmlFor="block">{isArabic ? "القطعة" : "Block"} <span className="text-red-600">*</span></Label>
                   <Input
                     id="block"
                     required
@@ -512,7 +516,7 @@ export default function CheckoutPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="mb-1" htmlFor="street">{isArabic ? "الشارع" : "Street"} *</Label>
+                  <Label className="mb-1" htmlFor="street">{isArabic ? "الشارع" : "Street"} <span className="text-red-600">*</span></Label>
                   <Input
                     id="street"
                     required
@@ -523,7 +527,7 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <Label className="mb-1" htmlFor="house">{isArabic ? "رقم المنزل" : "House Number"} *</Label>
+                  <Label className="mb-1" htmlFor="house">{isArabic ? "رقم المنزل" : "House Number"} <span className="text-red-600">*</span></Label>
                   <Input
                     id="house"
                     required

@@ -11,6 +11,7 @@ import { WishlistProvider } from "@/lib/wishlist-context";
 import { SavedAddressesProvider } from "@/lib/saved-addresses-context";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
+import { FixedWhatsappIcon } from "@/components/fixed-whatsapp-icon";
 
 const inter = Inter({ subsets: ["latin"] });
 const notoSansArabic = Noto_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "700"] });
@@ -179,6 +180,7 @@ export default function RootLayout({
 ></script>
       </head> */}
       <body className="bg-[#FBFAF9]">
+        <FixedWhatsappIcon/>
         <WishlistProvider>
           <CartProvider>
             <SavedAddressesProvider>
