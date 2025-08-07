@@ -251,7 +251,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
                   {eng.bundle.map((b, bidx) => b.product ? (
                     <div key={bidx} className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2">
                       <img
-                        src={b.product.image}
+                        src={b.product.image.split(',')[0] || '/placeholder-image.jpg'}
                         alt={b.product.en_name}
                         className="w-12 h-12 object-cover rounded-md border border-gray-100"
                         onError={e => (e.currentTarget.src = "/placeholder-image.jpg")}
