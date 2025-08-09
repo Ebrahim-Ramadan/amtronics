@@ -275,7 +275,7 @@ export default function OrdersList() {
           className="gap-2"
         >
           <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-          {isArabic ? "تحديث" : "Refresh"}
+          {/* {isArabic ? "تحديث" : "Refresh"} */}
         </Button>
       </div>
 
@@ -350,25 +350,32 @@ export default function OrdersList() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     {/* Order Status */}
-                    <Badge 
-                      variant={order.status === "canceled" ? "destructive" : "default"}
-                      className={order.status === "canceled" ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}
-                    >
-                      {
-  order.status === "canceled"
-    ? (isArabic ? "ملغى" : "Canceled")
-    : order.status === "completed"
-    ? (isArabic ? "مكتمل" : "Completed")
-    : (isArabic ? "قيد التنفيذ" : "Pending")
-}
+                    <Badge
+  variant="default"
+  className={
+    order.status === "canceled"
+      ? "bg-red-100 text-red-800"
+      : order.status === "completed"
+      ? "bg-blue-100 text-blue-800"
+      : "bg-green-100 text-green-800"
+  }
+>
+  {
+    order.status === "canceled"
+      ? (isArabic ? "ملغى" : "Canceled")
+      : order.status === "completed"
+      ? (isArabic ? "مكتمل" : "Completed")
+      : (isArabic ? "قيد التنفيذ" : "Pending")
+  }
 
-                      {index === 0 && currentPage === 1 && (
-                    <div className="flex items-center text-xs px-2 py-1 text-[#52A8FF] bg-neutral-100 font-semibold rounded-md gap-1">
-                      <ArrowUpCircle size={14} className="text-[#52A8FF]" />
-                      {isArabic ? "الحالي" : "Current"}
-                    </div>
-                  )}
-                    </Badge>
+  {index === 0 && currentPage === 1 && (
+    <div className="flex items-center text-xs px-2 py-1 text-[#52A8FF] bg-neutral-100 font-semibold rounded-md gap-1">
+      <ArrowUpCircle size={14} className="text-[#52A8FF]" />
+      {isArabic ? "الحالي" : "Current"}
+    </div>
+  )}
+</Badge>
+
                     
                     
                   </div>
