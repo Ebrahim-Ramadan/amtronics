@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowUpCircle, Copy, X } from "lucide-react";
+import { ArrowUpCircle, Copy, X, RefreshCw } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import type { Order, ProjectBundleItem } from "@/lib/types";
+import type { Order, ProjectBundleItem, CartItem } from "@/lib/types";
 import { useCart } from "@/lib/context";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Pagination } from "@/components/ui/pagination";
@@ -26,41 +26,164 @@ export default function OrdersList() {
   const [cancelingOrderId, setCancelingOrderId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<Order | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const isArabic = cartState.language === "ar";
   const currentPage = Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
-    setLoadingOrders(true);
-    try {
-      // Read orders from localStorage
-      const storedOrders = localStorage.getItem("orders");
-      let allOrders: Order[] = [];
+    const fetchOrdersWithStatus = async () => {
+      setLoadingOrders(true);
+      try {
+        // Read orders from localStorage
+        const storedOrders = localStorage.getItem("orders");
+        let allOrders: Order[] = [];
 
-      if (storedOrders) {
-        const ordersObj = JSON.parse(storedOrders) as { [key: string]: Order };
-        // Sort orders by createdAt in descending order (latest first)
-        allOrders = Object.values(ordersObj).sort(
-          (a, b) =>
+        if (storedOrders) {
+          const ordersObj = JSON.parse(storedOrders) as { [key: string]: Order };
+          allOrders = Object.values(ordersObj);
+
+          // Extract order IDs to fetch latest statuses
+          const orderIds = allOrders.map(order => order._id).filter(Boolean);
+          
+          if (orderIds.length > 0) {
+            try {
+              // Fetch latest order statuses from server
+              const response = await fetch(`/api/orders?ids=${orderIds.join(',')}&limit=${orderIds.length}`);
+              
+              if (response.ok) {
+                const { orders: serverOrders } = await response.json();
+                
+                // Create a map of server order statuses
+                const serverOrderMap = new Map();
+                serverOrders.forEach((serverOrder: any) => {
+                  serverOrderMap.set(serverOrder._id, {
+                    status: serverOrder.status
+                  });
+                });
+
+                // Update local orders with server statuses
+                let hasUpdates = false;
+                const updatedOrdersObj = { ...ordersObj };
+                
+                allOrders.forEach(order => {
+                  const serverData = serverOrderMap.get(order._id);
+                  if (serverData && serverData.status !== order.status) {
+                    updatedOrdersObj[order._id as string] = {
+                      ...order,
+                      status: serverData.status
+                    };
+                    hasUpdates = true;
+                  }
+                });
+
+                // Update localStorage if there are changes
+                if (hasUpdates) {
+                  localStorage.setItem("orders", JSON.stringify(updatedOrdersObj));
+                  allOrders = Object.values(updatedOrdersObj);
+                  
+                  // Sort again after updates
+                  allOrders.sort((a, b) => 
+                    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                  );
+                }
+              }
+            } catch (fetchError) {
+              console.error("Error fetching order statuses:", fetchError);
+              // Continue with local data if server fetch fails
+            }
+          }
+
+          // Sort orders by createdAt in descending order (latest first)
+          allOrders.sort((a, b) => 
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+          );
+        }
+
+        // Update state
+        setTotalOrders(allOrders.length);
+
+        // Apply pagination
+        const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+        const paginatedOrders = allOrders.slice(skip, skip + ITEMS_PER_PAGE);
+        setOrders(paginatedOrders);
+      } catch (error) {
+        console.error("Error parsing orders from localStorage:", error);
+        setOrders([]);
+        setTotalOrders(0);
+      } finally {
+        setLoadingOrders(false);
       }
+    };
 
-      // Update state
-      setTotalOrders(allOrders.length);
-
-      // Apply pagination
-      const skip = (currentPage - 1) * ITEMS_PER_PAGE;
-      const paginatedOrders = allOrders.slice(skip, skip + ITEMS_PER_PAGE);
-      setOrders(paginatedOrders);
-    } catch (error) {
-      console.error("Error parsing orders from localStorage:", error);
-      setOrders([]);
-      setTotalOrders(0);
-    } finally {
-      setLoadingOrders(false);
-    }
+    fetchOrdersWithStatus();
   }, [currentPage]);
+
+  const refreshOrderStatuses = async () => {
+    setRefreshing(true);
+    try {
+      const storedOrders = localStorage.getItem("orders");
+      if (!storedOrders) return;
+
+      const ordersObj = JSON.parse(storedOrders) as { [key: string]: Order };
+      const orderIds = Object.keys(ordersObj);
+      
+      if (orderIds.length > 0) {
+        const response = await fetch(`/api/orders?ids=${orderIds.join(',')}&limit=${orderIds.length}`);
+        
+        if (response.ok) {
+          const { orders: serverOrders } = await response.json();
+          
+          const serverOrderMap = new Map();
+          serverOrders.forEach((serverOrder: any) => {
+            serverOrderMap.set(serverOrder._id, {
+              status: serverOrder.status
+            });
+          });
+
+          let hasUpdates = false;
+          const updatedOrdersObj = { ...ordersObj };
+          
+          Object.keys(ordersObj).forEach(orderId => {
+            const serverData = serverOrderMap.get(orderId);
+            if (serverData && serverData.status !== ordersObj[orderId].status) {
+              updatedOrdersObj[orderId] = {
+                ...ordersObj[orderId],
+                status: serverData.status
+              };
+              hasUpdates = true;
+            }
+          });
+
+          if (hasUpdates) {
+            localStorage.setItem("orders", JSON.stringify(updatedOrdersObj));
+            
+            // Update current page orders with new status
+            const allOrders = Object.values(updatedOrdersObj).sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+            
+            // Update total orders count
+            setTotalOrders(allOrders.length);
+            
+            // Update current page orders
+            const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+            const paginatedOrders = allOrders.slice(skip, skip + ITEMS_PER_PAGE);
+            setOrders(paginatedOrders);
+            
+            toast.success(isArabic ? "تم تحديث حالة الطلبات" : "Order statuses updated");
+          } else {
+            toast.success(isArabic ? "جميع الطلبات محدثة" : "All orders are up to date");
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error refreshing order statuses:", error);
+      toast.error(isArabic ? "فشل في تحديث حالة الطلبات" : "Failed to refresh order statuses");
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const handleCancelOrder = async (order: Order) => {
     setOrderToCancel(order);
@@ -87,21 +210,24 @@ export default function OrdersList() {
           if (ordersObj[orderToCancel._id as string]) {
             ordersObj[orderToCancel._id as string] = {
               ...ordersObj[orderToCancel._id as string],
-              status: "canceled",
-              canceledAt: new Date().toISOString()
+              status: "canceled"
             };
             localStorage.setItem("orders", JSON.stringify(ordersObj));
+            
+            // Update the orders state immediately
+            const allOrders = Object.values(ordersObj).sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+            
+            // Update total orders count
+            setTotalOrders(allOrders.length);
+            
+            // Update current page orders
+            const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+            const paginatedOrders = allOrders.slice(skip, skip + ITEMS_PER_PAGE);
+            setOrders(paginatedOrders);
           }
         }
-
-        // Update the orders state
-        setOrders(prevOrders => 
-          prevOrders.map(o => 
-            o._id === orderToCancel._id 
-              ? { ...o, status: "canceled", canceledAt: new Date().toISOString() }
-              : o
-          )
-        );
 
         toast.success(isArabic ? "تم إلغاء الطلب بنجاح" : "Order canceled successfully");
         setDialogOpen(false);
@@ -136,6 +262,23 @@ export default function OrdersList() {
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-8" dir={isArabic ? "rtl" : "ltr"}>
+      {/* Header with refresh button */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-neutral-800">
+          {isArabic ? "طلباتي" : "My Orders"}
+        </h1>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={refreshOrderStatuses}
+          disabled={refreshing || loadingOrders}
+          className="gap-2"
+        >
+          <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+          {isArabic ? "تحديث" : "Refresh"}
+        </Button>
+      </div>
+
       {loadingOrders ? (
         <div className="py-12 text-center">
           <LoadingDots />
@@ -211,10 +354,14 @@ export default function OrdersList() {
                       variant={order.status === "canceled" ? "destructive" : "default"}
                       className={order.status === "canceled" ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}
                     >
-                      {order.status === "canceled" 
-                        ? (isArabic ? "ملغى" : "Canceled")
-                        : (isArabic ? "قيد التنفيذ" : "Pending")
-                      }
+                      {
+  order.status === "canceled"
+    ? (isArabic ? "ملغى" : "Canceled")
+    : order.status === "completed"
+    ? (isArabic ? "مكتمل" : "Completed")
+    : (isArabic ? "قيد التنفيذ" : "Pending")
+}
+
                       {index === 0 && currentPage === 1 && (
                     <div className="flex items-center text-xs px-2 py-1 text-[#52A8FF] bg-neutral-100 font-semibold rounded-md gap-1">
                       <ArrowUpCircle size={14} className="text-[#52A8FF]" />
@@ -272,7 +419,7 @@ export default function OrdersList() {
                         const isProjectBundleItem = "type" in item && item.type === "project-bundle";
                         return (
                           <li
-                            key={isProjectBundleItem ? `bundle-${itemIndex}` : (item.product?._id || `item-${itemIndex}`)}
+                            key={isProjectBundleItem ? `bundle-${itemIndex}` : ((item as CartItem).product?._id || `item-${itemIndex}`)}
                             className={isProjectBundleItem ? "flex flex-col rounded-md bg-blue-50 p-3" : "flex flex-col sm:flex-row items-start gap-2 sm:gap-4"}
                           >
                             {isProjectBundleItem ? (
@@ -377,10 +524,10 @@ export default function OrdersList() {
                               <>
                                 <div className="flex w-full items-center gap-2 sm:gap-3">
                                   <div className="relative h-14 w-14 sm:h-16 sm:w-16 flex-shrink-0 rounded-md border shadow-sm">
-                                    {item.product?.image ? (
+                                    {(item as CartItem).product?.image ? (
                                       <img
-                                        src={item.product.image.split(",")[0]}
-                                        alt={isArabic ? item.product.ar_name : item.product.en_name}
+                                        src={(item as CartItem).product.image.split(",")[0]}
+                                        alt={isArabic ? (item as CartItem).product.ar_name : (item as CartItem).product.en_name}
                                         className="h-full w-full object-cover"
                                       />
                                     ) : (
@@ -394,34 +541,35 @@ export default function OrdersList() {
                                   </div>
                                   <div className="flex flex-col leading-tight">
                                     <span className="font-semibold text-sm sm:text-base text-neutral-800">
-                                      {isArabic ? item.product?.ar_name || "منتج" : item.product?.en_name || "Product"}
+                                      {isArabic ? (item as CartItem).product?.ar_name || "منتج" : (item as CartItem).product?.en_name || "Product"}
                                     </span>
                                     <span className="text-xs sm:text-sm text-neutral-500">
                                       {isArabic
-                                        ? `سعر الوحدة: ${(item.product?.price?.toFixed(2) || "0.00")} د.ك`
-                                        : `Unit Price: ${(item.product?.price?.toFixed(2) || "0.00")} KD`}
+                                        ? `سعر الوحدة: ${((item as CartItem).product?.price?.toFixed(2) || "0.00")} د.ك`
+                                        : `Unit Price: ${((item as CartItem).product?.price?.toFixed(2) || "0.00")} KD`}
                                     </span>
                                   </div>
                                 </div>
                                 <div className="flex flex-col items-end leading-tight">
-                                  {item.product?.discount && item.product.discount > 0 ? (
+                                  {(item as CartItem).product?.discount && (item as CartItem).product?.discount > 0 ? (
                                     <>
                                       <span className="font-semibold text-sm sm:text-base text-green-600">
-                                        {(
-                                          item.product.price -
-                                          (item.product.discount_type === "percentage"
-                                            ? item.product.price * (item.product.discount / 100)
-                                            : item.product.discount)
-                                        ).toFixed(2)}{" "}
+                                        {(() => {
+                                          const product = (item as CartItem).product!;
+                                          const discountAmount = product.discount_type === "percentage"
+                                            ? product.price * (product.discount! / 100)
+                                            : product.discount!;
+                                          return (product.price - discountAmount).toFixed(2);
+                                        })()}{" "}
                                         {isArabic ? "د.ك" : "KD"}
                                       </span>
                                       <span className="text-xs sm:text-sm text-neutral-500 line-through">
-                                        {item.product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                                        {(item as CartItem).product!.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
                                       </span>
                                     </>
                                   ) : (
                                     <span className="font-semibold text-sm sm:text-base text-neutral-800">
-                                      {(item.product?.price || 0).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                                      {((item as CartItem).product?.price || 0).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                                     </span>
                                   )}
                                 </div>

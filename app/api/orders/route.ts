@@ -193,7 +193,7 @@ export async function GET(request: Request) {
 
     const orders = await db.collection("orders").find(
       { _id: { $in: ids } },
-      { projection: { _id: 1, status: 1, total: 1, createdAt: 1, customerInfo: 1 } }
+      { projection: { _id: 1, status: 1 } }
     )
     .skip(skip)
     .limit(limit)
