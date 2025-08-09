@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowUpCircle, Copy } from "lucide-react";
+import { ArrowUpCircle, Copy, X } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Order, ProjectBundleItem } from "@/lib/types";
 import { useCart } from "@/lib/context";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -22,6 +23,9 @@ export default function OrdersList() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [totalOrders, setTotalOrders] = useState(0);
+  const [cancelingOrderId, setCancelingOrderId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [orderToCancel, setOrderToCancel] = useState<Order | null>(null);
 
   const isArabic = cartState.language === "ar";
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -57,6 +61,61 @@ export default function OrdersList() {
       setLoadingOrders(false);
     }
   }, [currentPage]);
+
+  const handleCancelOrder = async (order: Order) => {
+    setOrderToCancel(order);
+    setDialogOpen(true);
+  };
+
+  const confirmCancelOrder = async () => {
+    if (!orderToCancel) return;
+
+    setCancelingOrderId(orderToCancel._id as string);
+    
+    try {
+      const response = await fetch(`/api/orders?id=${orderToCancel._id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Update local storage - mark order as canceled
+        const storedOrders = localStorage.getItem("orders");
+        if (storedOrders) {
+          const ordersObj = JSON.parse(storedOrders);
+          if (ordersObj[orderToCancel._id as string]) {
+            ordersObj[orderToCancel._id as string] = {
+              ...ordersObj[orderToCancel._id as string],
+              status: "canceled",
+              canceledAt: new Date().toISOString()
+            };
+            localStorage.setItem("orders", JSON.stringify(ordersObj));
+          }
+        }
+
+        // Update the orders state
+        setOrders(prevOrders => 
+          prevOrders.map(o => 
+            o._id === orderToCancel._id 
+              ? { ...o, status: "canceled", canceledAt: new Date().toISOString() }
+              : o
+          )
+        );
+
+        toast.success(isArabic ? "تم إلغاء الطلب بنجاح" : "Order canceled successfully");
+        setDialogOpen(false);
+        setOrderToCancel(null);
+      } else {
+        toast.error(data.error || (isArabic ? "فشل في إلغاء الطلب" : "Failed to cancel order"));
+      }
+    } catch (error) {
+      console.error("Error canceling order:", error);
+      toast.error(isArabic ? "حدث خطأ أثناء إلغاء الطلب" : "An error occurred while canceling the order");
+    } finally {
+      setCancelingOrderId(null);
+    }
+  };
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -119,36 +178,53 @@ export default function OrdersList() {
                 }`}
               >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-6 relative">
-                  {index === 0 && currentPage === 1 && (
-                    <div className="flex items-center text-xs sm:text-sm px-2 py-1 text-[#52A8FF] bg-neutral-100 font-semibold rounded-md gap-1 absolute -top-3 sm:top-2 right-0 sm:right-2">
+                  
+                  <div className="flex flex-col flex-1">
+                    <CardTitle className="flex flex-col">
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(order._id as string);
+                          toast.success(isArabic ? "تم نسخ رقم الطلب" : "Copied order ID");
+                        }}
+                        className="group/id flex items-center gap-2 text-sm sm:text-base font-semibold text-neutral-800"
+                      >
+                        {isArabic ? "رقم الطلب:" : "Order ID:"}
+                        <span className="break-all font-normal">
+                          {order._id?.substring(0, 8)}...
+                        </span>
+                        <Copy
+                          size={14}
+                          className="cursor-pointer text-neutral-500 transition-colors hover:text-[#00B8DB] group-hover/id:text-[#00B8DB]"
+                        />
+                      </div>
+                      <div className="mt-1 text-xs sm:text-sm text-neutral-500">
+                        {isArabic
+                          ? `التاريخ: ${new Date(order.createdAt).toLocaleString("ar-KW", dateTimeOptions)}`
+                          : `Date: ${new Date(order.createdAt).toLocaleString(undefined, dateTimeOptions)} `}
+                      </div>
+                    </CardTitle>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    {/* Order Status */}
+                    <Badge 
+                      variant={order.status === "canceled" ? "destructive" : "default"}
+                      className={order.status === "canceled" ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}
+                    >
+                      {order.status === "canceled" 
+                        ? (isArabic ? "ملغى" : "Canceled")
+                        : (isArabic ? "قيد التنفيذ" : "Pending")
+                      }
+                      {index === 0 && currentPage === 1 && (
+                    <div className="flex items-center text-xs px-2 py-1 text-[#52A8FF] bg-neutral-100 font-semibold rounded-md gap-1">
                       <ArrowUpCircle size={14} className="text-[#52A8FF]" />
                       {isArabic ? "الحالي" : "Current"}
                     </div>
                   )}
-                  <CardTitle className="flex flex-col">
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigator.clipboard.writeText(order._id as string);
-                        toast.success(isArabic ? "تم نسخ رقم الطلب" : "Copied order ID");
-                      }}
-                      className="group/id flex items-center gap-2 text-sm sm:text-base font-semibold text-neutral-800"
-                    >
-                      {isArabic ? "رقم الطلب:" : "Order ID:"}
-                      <span className="break-all font-normal">
-                        {order._id.substring(0, 8)}...
-                      </span>
-                      <Copy
-                        size={14}
-                        className="cursor-pointer text-neutral-500 transition-colors hover:text-[#00B8DB] group-hover/id:text-[#00B8DB]"
-                      />
-                    </div>
-                    <div className="mt-1 text-xs sm:text-sm text-neutral-500">
-                      {isArabic
-                        ? `التاريخ: ${new Date(order.createdAt).toLocaleString("ar-KW", dateTimeOptions)}`
-                        : `Date: ${new Date(order.createdAt).toLocaleString(undefined, dateTimeOptions)} `}
-                    </div>
-                  </CardTitle>
+                    </Badge>
+                    
+                    
+                  </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
                   <div className="mb-4 grid grid-cols-1 gap-2 sm:gap-4 sm:grid-cols-2">
@@ -392,8 +468,34 @@ export default function OrdersList() {
                         {(order.total - (order.discount || 0) + (order.shippingFee ?? 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                       </span>
                     </div>
+                    
                   </div>
+                   {/* Cancel Button - only show if order is not already canceled */}
+                    {order.status !== "canceled" && (
+                      <div className="flex w-full justify-end py-4 sm:py-6">
+                        <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelOrder(order);
+                        }}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                        disabled={cancelingOrderId === order._id}
+                      >
+                        {cancelingOrderId === order._id ? (
+                          <LoadingDots />
+                        ) : (
+                          <>
+                            <X size={14} className="mr-1" />
+                            {isArabic ? "إلغاء الطلب" : "Cancel Order"}
+                          </>
+                        )}
+                      </Button>
+                      </div>
+                    )}
                 </CardContent>
+               
               </Card>
             );
           })}
@@ -410,6 +512,46 @@ export default function OrdersList() {
           />
         </div>
       )}
+
+      {/* Cancel Order Confirmation Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {isArabic ? "تأكيد إلغاء الطلب" : "Confirm Order Cancellation"}
+            </DialogTitle>
+            <DialogDescription>
+              {isArabic 
+                ? `هل أنت متأكد من أنك تريد إلغاء الطلب رقم ${orderToCancel?._id?.substring(0, 8)}...؟ لا يمكن التراجع عن هذا الإجراء.`
+                : `Are you sure you want to cancel order ${orderToCancel?._id?.substring(0, 8)}...? This action cannot be undone.`
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDialogOpen(false);
+                setOrderToCancel(null);
+              }}
+              disabled={cancelingOrderId !== null}
+            >
+              {isArabic ? "إلغاء" : "Cancel"}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmCancelOrder}
+              disabled={cancelingOrderId !== null}
+            >
+              {cancelingOrderId !== null ? (
+                <LoadingDots />
+              ) : (
+                isArabic ? "تأكيد الإلغاء" : "Confirm Cancellation"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

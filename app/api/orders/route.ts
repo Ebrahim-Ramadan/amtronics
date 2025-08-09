@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
-import { sendOrderConfirmationEmail } from "@/lib/mailer"
+import { sendOrderConfirmationEmail, sendOrderCancellationEmail } from "@/lib/mailer"
 import { sendWhatsAppTemplate } from "@/lib/twilio"
 
 export async function POST(request: Request) {
@@ -81,6 +81,60 @@ export async function POST(request: Request) {
           })
         )
 
+        // Prepare bulk operations to decrement inventory
+        // const bulkOps: any[] = [];
+        
+        // for (const item of itemsWithAveCost) {
+        //   if (item.type === "project-bundle") {
+        //     // Handle project bundle items
+        //     for (const product of item.products) {
+        //       const prodId = product._id || product.id;
+        //       const quantity = product.quantity || 1;
+              
+        //       if (ObjectId.isValid(prodId)) {
+        //         bulkOps.push({
+        //           updateOne: {
+        //             filter: { _id: new ObjectId(prodId) },
+        //             update: { $inc: { quantity_on_hand: -quantity } }
+        //           }
+        //         });
+        //       } else {
+        //         bulkOps.push({
+        //           updateOne: {
+        //             filter: { id: prodId },
+        //             update: { $inc: { quantity_on_hand: -quantity } }
+        //           }
+        //         });
+        //       }
+        //     }
+        //   } else {
+        //     // Handle regular product items
+        //     const prodId = item.product._id || item.product.id;
+        //     const quantity = item.quantity || 1;
+            
+        //     if (ObjectId.isValid(prodId)) {
+        //       bulkOps.push({
+        //         updateOne: {
+        //           filter: { _id: new ObjectId(prodId) },
+        //           update: { $inc: { quantity_on_hand: -quantity } }
+        //         }
+        //       });
+        //     } else {
+        //       bulkOps.push({
+        //         updateOne: {
+        //           filter: { id: prodId },
+        //           update: { $inc: { quantity_on_hand: -quantity } }
+        //         }
+        //       });
+        //     }
+        //   }
+        // }
+
+        // // Execute bulk inventory updates
+        // if (bulkOps.length > 0) {
+        //   await db.collection("products").bulkWrite(bulkOps, { session });
+        // }
+
         // Insert order
         const orderResult = await db.collection("orders").insertOne(
           {
@@ -149,5 +203,143 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error fetching orders:", error);
     return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const orderIdString = searchParams.get('id');
+
+    if (!orderIdString) {
+      return NextResponse.json({ error: "No order ID provided" }, { status: 400 });
+    }
+
+    if (!ObjectId.isValid(orderIdString)) {
+      return NextResponse.json({ error: "Invalid order ID" }, { status: 400 });
+    }
+
+    const orderId = new ObjectId(orderIdString);
+    const client = await clientPromise;
+    const db = client.db("amtronics");
+
+    // Start a session for transaction
+    const session = client.startSession();
+    
+    try {
+      let result: any = null;
+      
+      await session.withTransaction(async () => {
+        // First, get the order to check if it exists and get its items
+        const order = await db.collection("orders").findOne(
+          { _id: orderId },
+          { session }
+        );
+
+        if (!order) {
+          throw new Error("Order not found");
+        }
+
+        if (order.status === "canceled") {
+          throw new Error("Order is already canceled");
+        }
+
+        // Prepare bulk operations to restore inventory (increment quantities back)
+        const bulkOps: any[] = [];
+        
+        for (const item of order.items) {
+          if (item.type === "project-bundle") {
+            // Handle project bundle items
+            for (const product of item.products) {
+              const prodId = product._id || product.id;
+              const quantity = product.quantity || 1;
+              
+              if (ObjectId.isValid(prodId)) {
+                bulkOps.push({
+                  updateOne: {
+                    filter: { _id: new ObjectId(prodId) },
+                    update: { $inc: { quantity_on_hand: quantity } }
+                  }
+                });
+              } else {
+                bulkOps.push({
+                  updateOne: {
+                    filter: { id: prodId },
+                    update: { $inc: { quantity_on_hand: quantity } }
+                  }
+                });
+              }
+            }
+          } else {
+            // Handle regular product items
+            const prodId = item.product._id || item.product.id;
+            const quantity = item.quantity || 1;
+            
+            if (ObjectId.isValid(prodId)) {
+              bulkOps.push({
+                updateOne: {
+                  filter: { _id: new ObjectId(prodId) },
+                  update: { $inc: { quantity_on_hand: quantity } }
+                }
+              });
+            } else {
+              bulkOps.push({
+                updateOne: {
+                  filter: { id: prodId },
+                  update: { $inc: { quantity_on_hand: quantity } }
+                }
+              });
+            }
+          }
+        }
+
+        // Execute bulk inventory restoration
+        if (bulkOps.length > 0) {
+          await db.collection("products").bulkWrite(bulkOps, { session });
+        }
+
+        // Update order status to canceled
+        const updateResult = await db.collection("orders").updateOne(
+          { _id: orderId },
+          { 
+            $set: { 
+              status: "canceled",
+              canceledAt: new Date()
+            }
+          },
+          { session }
+        );
+
+        result = { updateResult, order };
+      });
+
+      if (result && result.updateResult.matchedCount === 0) {
+        return NextResponse.json({ error: "Order not found" }, { status: 404 });
+      }
+
+      // Send cancellation email in the background
+      if (result?.order?.customerInfo?.email) {
+        sendOrderCancellationEmail(
+          result.order.customerInfo.email, 
+          orderIdString, 
+          result.order.customerInfo.name
+        );
+      }
+
+      return NextResponse.json({ 
+        success: true, 
+        message: "Order canceled successfully and inventory restored" 
+      });
+
+    } finally {
+      await session.endSession();
+    }
+
+  } catch (error) {
+    console.error("Error canceling order:", error);
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    return NextResponse.json({ error: "Failed to cancel order" }, { status: 500 });
   }
 }
