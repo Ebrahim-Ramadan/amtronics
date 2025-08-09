@@ -25,6 +25,11 @@ export default function ProductsPage() {
   const [totalProducts, setTotalProducts] = useState(0);
   const isArabic = state.language === "ar";
 
+  // Update searchQuery state when URL parameters change
+  useEffect(() => {
+    setSearchQuery(searchParams.get("search") || "");
+  }, [searchParams]);
+
   useEffect(() => {
     const fetchProducts = async () => {
       console.log('fetching');
@@ -32,7 +37,10 @@ export default function ProductsPage() {
       try {
         let url = "/api/products?";
         const params = new URLSearchParams();
-        if (searchQuery) params.append("search", searchQuery);
+        
+        // Use searchParams directly instead of searchQuery state to avoid stale state issues
+        const urlSearchQuery = searchParams.get("search");
+        if (urlSearchQuery) params.append("search", urlSearchQuery);
         if (selectedCategory !== "all") params.append("category", selectedCategory);
         if (searchParams.get("featured")) params.append("featured", "true");
         if (searchParams.get("recent")) params.append("recent", "true");
@@ -54,7 +62,7 @@ export default function ProductsPage() {
     };
 
     fetchProducts();
-  }, [searchParams, searchQuery, currentPage]);
+  }, [searchParams, selectedCategory, currentPage]);
 
 
 
