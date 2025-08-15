@@ -40,7 +40,7 @@ const productSuggestions = [
   "Fiber Optic Cable", "RF Cable", "Antenna", "Converter", "Audio Jack", "Video Jack", "HDMI Cable", "Ethernet Cable",
   "Gloves", "Lab Coat", "Safety Glasses", "Arduino", "Atmel", "STMicroelectronics", "Texas Instruments", "Energizer",
   "Duracell", "Panasonic", "Samsung", "Sony", "Toshiba", "Nexperia", "ON Semiconductor", "Broadcom", "Microchip",
-  "Kingston", "SanDisk", "Adafruit", "SparkFun", "Elegoo", "DFRobot", "Waveshare", "Seeed Studio", "HiLetgo",
+  "Kingston", "SanDisk", "Adafruit", "SparkFun", "Elegoo", "Waveshare", "Seeed Studio", "HiLetgo",
   "RobotDyn", "Pololu", "Maxim Integrated", "Bosch", "BME280", "AMS", "InvenSense", "Smart Home", "Home Automation",
   "IoT", "Wearable Tech", "Health Monitoring", "Fitness Tracker", "Environmental Monitoring", "Security System",
   "Surveillance", "Voice Control", "Remote Control", "Gesture Control", "Line Follower", "Obstacle Avoidance",

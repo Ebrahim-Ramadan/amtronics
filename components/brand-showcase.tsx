@@ -11,6 +11,11 @@ const brands = [
     link: "/products?category=Raspberry+Pi",
   },
   {
+    name: "Keyestudio",
+    logo: "/categories/Keyestudio-Logo.jpg",
+    link: "/products?category=Keyestudio",
+  },
+  {
     name: "Arduino",
     logo: "/categories/arduino.webp",
     link: "/products?category=Arduino",
@@ -36,7 +41,7 @@ export default function BrandShowcase() {
       <h2 className="text-2xl font-bold text-center mb-6">
         {isArabic ? "العلامات التجارية المميزة" : "Featured Brands"}
       </h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
         {brands.map((brand, index) => (
           <Link
             key={index}
@@ -49,7 +54,7 @@ export default function BrandShowcase() {
               alt={brand.name}
               width={200}
               height={100}
-              className="object-contain group-hover:scale-105 transition-transform"
+              className="py-2 object-contain group-hover:scale-105 transition-transform"
             />
           </Link>
         ))}
