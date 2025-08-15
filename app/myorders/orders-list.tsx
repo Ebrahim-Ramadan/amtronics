@@ -626,7 +626,7 @@ export default function OrdersList() {
                     
                   </div>
                    {/* Cancel Button - only show if order is not already canceled */}
-                    {order.status !== "canceled" && (
+                    {/* {order.status !== "canceled" && (
                       <div className="flex w-full justify-end py-4 sm:py-6">
                         <Button
                         variant="outline"
@@ -648,7 +648,7 @@ export default function OrdersList() {
                         )}
                       </Button>
                       </div>
-                    )}
+                    )} */}
                 </CardContent>
                
               </Card>
