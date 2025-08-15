@@ -85,7 +85,7 @@ export default async function Home() {
       </div>
 
       {/* Brand Showcase */}
-      {/* <BrandShowcase /> */}
+      <BrandShowcase />
     </div>
   );
 }

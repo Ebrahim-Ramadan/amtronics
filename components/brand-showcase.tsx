@@ -8,12 +8,12 @@ const brands = [
   {
     name: "Raspberry Pi",
     logo: "/categories/raspberry-pi.webp",
-    link: "/products?search=raspberry",
+    link: "/products?category=Raspberry+Pi",
   },
   {
     name: "Arduino",
     logo: "/categories/arduino.webp",
-    link: "/products?search=arduino",
+    link: "/products?category=Arduino",
   },
   {
     name: "Adafruit",
@@ -23,7 +23,7 @@ const brands = [
   {
     name: "SparkFun",
     logo: "/brands/sparkfun.png",
-    link: "/products?search=sparkfun",
+    link: "/products?category=Sparkfun",
   },
 ]
 
