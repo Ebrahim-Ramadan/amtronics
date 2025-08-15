@@ -81,11 +81,17 @@ export default function CheckoutPage() {
   }, [selectedAddressIndex, savedAddressesState.addresses])
 
   const handleInputChange = (field: keyof CustomerInfo, value: string) => {
-    setCustomerInfo((prev) => ({ ...prev, [field]: value }))
-    if (selectedAddressIndex !== "new") {
-      setSelectedAddressIndex("new")
+    if (field === "phone") {
+      // Only allow 8 digits
+      const phone = value.replace(/\D/g, "").slice(0,8);
+      setCustomerInfo((prev) => ({ ...prev, phone }));
+    } else {
+      setCustomerInfo((prev) => ({ ...prev, [field]: value }));
     }
-  }
+    if (selectedAddressIndex !== "new") {
+      setSelectedAddressIndex("new");
+    }
+  }  
 
   const handleAddressSelect = (value: string) => {
     setSelectedAddressIndex(value === "new" ? "new" : parseInt(value, 10))
@@ -206,16 +212,16 @@ export default function CheckoutPage() {
       return
     }
 
-    // Validate phone (must start with country code)
-    const phoneRegex = /^\+\d{8,}$/
-    if (!phoneRegex.test(customerInfo.phone.replace(/\s/g, ""))) {
+    // Validate phone (must be exactly 8 digits)
+    const phoneRegex = /^\d{8}$/;
+    if (!phoneRegex.test(customerInfo.phone)) {
       toast.error(
         isArabic
-          ? "رقم الهاتف يجب أن يبدأ برمز الدولة ويحتوي على أرقام فقط (مثال: +96512345678)."
-          : "Phone number must start with a country code and contain only digits (e.g., +96512345678).",
-      )
-      setLoading(false)
-      return
+          ? "رقم الهاتف يجب أن يتكون من 8 أرقام بعد +965 (مثال: +96512345678)."
+          : "Phone number must be exactly 8 digits after +965 (e.g., +96512345678).",
+      );
+      setLoading(false);
+      return;
     }
 
     setLoading(true)
@@ -224,7 +230,7 @@ export default function CheckoutPage() {
     try {
       const orderData = {
         items: state.items,
-        customerInfo,
+        customerInfo: { ...customerInfo, phone: "+965" + customerInfo.phone },
         total: state.total,
         discount: discountAmount,
         promoCode: promoCode || "",
@@ -425,14 +431,21 @@ export default function CheckoutPage() {
                 </div>
                 <div>
                   <Label className="mb-1" htmlFor="phone">{isArabic ? "رقم الهاتف" : "Phone Number"} <span className="text-red-600">*</span></Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    required
-                    value={customerInfo.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    // Always editable
-                  />
+                  <div className="flex items-center">
+                    <span className="inline-flex items-center px-2 py-2 border border-r-0 rounded-l-md bg-gray-100 text-gray-700 select-none text-sm">+965</span>
+                    <input
+                      id="phone"
+                      type="tel"
+                      required
+                      className="flex-1 min-w-0 border border-gray-300 rounded-r-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-[#00B8DB] text-sm"
+                      value={customerInfo.phone}
+                      onChange={e => handleInputChange("phone", e.target.value.replace(/\D/g, "").slice(0,8))}
+                      placeholder={isArabic ? "أدخل 8 أرقام" : "Enter 8 digits"}
+                      // pattern="\\d{8}"
+                        // pattern="^\\d{8}$"    
+                      inputMode="numeric"
+                    />
+                  </div>
                 </div>
               </div>
               <div>
