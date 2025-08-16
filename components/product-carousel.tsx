@@ -245,6 +245,8 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
   const [currentIndex, setCurrentIndex] = useState(0)
   const [visibleCount, setVisibleCount] = useState(4)
   const carouselRef = useRef<HTMLDivElement>(null)
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
 
   useEffect(() => {
     function updateVisibleCount() {
