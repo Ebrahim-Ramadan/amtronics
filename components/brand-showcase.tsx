@@ -20,11 +20,11 @@ const brands = [
     logo: "/categories/arduino.webp",
     link: "/products?category=Arduino",
   },
-  {
-    name: "Adafruit",
-    logo: "/brands/adafruit.png",
-    link: "/products?search=adafruit",
-  },
+  // {
+  //   name: "Adafruit",
+  //   logo: "/brands/adafruit.png",
+  //   link: "/products?search=adafruit",
+  // },
   {
     name: "SparkFun",
     logo: "/brands/sparkfun.png",

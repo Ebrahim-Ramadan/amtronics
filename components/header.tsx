@@ -14,7 +14,7 @@ import { useWishlist } from "@/lib/wishlist-context";
 import Fuse from "fuse.js";
 
 const productSuggestions = [
-  "Arduino Uno", "Arduino Nano", "Arduino Mega", "NodeMCU", "ESP32", "ESP8266", "Raspberry Pi", "Raspberry Pi Pico",
+  "Arduino Uno", "Arduino Nano", "Arduino Mega", "Node MCU", "ESP32", "ESP8266", "Raspberry Pi", "Raspberry Pi Pico",
   "Breadboard", "Jumper Wires", "LED", "RGB LED", "Resistor", "Capacitor", "Inductor", "Diode", "Zener Diode",
   "Transistor", "MOSFET", "Potentiometer", "Rotary Encoder", "Push Button", "Switch", "Toggle Switch", "Slide Switch",
   "Rocker Switch", "Relay", "Buzzer", "Speaker", "Microphone", "Sensor", "Ultrasonic Sensor", "Temperature Sensor",
@@ -25,7 +25,7 @@ const productSuggestions = [
   "7-Segment Display", "Dot Matrix Display", "Keypad", "Joystick Module", "Motor", "DC Motor", "Servo Motor",
   "Stepper Motor", "Motor Driver", "L298N", "TB6612FNG", "Battery", "Battery Holder", "Charger", "Li-ion Charger",
   "Power Supply", "Adapter", "Voltage Regulator", "DC-DC Converter", "AC-DC Converter", "Boost Converter",
-  "Buck Converter", "USB Cable", "USB to Serial Converter", "FTDI Module", "CH340", "Development Board", "Shield",
+  "Buck Converter", "USB Cable", "USB to Serial Converter", "FTDI Module", "Development Board", "Shield",
   "Breakout Board", "PCB", "Prototyping Board", "Soldering Iron", "Solder", "Desoldering Pump", "Flux",
   "Heat Shrink Tube", "Heat Shrink Gun", "Wire", "Male to Male Jumper", "Female to Female Jumper", "Alligator Clips",
   "Terminal Block", "Screw Terminal", "Connector", "Dupont Connector", "Header Pin", "Standoff", "Nut", "Screw",
@@ -41,15 +41,15 @@ const productSuggestions = [
   "Gloves", "Lab Coat", "Safety Glasses", "Arduino", "Atmel", "STMicroelectronics", "Texas Instruments", "Energizer",
   "Duracell", "Panasonic", "Samsung", "Sony", "Toshiba", "Nexperia", "ON Semiconductor", "Broadcom", "Microchip",
   "Kingston", "SanDisk", "Adafruit", "SparkFun", "Elegoo", "Waveshare", "Seeed Studio", "HiLetgo",
-  "RobotDyn", "Pololu", "Maxim Integrated", "Bosch", "BME280", "AMS", "InvenSense", "Smart Home", "Home Automation",
+  "Pololu", "Maxim Integrated", "Bosch", "BME280", "AMS", "InvenSense", "Smart Home", "Home Automation",
   "IoT", "Wearable Tech", "Health Monitoring", "Fitness Tracker", "Environmental Monitoring", "Security System",
-  "Surveillance", "Voice Control", "Remote Control", "Gesture Control", "Line Follower", "Obstacle Avoidance",
+  "Voice Control", "Remote Control", "Gesture Control", "Line Follower", "Obstacle Avoidance",
   "RFID Access Control", "Weather Station", "Greenhouse Monitoring", "Soil Moisture Monitoring",
   "Water Tank Automation", "Gas Leak Detection", "Fire Alarm System", "Smart Door Lock", "Wireless Communication",
   "Bluetooth Speaker", "Wi-Fi Camera", "Smart Light", "Smart Fan", "Drone", "Robotic Arm", "Automation",
   "Educational Project", "Science Fair Project", "Final Year Project", "Industrial Monitoring", "Vehicle Tracking",
   "Smart Agriculture", "Smart Metering", "Voice Assistant", "Gesture Based System", "Remote Weather Logger",
-  "IoT Dashboard", "Data Logging", "Energy Monitoring", "AI Vision", "Edge Computing", "AIoT", "Self-Balancing Robot",
+  "IoT Dashboard", "Data Logging", "Energy Monitoring", "AI Vision", "Edge Computing", "AIoT", 
   "Home Energy Saver", "Wireless Sensor Network"
 ];
 
