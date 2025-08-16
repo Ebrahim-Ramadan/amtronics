@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Star, CheckCheck } from "lucide-react"
@@ -243,26 +243,47 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
   const [addLoading, setAddLoading] = useState<{ [id: string]: boolean }>({})
   const [showCheck, setShowCheck] = useState<{ [id: string]: boolean }>({})
   const [currentIndex, setCurrentIndex] = useState(0)
-
-  // Touch gesture state
-  const touchStartX = useRef<number | null>(null)
-  const touchEndX = useRef<number | null>(null)
+  const [visibleCount, setVisibleCount] = useState(4)
   const carouselRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function updateVisibleCount() {
+      if (window.innerWidth < 640) {
+        setVisibleCount(1)
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2)
+      } else if (window.innerWidth < 1280) {
+        setVisibleCount(3)
+      } else {
+        setVisibleCount(4)
+      }
+    }
+    updateVisibleCount()
+    window.addEventListener('resize', updateVisibleCount)
+    return () => window.removeEventListener('resize', updateVisibleCount)
+  }, [])
 
   const addToCart = (product: Product) => {
     setAddLoading((prev) => ({ ...prev, [product._id]: true }))
     setShowCheck((prev) => ({ ...prev, [product._id]: false }))
     setTimeout(() => {
       dispatch({ type: "ADD_ITEM", payload: product })
-      toast.success(isArabic ? "\u062A\u0645\u062A \u0627\u0644\u0625\u0636\u0627\u0641\u0629 \u0625\u0644\u0649 \u0627\u0644\u0633\u0644\u0629" : "Added to cart")
+      toast.success(isArabic ? "\u062A\u0645\u062A \u0627\u0644\u0625\u0636\u0627\u0646\u0629 \u0625\u0644\u0649 \u0627\u0644\u0633\u0644\u0629" : "Added to cart")
       setAddLoading((prev) => ({ ...prev, [product._id]: false }))
       setShowCheck((prev) => ({ ...prev, [product._id]: true }))
       setTimeout(() => setShowCheck((prev) => ({ ...prev, [product._id]: false })), 2000)
     }, 200)
   }
 
-  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % Math.max(1, products.length - 4))
-  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + Math.max(1, products.length - 4)) % Math.max(1, products.length - 4))
+  const nextSlide = () => {
+    setCurrentIndex((prev) => {
+      const maxIndex = Math.max(0, products.length - visibleCount);
+      return prev < maxIndex ? prev + 1 : prev;
+    });
+  }
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  }
 
   // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
@@ -278,7 +299,8 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
     if (touchStartX.current === null || touchEndX.current === null) return;
     const distance = touchStartX.current - touchEndX.current;
     const threshold = 50; // Minimum px to be considered a swipe
-    if (distance > threshold && currentIndex < products.length - 4) {
+    const maxIndex = Math.max(0, products.length - visibleCount);
+    if (distance > threshold && currentIndex < maxIndex) {
       // Swiped left
       nextSlide();
     } else if (distance < -threshold && currentIndex > 0) {
@@ -309,7 +331,7 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
           <Button variant="outline" size="icon" onClick={prevSlide} disabled={currentIndex === 0}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" onClick={nextSlide} disabled={currentIndex >= products.length - 4}>
+          <Button variant="outline" size="icon" onClick={nextSlide} disabled={currentIndex >= products.length - visibleCount}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
