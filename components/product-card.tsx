@@ -152,6 +152,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       >
         <Link href={`/products/${product._id}`}>
           <Image
+          unoptimized
             src={images[index]}
             alt={`${isArabic ? product.ar_name : product.en_name} - Image ${index + 1}`}
             width={250}
