@@ -193,9 +193,9 @@ export default function EnhancedHeroSlider() {
           <div className="grid lg:grid-cols-2 gap-4 items-center w-full">
             {/* Left Content */}
             <div className={`text-white ${isArabic ? "text-right" : "text-left"}`}>
-              <Badge className="bg-yellow-400 text-black mb-4 text-sm font-bold px-3 py-1">
+              {/* <Badge className="bg-yellow-400 text-black mb-4 text-sm font-bold px-3 py-1">
                 {isArabic ? slideData.ar_discount : slideData.discount}
-              </Badge>
+              </Badge> */}
               <h1 className="text-2xl md:text-5xl line-clamp-1 md:line-clamp-2 md:leading-14 lg:text-6xl font-bold mb-1 md:mb-3 ">
                 {isArabic ? slideData.ar_title : slideData.en_title}
               </h1>
