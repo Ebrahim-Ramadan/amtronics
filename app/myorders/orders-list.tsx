@@ -27,6 +27,8 @@ export default function OrdersList() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<Order | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [cancelPassword, setCancelPassword] = useState("");
+  const [cancelError, setCancelError] = useState("");
 
   const isArabic = cartState.language === "ar";
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -192,9 +194,14 @@ export default function OrdersList() {
 
   const confirmCancelOrder = async () => {
     if (!orderToCancel) return;
-
+    setCancelError("");
+    // Example: hardcoded password, replace with your real logic
+    const requiredPassword = process.env.NEXT_PUBLIC_CASHIER_CANCELING_ORDER_PASSWORD;
+    if (cancelPassword !== requiredPassword) {
+      setCancelError(isArabic ? "كلمة المرور غير صحيحة. لا يمكنك إلغاء الطلب إلا إذا كنت مخولاً بذلك." : "Incorrect password. Only authorized roles can cancel orders.");
+      return;
+    }
     setCancelingOrderId(orderToCancel._id as string);
-    
     try {
       const response = await fetch(`/api/orders?id=${orderToCancel._id}`, {
         method: 'DELETE',
@@ -232,6 +239,8 @@ export default function OrdersList() {
         toast.success(isArabic ? "تم إلغاء الطلب بنجاح" : "Order canceled successfully");
         setDialogOpen(false);
         setOrderToCancel(null);
+        setCancelPassword("");
+        setCancelError("");
       } else {
         toast.error(data.error || (isArabic ? "فشل في إلغاء الطلب" : "Failed to cancel order"));
       }
@@ -626,7 +635,7 @@ export default function OrdersList() {
                     
                   </div>
                    {/* Cancel Button - only show if order is not already canceled */}
-                    {/* {order.status !== "canceled" && (
+                    {order.status !== "canceled" && (
                       <div className="flex w-full justify-end py-4 sm:py-6">
                         <Button
                         variant="outline"
@@ -648,7 +657,7 @@ export default function OrdersList() {
                         )}
                       </Button>
                       </div>
-                    )} */}
+                    )}
                 </CardContent>
                
               </Card>
@@ -680,14 +689,36 @@ export default function OrdersList() {
                 ? `هل أنت متأكد من أنك تريد إلغاء الطلب رقم ${orderToCancel?._id?.substring(0, 8)}...؟ لا يمكن التراجع عن هذا الإجراء.`
                 : `Are you sure you want to cancel order ${orderToCancel?._id?.substring(0, 8)}...? This action cannot be undone.`
               }
+              <div className="mt-2 text-sm text-yellow-700 bg-yellow-50 rounded p-2">
+                {isArabic
+                  ? "ملاحظة: لا يمكن إلغاء الطلب إلا من قبل المستخدمين المخولين (مثلاً: الإدارة أو الدعم). يرجى إدخال كلمة المرور الخاصة بك للمتابعة."
+                  : "Note: Only authorized roles (e.g., admin or support) can cancel orders. Please enter your password to proceed."}
+              </div>
             </DialogDescription>
           </DialogHeader>
+          <div className="my-4">
+            <label className="block text-sm font-medium mb-1" htmlFor="cancel-password">
+              {isArabic ? "كلمة المرور" : "Password"}
+            </label>
+            <input
+              id="cancel-password"
+              type="password"
+              className="w-full border rounded px-3 py-2"
+              value={cancelPassword}
+              onChange={e => setCancelPassword(e.target.value)}
+              disabled={cancelingOrderId !== null}
+              autoFocus
+            />
+            {cancelError && <div className="text-red-600 text-sm mt-1">{cancelError}</div>}
+          </div>
           <DialogFooter className="gap-2">
             <Button
               variant="outline"
               onClick={() => {
                 setDialogOpen(false);
                 setOrderToCancel(null);
+                setCancelPassword("");
+                setCancelError("");
               }}
               disabled={cancelingOrderId !== null}
             >
