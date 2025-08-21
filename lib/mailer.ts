@@ -52,6 +52,36 @@ export const sendOrderConfirmationEmail = async (email: string, orderID: string,
   }
 };
 
+export const sendOrderConfirmationEmailWithInvoice = async (
+	email: string,
+	orderID: string,
+	clientName: string,
+	invoicePdf: Buffer
+) => {
+  console.log('process.env.GMAIL_ACC,', process.env.GMAIL_ACC, 'ass', process.env.apppassword);
+  
+	const mailOptions = {
+		from: '"AMTRONICS" <noreply@amtronics.co>',
+		to: email,
+		subject,
+		html: emailContentTemplate.replace('[orderID]', orderID).replace('[clientName]', clientName),
+		attachments: [
+			{
+				filename: `invoice-${orderID.slice(-8).toUpperCase()}.pdf`,
+				content: invoicePdf,
+				contentType: 'application/pdf',
+			},
+		],
+	}
+
+	try {
+		await transporter.sendMail(mailOptions)
+		console.log(`Email with invoice sent to ${email}`)
+	} catch (error) {
+		console.error(`Error sending invoice email to ${email}: ${error}`)
+	}
+}
+
 const cancelSubject = 'Order Cancellation Confirmation | AMTRONICS';
 const cancelEmailContentTemplate = `
 <div>

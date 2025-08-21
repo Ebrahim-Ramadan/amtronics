@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
-import { sendOrderConfirmationEmail, sendOrderCancellationEmail } from "@/lib/mailer"
+import { sendOrderConfirmationEmail, sendOrderCancellationEmail, sendOrderConfirmationEmailWithInvoice } from "@/lib/mailer"
+import { generateInvoicePdf } from "@/lib/invoice"
 import { sendWhatsAppTemplate } from "@/lib/twilio"
 
 export async function POST(request: Request) {
@@ -151,7 +152,26 @@ export async function POST(request: Request) {
       if (newOrderID) {
         // Do not await these, let them run in the background
         if (customerInfo.email) {
-          sendOrderConfirmationEmail(customerInfo.email, newOrderID.toHexString(), customerInfo.name)
+          // Prepare minimal order object for invoice
+          const orderForInvoice = {
+            ...orderData,
+            _id: newOrderID.toHexString(),
+            status: "pending",
+          }
+          generateInvoicePdf(orderForInvoice as any)
+            .then((pdf) =>
+              sendOrderConfirmationEmailWithInvoice(
+                customerInfo.email,
+                newOrderID!.toHexString(),
+                customerInfo.name,
+                pdf
+              )
+            )
+            .catch((err) => {
+              console.error("Failed generating invoice PDF:", err)
+              // Fallback to email without attachment
+              // sendOrderConfirmationEmail(customerInfo.email, newOrderID!.toHexString(), customerInfo.name)
+            })
         }
 
         const total = (orderData.total - orderData.discount).toFixed(2)
