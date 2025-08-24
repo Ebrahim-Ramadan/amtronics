@@ -17,7 +17,7 @@ export const LazyLoad = ({ children }: LazyLoadProps) => {
           observer.disconnect();
         }
       },
-      { rootMargin: '100px' } // the root margin
+      { rootMargin: '75px' } // the root margin
     );
 
     if (ref.current) {
