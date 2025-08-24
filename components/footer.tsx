@@ -66,7 +66,7 @@ export default function Footer() {
             </a>
             <div className="flex items-center gap-2">
               <Mail className="h-5 w-5" color="#FEEE00" />
-              <p className="text-sm">support@amtronics.kw</p>
+              <p className="text-sm">business@amtronics.kw</p>
             </div>
           </div>
          {/* Product Categories */}
