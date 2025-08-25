@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    unoptimized: true,
     minimumCacheTTL: 2678400, // 31 days
     remotePatterns: [
       {
