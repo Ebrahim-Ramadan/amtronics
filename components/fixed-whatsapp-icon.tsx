@@ -11,7 +11,7 @@ export const FixedWhatsappIcon = () => {
     >
       {/* Animated text */}
       <span
-        className="absolute md:right-20 md:font-medium right-16 bg-green-600 text-white text-xs md:text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 animate-[slideOut_4s_ease-in-out_forwards]  min-w-max shadow-lg whitespace-pre-line"
+        className="absolute md:right-20 md:font-medium right-16 bg-green-600 text-white text-xs md:text-sm px-3 py-1 rounded-tl-lg rounded-tr-lg rounded-bl-lg opacity-0 group-hover:opacity-100 animate-[slideOut_4s_ease-in-out_forwards] min-w-max shadow-lg whitespace-pre-line"
         style={{ whiteSpace: 'pre-line' }}
       >
         Want to customize a whole new product?{'\n'}Chat with us!
