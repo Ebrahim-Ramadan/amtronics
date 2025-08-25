@@ -187,11 +187,11 @@ export default function CartPage() {
                             key={prod._id + i}
                             className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2 sm:p-3"
                           >
-                            <Image
+                            <img
                               src={prod.image.split(",")[0] || "/placeholder.svg?height=64&width=64"}
                               alt={isArabic ? prod.ar_name : prod.en_name}
-                              width={48}
-                              height={48}
+                              // width={48}
+                              // height={48}
                               className="rounded-md object-contain w-12 h-12 sm:w-16 sm:h-16"
                             />
                             <div className="flex-1">
@@ -224,13 +224,13 @@ export default function CartPage() {
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                       <div className="relative h-24 w-full sm:h-32 sm:w-32">
-                        <Image
+                        <img
                           src={item.product.image.split(",")[0] || "/placeholder.svg?height=128&width=128"}
                           alt={isArabic ? item.product.ar_name : item.product.en_name}
-                          fill
+                          // fill
                           className="rounded-lg object-contain"
-                          sizes="(max-width: 640px) 100vw, 128px"
-                          priority
+                          // sizes="(max-width: 640px) 100vw, 128px"
+                          // priority
                         />
                         <Button
                           variant="outline"
@@ -377,11 +377,11 @@ export default function CartPage() {
                   className="w-full h-10 sm:h-12 text-sm sm:text-base font-semibold bg-[#0F172B] hover:bg-primary/90 transition-colors"
                   size="lg"
                 >
-                  <Image
+                  <img
                     src="/payment_menu_icon.svg"
                     alt={isArabic ? "إتمام الطلب" : "Proceed to Checkout"}
-                    width={18}
-                    height={18}
+                    // width={18}
+                    // height={18}
                     className="mr-2"
                   />
                   {isArabic ? "إتمام الطلب" : "Proceed to Checkout"}

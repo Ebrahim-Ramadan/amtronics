@@ -72,12 +72,12 @@ export default function DealsSection({ title, arTitle, bgColor, dealType }: Deal
             <CardContent className="p-3">
               <Link href={`/products/${product._id}`}>
                 <div className="relative mb-3">
-                  <Image
-                  unoptimized
+                  <img
+                  // unoptimized
                     src={product.image || "/placeholder.svg?height=150&width=150"}
                     alt={isArabic ? product.ar_name : product.en_name}
-                    width={150}
-                    height={150}
+                    // width={150}
+                    // height={150}
                     className="w-full h-32 object-cover rounded group-hover:scale-105 transition-transform"
                   />
                   {dealType === "flash" && (

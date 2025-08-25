@@ -39,13 +39,13 @@ export default function BrandShowcase() {
 							{isArabic ? "موزع رسمي" : "Official Reseller"}
 						</span>
 					</div>
-					<Image
+					<img
 						src="/categories/Keyestudio-Logo.jpg"
 						alt="Keystudio"
-						width={120}
-						height={120}
+						// width={120}
+						// height={120}
 						className="mb-4 rounded-lg shadow-md bg-white"
-						unoptimized
+						// unoptimized
 					/>
 					<h3 className="text-2xl md:text-3xl font-extrabold text-yellow-700 mb-2 tracking-tight text-center">
 						{isArabic
@@ -90,12 +90,12 @@ export default function BrandShowcase() {
 						href={brand.link}
 						className="flex items-center justify-center bg-white rounded-lg hover:shadow-md transition-shadow group"
 					>
-						<Image
-							unoptimized
+						<img
+							// unoptimized
 							src={brand.logo || "/placeholder.svg"}
 							alt={brand.name}
-							width={200}
-							height={100}
+							// width={200}
+							// height={100}
 							className="py-2 object-contain group-hover:scale-105 transition-transform"
 						/>
 					</Link>

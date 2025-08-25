@@ -78,12 +78,12 @@ function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, s
       className={`absolute inset-0 w-full h-full transition-all duration-400 ${transitionClass}`}
       style={{ willChange: isSliding ? 'transform' : undefined }}
     >
-      <Image
-        unoptimized
+      <img
+        // unoptimized
         src={images[index]}
         alt={`${isArabic ? product.ar_name : product.en_name} - Image ${index + 1}`}
-        width={200}
-        height={200}
+        // width={200}
+        // height={200}
         className="w-full h-48 object-cover rounded group-hover:scale-105 transition-transform"
       />
     </div>
@@ -225,7 +225,7 @@ function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, s
               ) : (
                 <>
                   {isArabic ? "أضف" : "Add"}
-                  <Image unoptimized src='/quick-atc-add-to-cart-grey.svg' width={20} height={20} alt="Add to Cart" />
+                  <img  src='/quick-atc-add-to-cart-grey.svg' alt="Add to Cart" />
                 </>
               )}
             </Button>

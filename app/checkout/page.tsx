@@ -734,7 +734,7 @@ export default function CheckoutPage() {
               <h3 className="font-semibold mb-2">{isArabic ? "طريقة الدفع" : "Payment Method"}</h3>
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">{isArabic ? "الدفع عند التسليم - نقداً" : "Cash on Delivery"}</p>
-                <Image src="/cash-on-delivery.svg" width={40} height={40} alt="Cash on Delivery" unoptimized/>
+                <img src="/cash-on-delivery.svg"  alt="Cash on Delivery" />
               </div>
             </div>
           </CardContent>

@@ -63,7 +63,7 @@ export default function WishlistPage() {
     return (
       <div className="bg-[#FBFAF9] mx-auto px-2 md:px-4 py-8 min-h-[60vh] flex items-center justify-center">
         <div className="text-center py-12 space-y-2 md:space-y-6 flex flex-col items-center justify-center">
-          <Image src="/empty-wishlist-1.webp" width={100} height={100} alt="My Durves" />
+          <img src="/empty-wishlist-1.webp" alt="My Durves" />
           <h1 className="text-xl md:text-3xl font-bold">{isArabic ? "قائمة الرغبات فارغة" : "Your Wishlist is Empty"}</h1>
           <p className="text-xs md:text-sm text-gray-600 max-w-md mx-auto">
             {isArabic
@@ -131,11 +131,11 @@ export default function WishlistPage() {
                       {(project.engineers || []).flatMap((eng: any) =>
                         (eng.bundle || []).map((b: any, bidx: number) => b.product ? (
                           <div key={bidx} className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2">
-                            <Image
+                            <img
                               src={b.product.image?.split(',')[0] || "/placeholder.svg?height=128&width=128"}
                               alt={isArabic ? b.product.ar_name : b.product.en_name}
-                              width={48}
-                              height={48}
+                              // width={48}
+                              // height={48}
                               className="rounded-md object-contain"
                             />
                             <div className="flex-1">
@@ -167,11 +167,11 @@ export default function WishlistPage() {
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center text-center space-y-2">
                     <Link href={`/products/${product._id}`}>
-                      <Image
+                      <img
                         src={product.image.split(",")[0] || "/placeholder.svg?height=150&width=150"}
                         alt={isArabic ? product.ar_name : product.en_name}
-                        width={150}
-                        height={150}
+                        // width={150}
+                        // height={150}
                         className="object-contain rounded-lg"
                       />
                     </Link>
@@ -213,10 +213,10 @@ export default function WishlistPage() {
                           </>
                         ) : (
                           <>
-                            <Image
+                            <img
                               src="/quick-atc-add-to-cart-grey.svg"
-                              width={20}
-                              height={20}
+                              // width={20}
+                              // height={20}
                               alt={isArabic ? "أضف إلى السلة" : "Add to Cart"}
                             />
                             {isArabic ? "أضف للسلة" : "Add to Cart"}

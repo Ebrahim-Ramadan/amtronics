@@ -151,12 +151,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         style={{ willChange: isSliding ? 'transform' : undefined }}
       >
         <Link href={`/products/${product._id}`}>
-          <Image
-          unoptimized
+          <img
+          // unoptimized
             src={images[index]}
             alt={`${isArabic ? product.ar_name : product.en_name} - Image ${index + 1}`}
-            width={250}
-            height={250}
+            // width={250}
+            // height={250}
             className="w-full h-48 object-contain group-hover:scale-105 transition-transform duration-300"
           />
         </Link>
@@ -330,11 +330,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       <CardFooter className="p-4 pt-0">
         <Button onClick={addToCart} className="w-full" disabled={product.quantity_on_hand === 0 || addToCartLoading}>
           {!addToCartLoading && !showCheck &&
-            <Image
-            unoptimized
+            <img
+            // unoptimized
               src='/quick-atc-add-to-cart-grey.svg'
-              width={20}
-              height={20}
+              // width={20}
+              // height={20}
               alt="Add to Cart"
             />
           }

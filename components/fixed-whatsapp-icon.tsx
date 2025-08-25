@@ -17,12 +17,12 @@ export const FixedWhatsappIcon = () => {
         Want to customize a whole new product?{'\n'}Chat with us!
       </span>
 
-      <Image
+      <img
         src="/whatsapp.webp"
         alt="WhatsApp Icon"
-        width={300}
-        height={300}
-        priority={false}
+        // width={300}
+        // height={300}
+        // priority={false}
         className="md:h-14 md:w-14 h-10 w-10"
       />
     </a>
