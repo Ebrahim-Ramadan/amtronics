@@ -12,6 +12,42 @@ import ProductImageGallery from "./ProductImageGallery"
 import { Suspense } from "react"
 import LoadingProductPage from "./product-loading"
 
+// --- SEO Metadata Helper ---
+function getProductMeta(product: Product, isArabic: boolean) {
+  const title = isArabic ? product.ar_name : product.en_name
+  const description = isArabic ? product.ar_description : product.en_description
+  const images = product.image
+    ? product.image.split(",").map((img) => img.trim())
+    : ["/placeholder.svg"]
+  const url = `https://amtronics.co/products/${product._id}`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website", // <-- change from "product" to "website"
+      images: images.map((src) => ({
+        url: src.startsWith("http") ? src : `https://amtronics.co${src}`,
+        width: 800,
+        height: 600,
+        alt: title,
+      })),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: images.map((src) => (src.startsWith("http") ? src : `https://amtronics.co${src}`)),
+    },
+    alternates: {
+      canonical: url,
+    },
+  }
+}
+
 async function getProduct(id: string): Promise<Product | null> {
   try {
     const client = await clientPromise
@@ -45,11 +81,12 @@ async function getProduct(id: string): Promise<Product | null> {
           ar_brand: 1,
           en_brand: 1,
           ave_cost: 1
-
         }
       }
     )
-    return product as Product | null
+    if (!product) return null
+    // Convert _id to string for serialization
+    return { ...product, _id: product._id.toString() } as Product
   } catch (error) {
     console.error("Error fetching product:", error)
     return null
@@ -61,6 +98,7 @@ interface ProductPageProps {
   searchParams: { lang?: string }
 }
 
+// --- SEO Metadata Export ---
 export async function generateMetadata({ params, searchParams }: ProductPageProps) {
   const product = await getProduct(params.id)
   const isArabic = searchParams.lang === "ar"
@@ -71,13 +109,11 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
       description: isArabic
         ? "المنتج المطلوب غير متوفر."
         : "The requested product is not available.",
+      robots: "noindex, nofollow",
     }
   }
 
-  return {
-    title: isArabic ? product.ar_name : product.en_name,
-    description: isArabic ? product.ar_description : product.en_description,
-  }
+  return getProductMeta(product, isArabic)
 }
 
 export default function ProductPageWrapper(props: ProductPageProps) {
