@@ -150,7 +150,7 @@ export default function CheckoutPage() {
 
     // Validate required fields
     const requiredFields: (keyof CustomerInfo)[] = ["name", "phone", 
-      // "email",
+      "email",
       "country", "city", "area", "block", "street", "house"]
     for (const field of requiredFields) {
       if (!customerInfo[field].trim()) {
@@ -161,8 +161,8 @@ export default function CheckoutPage() {
                   ? "الاسم الكامل"
                   : field === "phone"
                     ? "رقم الهاتف"
-                    // : field === "email"
-                    //   ? "البريد الإلكتروني"
+                    : field === "email"
+                      ? "البريد الإلكتروني"
                       : field === "country"
                         ? "الدولة"
                         : field === "city"
@@ -182,8 +182,8 @@ export default function CheckoutPage() {
                   ? "Full Name"
                   : field === "phone"
                     ? "Phone Number"
-                  // : field === "email"
-                  //   ? "Email Address"
+                  : field === "email"
+                    ? "Email Address"
                   : field === "country"
                     ? "Country"
                   : field === "city"
