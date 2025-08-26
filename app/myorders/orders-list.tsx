@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowUpCircle, Copy, X, RefreshCw } from "lucide-react";
+import { ArrowUpCircle, Copy, X, RefreshCw, ChevronLeft, CheckCircle } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -270,13 +270,18 @@ export default function OrdersList() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 sm:py-8" dir={isArabic ? "rtl" : "ltr"}>
+    <div className="w-full  px-4 py-3 md:py-6" dir={isArabic ? "rtl" : "ltr"}>
       {/* Header with refresh button */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-neutral-800">
-          {isArabic ? "طلباتي" : "My Orders"}
-        </h1>
-        <Button
+      <div className="w-full flex flex-col items-center mb-3 md:mb-6 gap-4">
+         <div className="flex items-center w-full gap-2 justify-between">
+          <Link
+        href="/"
+        className=" flex items-center text-sm text-neutral-600 transition-colors duration-200 hover:text-[#00B8DB] md:text-base"
+      >
+        <ChevronLeft className="mr-1 h-5 w-5" />
+        {isArabic ? "العودة للرئيسية" : "Back to Home"}
+      </Link>
+      <Button
           variant="outline"
           size="sm"
           onClick={refreshOrderStatuses}
@@ -286,6 +291,14 @@ export default function OrdersList() {
           <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
           {/* {isArabic ? "تحديث" : "Refresh"} */}
         </Button>
+         </div>
+      <div className="md:mb-4 flex justify-center">
+        <CheckCircle className="h-20 w-20 text-green-500 md:h-28 md:w-28" />
+      </div>
+      <h1 className="mb-4 text-center text-4xl font-bold text-neutral-800 md:mb-6 md:text-5xl">
+        {isArabic ? "طلباتي" : "My Orders"}
+      </h1>
+        
       </div>
 
       {loadingOrders ? (
