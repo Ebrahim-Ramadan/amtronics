@@ -448,8 +448,9 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <div>
-  <Label className="mb-1" htmlFor="email">{isArabic ? "البريد الإلكتروني" : "Email Address"} </Label>
+  <Label className="mb-1" htmlFor="email">{isArabic ? "البريد الإلكتروني" : "Email Address"} <span className="text-red-600">*</span></Label>
   <Input
+  required
     id="email"
     type="email"
     value={customerInfo.email}
