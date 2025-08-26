@@ -224,7 +224,7 @@ export default function EnhancedHeroSlider() {
                 ))}
               </div>
 
-              <Link href={slideData.link}>
+              <Link href={slideData.link} prefetch={false}>
                 <Button  className="bg-white text-black hover:bg-gray-100 text-lg md:text-xl px-4 md:px-8 py-2 md:py-4 font-bold md:size-lg">
                   {isArabic ? "تسوق الآن" : "SHOP NOW"}
                 </Button>

@@ -90,7 +90,7 @@ function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, s
   );
 
   return (
-    <Link href={`/products/${product._id}`} className="block h-full">
+    <Link href={`/products/${product._id}`} className="block h-full" prefetch={false}>
       <Card className="flex-shrink-0 bg-white/70 w-64 group hover:shadow-lg transition-shadow h-full">
         <CardContent className="p-4">
           <div className="relative mb-3">

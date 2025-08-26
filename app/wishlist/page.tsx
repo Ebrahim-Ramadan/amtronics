@@ -70,7 +70,7 @@ export default function WishlistPage() {
               ? "ابدأ في إضافة المنتجات التي تعجبك إلى قائمة الرغبات لمتابعتها لاحقاً!"
               : "Start adding products you like to your wishlist to keep track of them!"}
           </p>
-          <Link href="/products">
+          <Link href="/products" prefetch={false}>
             <Button className="bg-cyan-500 hover:bg-primary/90 size-sm md:size-lg">
               {isArabic ? "تسوق الآن" : "Shop Now"}
             </Button>
@@ -166,7 +166,7 @@ export default function WishlistPage() {
               <Card key={product._id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center text-center space-y-2">
-                    <Link href={`/products/${product._id}`}>
+                    <Link href={`/products/${product._id}`} prefetch={false}>
                       <img
                         src={product.image.split(",")[0] || "/placeholder.svg?height=150&width=150"}
                         alt={isArabic ? product.ar_name : product.en_name}
@@ -175,7 +175,7 @@ export default function WishlistPage() {
                         className="object-contain rounded-lg"
                       />
                     </Link>
-                    <Link href={`/products/${product._id}`} className="hover:underline">
+                    <Link href={`/products/${product._id}`} prefetch={false} className="hover:underline">
                       <h3 className="font-semibold text-lg line-clamp-2 leading-5">
                         {isArabic ? product.ar_name : product.en_name}
                       </h3>

@@ -106,7 +106,7 @@ function PromotionalGridSection({ section }: PromotionalGridProps) {
 
         <div className="grid grid-cols-2 gap-3 mb-4">
           {products.slice(0, 4).map((product) => (
-            <Link key={product._id} href={`/products/${product._id}`} className="group">
+            <Link key={product._id} href={`/products/${product._id}`} className="group" prefetch={false}>
               <div className="bg-white/70 rounded-lg p-3 hover:shadow-md transition-shadow">
                 <Image
                 unoptimized
@@ -125,7 +125,7 @@ function PromotionalGridSection({ section }: PromotionalGridProps) {
           ))}
         </div>
 
-        <Link href={section.link}>
+        <Link href={section.link} prefetch={false}>
           <Button variant="outline" size="sm" className="w-full">
             {isArabic ? "عرض الكل" : "See all deals"}
           </Button>

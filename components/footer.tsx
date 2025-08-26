@@ -76,27 +76,27 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/products?category=Kits" className="hover:underline">
+                <Link href="/products?category=Kits" className="hover:underline" prefetch={false}>
                   {isArabic ? "الأطقم" : "Kits"}
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=Resistor" className="hover:underline">
+                <Link href="/products?category=Resistor" className="hover:underline" prefetch={false}>
                   {isArabic ? "المقاومه" : "Resistor"}
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=Sensor" className="hover:underline">
+                <Link href="/products?category=Sensor" className="hover:underline" prefetch={false}>
                   {isArabic ? "المستشعرات" : "Sensor"}
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=Capacitors" className="hover:underline">
+                <Link href="/products?category=Capacitors" className="hover:underline" prefetch={false}>
                   {isArabic ? "المكثفات" : "Capacitors"}
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=Arduino" className="hover:underline">
+                <Link href="/products?category=Arduino" className="hover:underline" prefetch={false}>
                   {isArabic ? "أردوينو" : "Arduino"}
                 </Link>
               </li>

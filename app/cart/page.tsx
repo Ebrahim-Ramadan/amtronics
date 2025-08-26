@@ -372,7 +372,7 @@ export default function CartPage() {
                   </span>
                 </div>
               </div>
-              <Link href="/checkout" className="block">
+              <Link href="/checkout" className="block" prefetch={false}>
                 <Button
                   className="w-full h-10 sm:h-12 text-sm sm:text-base font-semibold bg-[#0F172B] hover:bg-primary/90 transition-colors"
                   size="lg"

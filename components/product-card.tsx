@@ -150,7 +150,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         className={`absolute inset-0 w-full h-full transition-all duration-400 ${transitionClass}`}
         style={{ willChange: isSliding ? 'transform' : undefined }}
       >
-        <Link href={`/products/${product._id}`}>
+        <Link href={`/products/${product._id}`} prefetch={false}>
           <img
           // unoptimized
             src={images[index]}

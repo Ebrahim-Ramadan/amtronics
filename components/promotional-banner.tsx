@@ -22,7 +22,7 @@ export default function PromotionalBanner() {
             </p>
           </div>
         </div>
-        <Link href="/products?category=Kits">
+        <Link href="/products?category=Kits" prefetch={false}>
           <Button variant="secondary" className="bg-yellow-400 text-black hover:bg-yellow-300">
             {isArabic ? "تسوق الآن" : "Shop Now"}
           </Button>

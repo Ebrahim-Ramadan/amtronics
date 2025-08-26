@@ -85,6 +85,7 @@ export default function EnhancedCategories() {
       <div className="flex md:grid md:grid-cols-8 gap-2 md:gap-4 pt-6 py-2 overflow-x-auto scrollbar-hide">
         {categories.map((category, index) => (
           <Link
+          prefetch={false}
             key={index}
             href={category.link}
             className="group mb-1 md:mb-0 flex-shrink-0 md:flex-shrink md:w-auto min-w-[140px] md:min-w-0 flex flex-col items-center justify-center"

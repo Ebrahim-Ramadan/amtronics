@@ -84,7 +84,7 @@ export default function HeroBanner() {
           <p className="text-xl md:text-2xl mb-8 opacity-90">
             {isArabic ? currentBanner.ar_subtitle : currentBanner.en_subtitle}
           </p>
-          <Link href={currentBanner.link}>
+          <Link href={currentBanner.link} prefetch={false}>
             <Button size="lg" variant="secondary" className="text-lg px-8 py-3">
               {isArabic ? "تسوق الآن" : "Shop Now"}
             </Button>

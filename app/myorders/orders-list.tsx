@@ -310,7 +310,7 @@ export default function OrdersList() {
           <p className="text-base sm:text-lg text-neutral-600">
             {isArabic ? "لا توجد طلبات حتى الآن." : "You have no orders yet."}
           </p>
-          <Link href="/products">
+          <Link href="/products" prefetch={false}>
             <Button className="rounded-full bg-[#00B8DB] px-6 py-2 sm:py-3 text-sm sm:text-base text-white hover:bg-[#009bb8]">
               {isArabic ? "تسوق الآن" : "Shop Now"}
             </Button>

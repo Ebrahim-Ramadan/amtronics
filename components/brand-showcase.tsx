@@ -58,6 +58,7 @@ export default function BrandShowcase() {
 							: "Get genuine Keystudio products directly from the official reseller in Kuwait. Quality, warranty, and premium support."}
 					</p>
 					<Link
+					prefetch={false}
 						href="/products?category=Keyestudio"
 						className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold shadow transition"
 					>
