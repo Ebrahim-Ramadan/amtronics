@@ -36,7 +36,7 @@ export default function BrandShowcase() {
 				<div className="relative flex flex-col items-center justify-center w-full max-w-xl rounded-2xl border border-neutral-200 bg-gradient-to-br from-yellow-50 via-white to-yellow-100 shadow-xl py-10 px-6 md:px-16">
 					<div className="absolute top-4 right-4">
 						<span className="px-3 py-1 rounded-full bg-yellow-400 text-yellow-900 text-xs font-semibold shadow">
-							{isArabic ? "موزع رسمي" : "Official Reseller"}
+							{isArabic ? "موزع رسمي" : "Official Distributor"}
 						</span>
 					</div>
 					<img

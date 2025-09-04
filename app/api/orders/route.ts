@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
-import { sendOrderConfirmationEmail, sendOrderCancellationEmail, sendOrderConfirmationEmailWithInvoice } from "@/lib/mailer"
+import {  sendOrderCancellationEmail, sendOrderConfirmationEmailWithInvoice } from "@/lib/mailer"
 import { generateInvoicePdf } from "@/lib/invoice"
 import { sendWhatsAppTemplate } from "@/lib/twilio"
 
@@ -164,7 +164,7 @@ export async function POST(request: Request) {
                 customerInfo.email,
                 newOrderID!.toHexString(),
                 customerInfo.name,
-                pdf
+                // pdf
               )
             )
             .catch((err) => {

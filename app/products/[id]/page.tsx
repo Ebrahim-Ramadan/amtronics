@@ -291,7 +291,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
                 </div>
                 <div className="flex items-center gap-3">
                   <RefreshCw className="h-5 w-5 text-orange-600" />
-                  <span className="text-sm">{isArabic ? "إمكانية الإرجاع خلال 7 أيام" : "7-day return policy"}</span>
+                  <span className="text-sm">{isArabic ? "إمكانية الإرجاع خلال 14 أيام" : "14-day return policy"}</span>
                 </div>
               </div>
             </CardContent>
