@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Pagination } from "@/components/ui/pagination"; // Assuming you have a Pagination component
 import { categories } from "@/lib/utils"; // Assuming categories is an array of category names
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 15;
 
 export default function SearchPage() {
   const { state } = useCart();

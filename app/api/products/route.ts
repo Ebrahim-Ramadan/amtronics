@@ -18,8 +18,10 @@ export async function GET(request: Request) {
 
     if (category) {
       query.$or = [
-        { en_main_category: { $regex: category, $options: "i" } },
-        { ar_main_category: { $regex: category, $options: "i" } },
+        { en_category: { $regex: category, $options: "i" } },
+        { en_name: { $regex: category, $options: "i" } },
+        { en_long_description: { $regex: category, $options: "i" } },
+
       ]
     }
 
@@ -28,7 +30,9 @@ export async function GET(request: Request) {
         { en_name: { $regex: search, $options: "i" } },
         { ar_name: { $regex: search, $options: "i" } },
         { en_description: { $regex: search, $options: "i" } },
-        { ar_description: { $regex: search, $options: "i" } },
+        { en_long_description: { $regex: search, $options: "i" } },
+
+
       ]
     }
 

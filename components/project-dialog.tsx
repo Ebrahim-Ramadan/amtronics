@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 interface Bundle {
   id: string;
   product: Product | null;
+  quantity?: number; // <-- Add quantity field
 }
 
 interface Engineer {
@@ -52,40 +53,18 @@ export default function ProjectDialog({ project }: { project: Project }) {
     }
   };
 
-  // Gather all products from all bundles
+  // Gather all products from all bundles, including quantity
   const allProducts = (project.engineers?.flatMap((eng) =>
     eng.bundle.map((b) => {
       const p = b.product;
       if (!p) return null;
       return {
+        ...p,
         _id: b.id,
-        id: 0,
-        sku: '',
-        en_name: p.en_name || '',
-        ar_name: '',
-        en_description: '',
-        ar_description: '',
-        en_long_description: '',
-        ar_long_description: '',
-        en_main_category: '',
-        ar_main_category: '',
-        en_category: '',
-        ar_category: '',
-        price: p.price,
-        image: p.image,
-        quantity_on_hand: 0,
-        sold_quantity: 0,
-        visible_in_catalog: 1,
-        visible_in_search: 1,
-        slug_url: '',
-        discount: 0,
-        discount_type: '',
-        ar_brand: '',
-        en_brand: '',
-        ave_cost: 0,
-      } as Product;
+        quantity: b.quantity ?? 1, // <-- Use bundle quantity, default to 1
+      } as Product & { quantity: number };
     })
-  ).filter((p): p is Product => !!p)) || [];
+  ).filter((p): p is Product & { quantity: number } => !!p)) || [];
 
   const handleAddToCart = () => {
     if (!allProducts.length) return toast.error("No products to add");
@@ -107,7 +86,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
 
   const handleBuyNow = () => {
     if (!allProducts.length) return toast.error("No products to buy");
-    setLoading(true); // Set loading state
+    setLoading(true);
     dispatch({
       type: "ADD_PROJECT_BUNDLE",
       payload: {
@@ -122,16 +101,17 @@ export default function ProjectDialog({ project }: { project: Project }) {
     });
     toast.success("Project bundle added to cart!");
     setOpen(false);
-    setLoading(false); // Reset loading state
+    setLoading(false);
     router.push("/checkout");
   };
 
+  // Update totalPrice calculation to multiply by quantity
   const totalPrice =
     project.engineers?.reduce((sum, eng) => {
       return (
         sum +
         (eng.bundle?.reduce(
-          (bundleSum, b) => bundleSum + (b.product?.price || 0),
+          (bundleSum, b) => bundleSum + ((b.product?.price || 0) * (b.quantity ?? 1)),
           0
         ) || 0)
       );
@@ -214,7 +194,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
             </DialogTitle>
           </div>
           <DialogDescription className="text-gray-500 flex items-center justify-between gap-2">
-            <p className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               Project ID: {project._id}
               <Copy
                 onClick={() => {
@@ -224,7 +204,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
                 size={16}
                 className="cursor-pointer text-gray-400 hover:text-black"
               />
-            </p>
+            </div>
             <Button
               variant={isWishlisted ? "outline" : "ghost"}
               size="icon"
@@ -258,7 +238,12 @@ export default function ProjectDialog({ project }: { project: Project }) {
                       />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-[#0F172B]">{b.product.en_name}</p>
-                        <p className="text-xs text-gray-600">${b.product.price.toFixed(2)}</p>
+                        <p className="text-xs text-gray-600">
+                          ${b.product.price.toFixed(2)}
+                          {b.quantity && b.quantity > 1 && (
+                            <span className="ml-2 text-xs text-gray-500">× {b.quantity}</span>
+                          )}
+                        </p>
                       </div>
                     </div>
                   ) : (

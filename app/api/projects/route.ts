@@ -36,14 +36,15 @@ export async function GET() {
       products.map((product) => [product._id.toString(), product])
     );
 
-    // Enrich projects with product details
+    // Enrich projects with product details and quantity
     const enrichedProjects = projects.map((project) => ({
       ...project,
       _id: project._id.toString(),
-      engineers: project.engineers?.map((eng: { name: string; bundle: { id: string }[] }) => ({
+      engineers: project.engineers?.map((eng: { name: string; bundle: { id: string; quantity?: number }[] }) => ({
         ...eng,
         bundle: eng.bundle.map((b) => ({
           id: b.id,
+          quantity: b.quantity ?? 1, // Pass quantity (default to 1 if missing)
           product: productMap.get(b.id) || null,
         })),
       })) || [],
