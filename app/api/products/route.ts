@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const search = searchParams.get("search")
     const featured = searchParams.get("featured")
     const recent = searchParams.get("recent")
-    const limit = Number.parseInt(searchParams.get("limit") || "20")
+    const limit = Number.parseInt(searchParams.get("limit") || "15")
     const skip = Number.parseInt(searchParams.get("skip") || "0")
 
     const client = await clientPromise
