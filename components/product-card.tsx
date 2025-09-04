@@ -286,7 +286,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </h3>
         </Link>
         <p className="text-gray-600 text-sm line-clamp-2">
-          {isArabic ? product.ar_description : product.en_description}
+          {product.en_description}
         </p>
 
         {/* <div className="flex items-center gap-2 mb-1">

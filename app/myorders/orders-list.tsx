@@ -585,9 +585,7 @@ export default function OrdersList() {
                                       <span className="font-semibold text-sm sm:text-base text-green-600">
                                         {(() => {
                                           const product = (item as CartItem).product!;
-                                          const discountAmount = product.discount_type === "percentage"
-                                            ? product.price * (product.discount! / 100)
-                                            : product.discount!;
+                                          const discountAmount = product.price * (product.discount! / 100)
                                           return (product.price - discountAmount).toFixed(2);
                                         })()}{" "}
                                         {isArabic ? "د.ك" : "KD"}

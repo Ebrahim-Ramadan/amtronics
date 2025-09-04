@@ -185,9 +185,7 @@ export default function WishlistPage() {
                     <div className="flex items-center gap-2">
       <p className="text-gray-600 font-semibold text-base">
         {Number(product.price - (product.discount && product.discount > 0
-          ? product.discount_type === "percentage"
-            ? product.price * (product.discount / 100)
-            : product.discount
+          ? product.price * (product.discount / 100)
           : 0
         )).toFixed(2)} {isArabic ? "د.ك" : "KD"}
       </p>

@@ -15,7 +15,7 @@ import LoadingProductPage from "./product-loading"
 // --- SEO Metadata Helper ---
 function getProductMeta(product: Product, isArabic: boolean) {
   const title = isArabic ? product.ar_name : product.en_name
-  const description = isArabic ? product.ar_description : product.en_description
+  const description = product.en_description
   const images = product.image
     ? product.image.split(",").map((img) => img.trim())
     : ["/placeholder.svg"]
@@ -140,7 +140,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
   console.log('discountedPrice', discountedPrice);
 
   // Breadcrumbs
-  const category = isArabic ? product.ar_main_category : product.en_main_category
+  const category = product.en_category
   const productName = isArabic ? product.ar_name : product.en_name
 
   // Stock status: Treat quantity_on_hand as Infinity if null
@@ -203,9 +203,9 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
               </h1>
             )}
             <h1 className="text-xl md:text-3xl leading-6 md:leading-9 tracking-[.02em] font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
-          {isArabic ? product.ar_description : product.en_description ? (
+          {isArabic ? product.en_description : product.en_description ? (
   <p className="text-gray-600 leading-4 md:leading-5 text-sm md:text-base">
-    {isArabic ? product.ar_description.substring(0, 200) : product.en_description.substring(0, 200)}
+    {isArabic ? product.en_description.substring(0, 200) : product.en_description.substring(0, 200)}
     {isArabic ? (
       <Link prefetch={false} href="#description" className="text-[#00B9DA] cursor-pointer ml-2 hover:underline">عرض المزيد</Link>
     ) : (
