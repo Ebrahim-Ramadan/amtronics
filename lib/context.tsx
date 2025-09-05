@@ -53,22 +53,39 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       }
     }
     case "REMOVE_ITEM": {
+      // Find if the payload matches a project-bundle or a product
       const itemToRemove = state.items.find((item) => {
-        if ("product" in item) {
-          return item.product._id === action.payload
+        if ("type" in item && item.type === "project-bundle") {
+          return item.projectId === action.payload;
         }
-        return false
-      }) as CartItem | undefined
+        if ("product" in item) {
+          return item.product._id === action.payload;
+        }
+        return false;
+      });
+
       return {
         ...state,
         items: state.items.filter((item) => {
-          if ("product" in item) {
-            return item.product._id !== action.payload
+          if ("type" in item && item.type === "project-bundle") {
+            return item.projectId !== action.payload;
           }
-          return true
+          if ("product" in item) {
+            return item.product._id !== action.payload;
+          }
+          return true;
         }),
-        total: state.total - (itemToRemove ? itemToRemove.product.price * itemToRemove.quantity : 0),
-      }
+        total: state.total - (
+          itemToRemove
+            ? ("type" in itemToRemove && itemToRemove.type === "project-bundle"
+                ? itemToRemove.products.reduce((sum, p) => sum + p.price, 0) * itemToRemove.quantity
+                : "product" in itemToRemove
+                ? itemToRemove.product.price * itemToRemove.quantity
+                : 0
+              )
+            : 0
+        ),
+      };
     }
     case "UPDATE_QUANTITY": {
       const item = state.items.find((item) => {

@@ -76,6 +76,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
         projectId: project._id,
         projectName: project.name,
         engineerNames: project.engineers?.map((e) => e.name) || [],
+        engineerEmails: project.engineers?.map((e) => e.email) || [], // <-- Add engineerEmails here
         bundleIds: project.engineers?.flatMap((e) => e.bundle.map((b) => b.id)) || [],
         products: allProducts,
         quantity: 1,
@@ -95,6 +96,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
         projectId: project._id,
         projectName: project.name,
         engineerNames: project.engineers?.map((e) => e.name) || [],
+        engineerEmails: project.engineers?.map((e) => e.email) || [], // <-- Add engineerEmails here
         bundleIds: project.engineers?.flatMap((e) => e.bundle.map((b) => b.id)) || [],
         products: allProducts,
         quantity: 1,

@@ -331,7 +331,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto md:px-20 py-4 md:py-6" dir={dir}>
+    <div className="mx-auto md:px-16 py-4 md:py-6" dir={dir}>
       <a
         href="/cart"
         className="font-medium text-neutral-500 hover:text-[#00B8DB] text-xs md:text-sm flex justify-start items-center mb-2 text-center"
@@ -644,7 +644,7 @@ export default function CheckoutPage() {
                       <div className="text-xs text-blue-700 mt-1">
                         {isArabic ? "البريد الإلكتروني:" : "Engineer Email:"} {item.engineerEmails?.join(", ")}
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                      <div className="grid grid-cols-1  gap-2 mt-2">
                         {item.products.map((prod: Product, idx: number) => (
                           <div key={prod._id + idx} className="flex items-center gap-2 shadow-xl rounded-xl p-2">
                             <div className="relative w-14 h-14 rounded-xl shadow-sm">

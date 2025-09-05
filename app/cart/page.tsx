@@ -49,12 +49,23 @@ export default function CartPage() {
     }
   };
 
-  const removeItem = (productId: string) => {
+  const removeItem = (id: string) => {
+    const item = state.items.find(
+      (itm) =>
+        ("type" in itm && itm.type === "project-bundle" && itm.projectId === id) ||
+        ("product" in itm && itm.product._id === id)
+    );
     const confirmMessage = isArabic
       ? "هل أنت متأكد من إزالة هذا المنتج من السلة؟"
       : "Are you sure you want to remove this item from the cart?";
-    if (confirm(confirmMessage)) {
-      dispatch({ type: "REMOVE_ITEM", payload: productId });
+    if (item && confirm(confirmMessage)) {
+      dispatch({
+        type: "REMOVE_ITEM",
+        payload:
+          "type" in item && item.type === "project-bundle"
+            ? item.projectId
+            : item.product._id,
+      });
       toast.info("Item Removed");
     }
   };
@@ -72,6 +83,7 @@ export default function CartPage() {
 
   const subtotal = state.total;
   const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0);
+console.log('state.items', state.items);
 
   if (state.items.length === 0) {
     return <EmptyCart isArabic={isArabic} />;
@@ -180,12 +192,13 @@ export default function CartPage() {
                             {eng}
                           </span>
                         ))}
-                      </div>
-                      {item.engineerEmails && item.engineerEmails.length > 0 && (
-                        <div className="text-xs text-blue-700 mb-2">
-                          {isArabic ? "البريد الإلكتروني:" : "Engineer Email:"} {item.engineerEmails.join(", ")}
+                        {item.engineerEmails && item.engineerEmails.length > 0 && (
+                        <div className="text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                           {item.engineerEmails.join(", ")}
                         </div>
                       )}
+                      </div>
+                      
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {item.products.map((prod, i) => (
                           <div
