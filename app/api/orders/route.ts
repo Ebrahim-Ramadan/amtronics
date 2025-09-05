@@ -136,6 +136,35 @@ export async function POST(request: Request) {
         //   await db.collection("products").bulkWrite(bulkOps, { session });
         // }
 
+        // Prepare bulk operations to increment quantities_sold for projects
+        const projectBulkOps: any[] = [];
+        for (const item of itemsWithAveCost) {
+          if (item.type === "project-bundle" && item.projectId) {
+            // Use item.quantity or default to 1
+            const quantity = item.quantity || 1;
+            if (ObjectId.isValid(item.projectId)) {
+              projectBulkOps.push({
+                updateOne: {
+                  filter: { _id: new ObjectId(item.projectId) },
+                  update: { $inc: { quantities_sold: quantity } }
+                }
+              });
+            } else {
+              projectBulkOps.push({
+                updateOne: {
+                  filter: { id: item.projectId },
+                  update: { $inc: { quantities_sold: quantity } }
+                }
+              });
+            }
+          }
+        }
+
+        // Execute bulk project quantities_sold updates
+        if (projectBulkOps.length > 0) {
+          await db.collection("projects").bulkWrite(projectBulkOps, { session });
+        }
+
         // Insert order
         const orderResult = await db.collection("orders").insertOne(
           {
