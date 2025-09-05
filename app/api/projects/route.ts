@@ -40,14 +40,17 @@ export async function GET() {
     const enrichedProjects = projects.map((project) => ({
       ...project,
       _id: project._id.toString(),
-      engineers: project.engineers?.map((eng: { name: string; bundle: { id: string; quantity?: number }[] }) => ({
-        ...eng,
-        bundle: eng.bundle.map((b) => ({
-          id: b.id,
-          quantity: b.quantity ?? 1, // Pass quantity (default to 1 if missing)
-          product: productMap.get(b.id) || null,
-        })),
-      })) || [],
+      engineers: project.engineers?.map(
+        (eng: { name: string; email?: string; bundle: { id: string; quantity?: number }[] }) => ({
+          ...eng,
+          email: eng.email ?? null, // Include engineer email
+          bundle: eng.bundle.map((b) => ({
+            id: b.id,
+            quantity: b.quantity ?? 1,
+            product: productMap.get(b.id) || null,
+          })),
+        })
+      ) || [],
     }));
 
     console.log("Enriched projects:", enrichedProjects);

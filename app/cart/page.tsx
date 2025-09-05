@@ -181,6 +181,11 @@ export default function CartPage() {
                           </span>
                         ))}
                       </div>
+                      {item.engineerEmails && item.engineerEmails.length > 0 && (
+                        <div className="text-xs text-blue-700 mb-2">
+                          {isArabic ? "البريد الإلكتروني:" : "Engineer Email:"} {item.engineerEmails.join(", ")}
+                        </div>
+                      )}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {item.products.map((prod, i) => (
                           <div

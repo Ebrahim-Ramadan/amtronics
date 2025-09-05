@@ -31,6 +31,7 @@ export interface ProjectCartItem {
   projectId: string;
   projectName: string;
   engineerNames: string[];
+  engineerEmails: string[]; // <-- Add this line
   bundleIds: string[];
   products: Product[];
   quantity: number;
@@ -42,6 +43,7 @@ export interface ProjectBundleItem {
   projectId: string;
   projectName: string;
   engineerNames: string[];
+  engineerEmails: string[]; // <-- Add this line
   bundleIds: string[];
   products: Product[];
   quantity: number;
@@ -56,24 +58,25 @@ export interface PromoCode {
 }
 
 export interface Order {
-  _id?: string
-  items: (CartItem | ProjectBundleItem)[]
-  customerInfo: CustomerInfo
-  total: number
-  discount: number
-  promoCode?: string
-  status: string
-  createdAt: Date
-  shippingFee?: number
+  _id?: string;
+  items: (CartItem | ProjectBundleItem)[];
+  customerInfo: CustomerInfo;
+  total: number;
+  discount: number;
+  promoCode?: string;
+  status: string;
+  createdAt: Date;
+  shippingFee?: number;
   projectBundle?: {
-    type: 'project-bundle'
-    projectId: string
-    projectName: string
-    engineerIndex: number
-    bundleIndex: number
-    engineerNames: string[]
-    bundleIds: string[]
-  }
+    type: 'project-bundle';
+    projectId: string;
+    projectName: string;
+    engineerIndex: number;
+    bundleIndex: number;
+    engineerNames: string[];
+    engineerEmails: string[]; // <-- Add this line
+    bundleIds: string[];
+  };
 }
 
 export interface CustomerInfo {

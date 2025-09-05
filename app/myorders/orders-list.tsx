@@ -461,6 +461,11 @@ export default function OrdersList() {
                                     <span className="text-xs sm:text-sm text-blue-600">
                                       {isArabic ? "المهندس:" : "Engineer:"} {(item as ProjectBundleItem).engineerNames.join(", ")}
                                     </span>
+                                    {(item as ProjectBundleItem).engineerEmails && (item as ProjectBundleItem).engineerEmails.length > 0 && (
+                                      <span className="text-xs sm:text-sm text-blue-700 block mt-1">
+                                        {isArabic ? "البريد الإلكتروني:" : "Email:"} {(item as ProjectBundleItem).engineerEmails.join(", ")}
+                                      </span>
+                                    )}
                                   </div>
                                   <span className="rounded-full bg-blue-100 px-2 sm:px-3 py-1 text-xs font-medium text-blue-800">
                                     {isArabic ? "حزمة مشروع" : "Project Bundle"}

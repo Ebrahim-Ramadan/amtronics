@@ -127,23 +127,29 @@ export default function WishlistPage() {
                         <span key={i} className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]">{eng.name || eng}</span>
                       ))}
                     </div>
+                    {(project.engineers || []).some((eng: any) => eng.email) && (
+                      <div className="text-xs text-blue-700 mb-2">
+                        {isArabic ? "البريد الإلكتروني:" : "Engineer Email:"}{" "}
+                        {(project.engineers || []).map((eng: any) => eng.email).filter(Boolean).join(", ")}
+                      </div>
+                    )}
                     <div className="grid grid-cols-1 gap-2">
                       {(project.engineers || []).flatMap((eng: any) =>
-                        (eng.bundle || []).map((b: any, bidx: number) => b.product ? (
-                          <div key={bidx} className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2">
-                            <img
-                              src={b.product.image?.split(',')[0] || "/placeholder.svg?height=128&width=128"}
-                              alt={isArabic ? b.product.ar_name : b.product.en_name}
-                              // width={48}
-                              // height={48}
-                              className="rounded-md object-contain"
-                            />
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-[#0F172B]">{isArabic ? b.product.ar_name : b.product.en_name}</p>
-                              <p className="text-xs text-gray-600">{b.product.price?.toFixed(2)} {isArabic ? "د.ك" : "KD"}</p>
+                        (eng.bundle || []).map((b: any, bidx: number) =>
+                          b.product ? (
+                            <div key={`${eng.name || ""}-${bidx}`} className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2">
+                              <img
+                                src={b.product.image?.split(',')[0] || "/placeholder.svg?height=128&width=128"}
+                                alt={isArabic ? b.product.ar_name : b.product.en_name}
+                                className="rounded-md object-contain"
+                              />
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-[#0F172B]">{isArabic ? b.product.ar_name : b.product.en_name}</p>
+                                <p className="text-xs text-gray-600">{b.product.price?.toFixed(2)} {isArabic ? "د.ك" : "KD"}</p>
+                              </div>
                             </div>
-                          </div>
-                        ) : null)
+                          ) : null
+                        )
                       )}
                     </div>
                     <div className="flex gap-2 mt-2">

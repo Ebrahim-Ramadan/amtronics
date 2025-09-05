@@ -26,6 +26,7 @@ interface Bundle {
 
 interface Engineer {
   name: string;
+  email: string; // <-- Add email field
   bundle: Bundle[];
 }
 
@@ -225,6 +226,11 @@ export default function ProjectDialog({ project }: { project: Project }) {
                   <span className="bg-[#FEEE00]/80 text-[#0F172B] px-3 py-1 rounded-full text-xs font-medium border border-[#FEEE00]">
                     {eng.name}
                   </span>
+                  {eng.email && (
+                    <span className="text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                      {eng.email}
+                    </span>
+                  )}
                   <span className="text-xs text-gray-500">{eng.bundle.length} Bundle{eng.bundle.length !== 1 ? 's' : ''}</span>
                 </div>
                 <div className="grid grid-cols-1 gap-3">

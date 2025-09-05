@@ -637,9 +637,12 @@ export default function CheckoutPage() {
                     <div key={item.projectId} className="flex flex-col gap-2 border-b pb-2 mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-[#0F172B]">{isArabic ? "مشروع:" : "Project:"} {item.projectName}</span>
-                        <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]">{engineerCount} {isArabic ? "مهندس" : "Engineers"}</span>
-                        <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-200">{bundleCount} {isArabic ? "حزمة" : "Bundles"}</span>
-                        <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium border border-green-200">{productCount} {isArabic ? "منتج" : "Products"}</span>
+                        <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]">{item.engineerNames.length} {isArabic ? "مهندس" : "Engineers"}</span>
+                        <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-200">{item.engineerNames.length} {isArabic ? "حزمة" : "Bundles"}</span>
+                        <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium border border-green-200">{item.products.length} {isArabic ? "منتج" : "Products"}</span>
+                      </div>
+                      <div className="text-xs text-blue-700 mt-1">
+                        {isArabic ? "البريد الإلكتروني:" : "Engineer Email:"} {item.engineerEmails?.join(", ")}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                         {item.products.map((prod: Product, idx: number) => (
