@@ -28,7 +28,7 @@ export default function BrandShowcase() {
 
 	return (
 		<div className="bg-gray-50 rounded-lg px-6 mb-8">
-			{/* Official Keystudio Reseller Section - Vercel Inspired */}
+			{/* Official Keyestudio Reseller Section - Vercel Inspired */}
 			<section
 				id="official-resellers"
 				className="my-12 flex flex-col items-center justify-center"
@@ -41,7 +41,7 @@ export default function BrandShowcase() {
 					</div>
 					<img
 						src="/categories/Keyestudio-Logo.jpg"
-						alt="Keystudio"
+						alt="Keyestudio"
 						// width={120}
 						// height={120}
 						className="mb-4 rounded-lg shadow-md bg-white"
@@ -49,20 +49,20 @@ export default function BrandShowcase() {
 					/>
 					<h3 className="text-2xl md:text-3xl font-extrabold text-yellow-700 mb-2 tracking-tight text-center">
 						{isArabic
-							? "نحن الموزع الرسمي لـ Keystudio"
-							: "We are the Official Keystudio Distributor"}
+							? "نحن الموزع الرسمي لـ Keyestudio"
+							: "We are the Official Keyestudio Distributor"}
 					</h3>
 					<p className="text-neutral-700 text-center mb-4 max-w-md">
 						{isArabic
-							? "احصل على منتجات Keystudio الأصلية مباشرة من الموزع الرسمي في الكويت. الجودة والضمان والدعم المميز."
-							: "Get genuine Keystudio products directly from the Official Distributor in Kuwait. Quality, warranty, and premium support."}
+							? "احصل على منتجات Keyestudio الأصلية مباشرة من الموزع الرسمي في الكويت. الجودة والضمان والدعم المميز."
+							: "Get genuine Keyestudio products directly from the Official Distributor in Kuwait. Quality, warranty, and premium support."}
 					</p>
 					<Link
 					prefetch={false}
 						href="/products?category=Keyestudio"
 						className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold shadow transition"
 					>
-						{isArabic ? "تسوق Keystudio" : "Shop Keystudio"}
+						{isArabic ? "تسوق Keyestudio" : "Shop Keyestudio"}
 						<svg
 							width="18"
 							height="18"
