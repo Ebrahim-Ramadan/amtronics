@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
+// Helper to escape regex special characters
+function escapeRegex(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -14,15 +19,15 @@ export async function GET(request: Request) {
     const client = await clientPromise
     const db = client.db("amtronics")
 
-    const queryBase: any = { }
+    const queryBase: any = { visible_in_catalog: 1, visible_in_search: 1 }
     let products: any[] = []
     let total = 0
 
     // Helper to build $or for a category string
     const buildCategoryOr = (cat: string) => [
-      { en_category: { $regex: cat, $options: "i" } },
-      { en_name: { $regex: cat, $options: "i" } },
-      { en_long_description: { $regex: cat, $options: "i" } },
+      { en_category: { $regex: escapeRegex(cat), $options: "i" } },
+      { en_name: { $regex: escapeRegex(cat), $options: "i" } },
+      { en_long_description: { $regex: escapeRegex(cat), $options: "i" } },
     ]
 
     if (category && category.includes("&")) {
@@ -74,12 +79,13 @@ export async function GET(request: Request) {
         query.$or = buildCategoryOr(category)
       }
       if (search) {
+        const safeSearch = escapeRegex(search)
         query.$or = [
-          { en_name: { $regex: search, $options: "i" } },
-          { ar_name: { $regex: search, $options: "i" } },
-          { en_description: { $regex: search, $options: "i" } },
-          { en_long_description: { $regex: search, $options: "i" } },
-          { en_category: { $regex: search, $options: "i" } },
+          { en_name: { $regex: safeSearch, $options: "i" } },
+          { ar_name: { $regex: safeSearch, $options: "i" } },
+          { en_description: { $regex: safeSearch, $options: "i" } },
+          { en_long_description: { $regex: safeSearch, $options: "i" } },
+          { en_category: { $regex: safeSearch, $options: "i" } },
         ]
       }
 
