@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const client = await clientPromise
     const db = client.db("amtronics")
 
-    const queryBase: any = { visible_in_catalog: 1 }
+    const queryBase: any = { }
     let products: any[] = []
     let total = 0
 
@@ -79,6 +79,7 @@ export async function GET(request: Request) {
           { ar_name: { $regex: search, $options: "i" } },
           { en_description: { $regex: search, $options: "i" } },
           { en_long_description: { $regex: search, $options: "i" } },
+          { en_category: { $regex: search, $options: "i" } },
         ]
       }
 
