@@ -22,8 +22,6 @@ export const  categories = [
   "Keyestudio",
   "Servo & Stepper Motor",
   "Led & Diode",
-  "Battery",
-  "Transistor",
   "IC",
   "3D Print",
   "Capacitors",

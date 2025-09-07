@@ -14,60 +14,93 @@ export async function GET(request: Request) {
     const client = await clientPromise
     const db = client.db("amtronics")
 
-    const query: any = { visible_in_catalog: 1 }
+    const queryBase: any = { visible_in_catalog: 1 }
+    let products: any[] = []
+    let total = 0
 
-    if (category) {
-      query.$or = [
-        { en_category: { $regex: category, $options: "i" } },
-        { en_name: { $regex: category, $options: "i" } },
-        { en_long_description: { $regex: category, $options: "i" } },
+    // Helper to build $or for a category string
+    const buildCategoryOr = (cat: string) => [
+      { en_category: { $regex: cat, $options: "i" } },
+      { en_name: { $regex: cat, $options: "i" } },
+      { en_long_description: { $regex: cat, $options: "i" } },
+    ]
 
-      ]
-    }
+    if (category && category.includes("&")) {
+      // Split and trim categories
+      const categories = category.split("&").map(c => c.trim())
+      // Search each category individually and combine results
+      let combinedProducts: any[] = []
+      for (const cat of categories) {
+        const query = { ...queryBase, $or: buildCategoryOr(cat) }
+        const result = await db.collection("products").find(query, { projection: {
+          _id: 1,
+          en_name: 1,
+          ar_name: 1,
+          price: 1,
+          image: 1,
+          ave_cost: 1,
+        }}).toArray()
+        combinedProducts = combinedProducts.concat(result)
+      }
+      // Remove duplicates by _id
+      const uniqueProducts = Array.from(new Map(combinedProducts.map(p => [p._id.toString(), p])).values())
+      products = uniqueProducts
 
-    if (search) {
-      query.$or = [
-        { en_name: { $regex: search, $options: "i" } },
-        { ar_name: { $regex: search, $options: "i" } },
-        { en_description: { $regex: search, $options: "i" } },
-        { en_long_description: { $regex: search, $options: "i" } },
+      // Now search with all combined as a single string
+      const combinedCategory = categories.join(" ")
+      const query = { ...queryBase, $or: buildCategoryOr(combinedCategory) }
+      const result = await db.collection("products").find(query, { projection: {
+        _id: 1,
+        en_name: 1,
+        ar_name: 1,
+        price: 1,
+        image: 1,
+        ave_cost: 1,
+      }}).toArray()
+      // Add new results, avoiding duplicates
+      const allProductsMap = new Map(products.map(p => [p._id.toString(), p]))
+      for (const prod of result) {
+        allProductsMap.set(prod._id.toString(), prod)
+      }
+      products = Array.from(allProductsMap.values())
+      total = products.length
 
-
-      ]
-    }
-
-    let sort: any = {}
-    if (featured === "true") {
-      // Simulate featured products by combining sold_quantity and random factor
-      // In a real scenario, you might have a featured flag in the database
-      sort = { sold_quantity: -1, price: -1 }
-    } else if (recent === "true") {
-      // Simulate recent products by sorting by _id (newest first) and price
-      sort = { _id: -1, price: 1 }
+      // Apply limit and skip
+      products = products.slice(skip, skip + 15)
     } else {
-      // Default sorting
-      sort = { sold_quantity: -1 }
-    }
+      // Normal category or no category
+      const query: any = { ...queryBase }
+      if (category) {
+        query.$or = buildCategoryOr(category)
+      }
+      if (search) {
+        query.$or = [
+          { en_name: { $regex: search, $options: "i" } },
+          { ar_name: { $regex: search, $options: "i" } },
+          { en_description: { $regex: search, $options: "i" } },
+          { en_long_description: { $regex: search, $options: "i" } },
+        ]
+      }
 
-    // Add some randomization for featured products to make it more dynamic
-    if (featured === "true") {
-      // You can add additional logic here to randomize featured products
-      // For now, we'll use a combination of sold_quantity and price
-    }
+      let sort: any = {}
+      if (featured === "true") {
+        sort = { sold_quantity: -1, price: -1 }
+      } else if (recent === "true") {
+        sort = { _id: -1, price: 1 }
+      } else {
+        sort = { sold_quantity: -1 }
+      }
 
-    // Only fetch summary fields for product list
-    const projection = {
-      _id: 1,
-      en_name: 1,
-      ar_name: 1,
-      price: 1,
-      image: 1,
-      ave_cost: 1,
-      // add more summary fields if needed
+      products = await db.collection("products").find(query, { projection: {
+        _id: 1,
+        en_name: 1,
+        ar_name: 1,
+        price: 1,
+        image: 1,
+        ave_cost: 1,
+      }}).sort(sort).skip(skip).limit(limit).toArray()
+      total = await db.collection("products").countDocuments(query)
     }
-
-    const products = await db.collection("products").find(query, { projection }).sort(sort).skip(skip).limit(limit).toArray()
-    const total = await db.collection("products").countDocuments(query);
 
     return NextResponse.json({ products, total })
   } catch (error) {
