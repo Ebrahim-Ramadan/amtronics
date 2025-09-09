@@ -115,8 +115,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:underline" prefetch={false}>
-                  {isArabic ? "الشحن والتوصيل" : "Shipping & Delivery"}
+                <Link href="/termsandconditions" className="hover:underline" prefetch={false}>
+                  {isArabic ? "الشروط والأحكام" : "Terms & Conditions"}
                 </Link>
               </li>
               <li>
