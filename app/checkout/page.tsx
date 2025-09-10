@@ -15,6 +15,8 @@ import { toast } from "sonner"
 import { LoadingDots } from "@/components/ui/loading-spinner"
 import { GovernateswithRegions } from "@/lib/utils"
 import type { Product } from "@/lib/types"
+import Cookies from "js-cookie"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -44,6 +46,45 @@ export default function CheckoutPage() {
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>("")
   const [availableAreas, setAvailableAreas] = useState<{ english: string; arabic: string }[]>([])
   const [shippingFee] = useState(2)
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "knet">("cod")
+  const [isAuthorized, setIsAuthorized] = useState(false)
+  const [authEmail, setAuthEmail] = useState("")
+  const [authPassword, setAuthPassword] = useState("")
+  const [authError, setAuthError] = useState("")
+  const [showAuthDialog, setShowAuthDialog] = useState(false)
+
+  // Hardcoded credentials (replace with env or secure storage in production)
+  const AUTH_EMAIL = process.env.NEXT_PUBLIC_AUTH_EMAIL 
+  const AUTH_PASSWORD = process.env.NEXT_PUBLIC_AUTH_PASSWORD 
+
+  useEffect(() => {
+    // Check cookie for authorization
+    const cookieAuth = Cookies.get("amtronics_order_auth")
+    setIsAuthorized(cookieAuth === "true")
+  }, [])
+
+  const handleAuthLogin = () => {
+    setAuthError("")
+    if (authEmail === AUTH_EMAIL && authPassword === AUTH_PASSWORD) {
+      Cookies.set("amtronics_order_auth", "true", { expires: 1 })
+      setIsAuthorized(true)
+      setShowAuthDialog(false)
+      setAuthEmail("")
+      setAuthPassword("")
+      setAuthError("")
+      toast.success(isArabic ? "تم تسجيل الدخول بنجاح" : "Login successful")
+    } else {
+      setAuthError(isArabic ? "بيانات الدخول غير صحيحة" : "Invalid credentials")
+    }
+  }
+
+  const handlePaymentMethodChange = (method: "cod" | "knet") => {
+    if (method === "knet" && !isAuthorized) {
+      setShowAuthDialog(true)
+      return
+    }
+    setPaymentMethod(method)
+  }
 
   useEffect(() => {
     if (selectedAddressIndex !== "new" && savedAddressesState.addresses[selectedAddressIndex]) {
@@ -143,6 +184,10 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (paymentMethod === "knet" && !isAuthorized) {
+      toast.error(isArabic ? "يجب تسجيل الدخول كمستخدم مخول لدفع كي نت" : "You must login as an authorized user to pay with Knet")
+      return
+    }
     if (state.items.length === 0) {
       toast.error(isArabic ? "السلة فارغة" : "Cart is empty")
       return
@@ -227,6 +272,7 @@ export default function CheckoutPage() {
     setLoadingMessage(isArabic ? "جاري معالجة طلبك..." : "Processing your order...")
 
     try {
+      // Add paymentMethod to orderData
       const orderData = {
         items: state.items,
         customerInfo: { ...customerInfo, phone: "+965" + customerInfo.phone },
@@ -234,6 +280,7 @@ export default function CheckoutPage() {
         discount: discountAmount,
         promoCode: promoCode || "",
         shippingFee,
+        paymentMethod,
       }
       
       setLoadingMessage(isArabic ? "جاري تقديم الطلب..." : "Placing order...")
@@ -550,21 +597,94 @@ export default function CheckoutPage() {
                   />
                 </div>
               </div>
+            {/* Payment Method Selection */}
+<div className="mb-6">
+  <label className="mb-2 block text-sm font-semibold text-neutral-800">
+    {isArabic ? "طريقة الدفع" : "Payment Method"}
+  </label>
+  <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+    <label className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-all hover:bg-neutral-100 focus-within:ring-2 focus-within:ring-[#00B8DB] cursor-pointer">
+      <input
+        type="radio"
+        name="paymentMethod"
+        value="cod"
+        checked={paymentMethod === "cod"}
+        onChange={() => handlePaymentMethodChange("cod")}
+        className="h-5 w-5 text-[#00B8DB] focus:ring-[#00B8DB] cursor-pointer"
+      />
+      <span className="text-sm font-medium text-neutral-700">
+        {isArabic ? "الدفع عند التسليم" : "Cash on Delivery"}
+      </span>
+    </label>
+    <label className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-all hover:bg-neutral-100 focus-within:ring-2 focus-within:ring-[#00B8DB] cursor-pointer">
+      <input
+        type="radio"
+        name="paymentMethod"
+        value="knet"
+        checked={paymentMethod === "knet"}
+        onChange={() => handlePaymentMethodChange("knet")}
+        className="h-5 w-5 text-[#00B8DB] focus:ring-[#00B8DB] cursor-pointer"
+      />
+      <span className="text-sm font-medium text-neutral-700">
+        {isArabic ? "كي نت - أونلاين" : "Knet - Online"}
+      </span>
+    </label>
+  </div>
+  {paymentMethod === "knet" && !isAuthorized && (
+    <p className="mt-2 text-xs text-yellow-600 font-medium italic bg-yellow-50/50 p-2 rounded-md">
+      {isArabic ? "يجب تسجيل الدخول كمستخدم مخول لدفع باستخدام كي نت" : "You must login as an authorized user to pay with Knet"}
+    </p>
+  )}
+</div>
               <div className="pt-4">
-                <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                <Button type="submit" className="w-full" size="lg" disabled={loading || (paymentMethod === "knet" && !isAuthorized)}>
                   {loading ? (
                     <div className="flex items-center justify-center gap-2">
                       <LoadingDots />
                       <span>{loadingMessage}</span>
                     </div>
                   ) : isArabic ? (
-                    "تأكيد الطلب - دفع عند التسليم"
+                    paymentMethod === "knet" ? "تأكيد الطلب - دفع كي نت" : "تأكيد الطلب - دفع عند التسليم"
                   ) : (
-                    "Confirm Order - Cash on Delivery"
+                    paymentMethod === "knet" ? "Confirm Order - Pay with Knet" : "Confirm Order - Cash on Delivery"
                   )}
                 </Button>
               </div>
             </form>
+            {/* Auth Dialog for Knet using shadcn/ui Dialog */}
+            <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="text-yellow-700">
+                    {isArabic ? "تسجيل دخول المسؤول" : "Admin Login Required"}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-2 pt-2">
+                  <Input
+                    type="email"
+                    placeholder={isArabic ? "البريد الإلكتروني" : "Email"}
+                    value={authEmail}
+                    onChange={e => setAuthEmail(e.target.value)}
+                    autoFocus
+                  />
+                  <Input
+                    type="password"
+                    placeholder={isArabic ? "كلمة المرور" : "Password"}
+                    value={authPassword}
+                    onChange={e => setAuthPassword(e.target.value)}
+                  />
+                  {authError && <div className="text-red-600 text-sm">{authError}</div>}
+                </div>
+                <DialogFooter className="flex gap-2 pt-2">
+                  <Button variant="default" onClick={handleAuthLogin}>
+                    {isArabic ? "تسجيل الدخول" : "Login"}
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowAuthDialog(false)}>
+                    {isArabic ? "إلغاء" : "Cancel"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
         <Card className="border-2 border-[#FEEE00]">
@@ -737,8 +857,16 @@ export default function CheckoutPage() {
             <div className="bg-blue-50 p-4 rounded-lg">
               <h3 className="font-semibold mb-2">{isArabic ? "طريقة الدفع" : "Payment Method"}</h3>
               <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-600">{isArabic ? "الدفع عند التسليم - نقداً" : "Cash on Delivery"}</p>
-                <img src="/cash-on-delivery.svg"  alt="Cash on Delivery" />
+                <p className="text-sm text-gray-600">
+                  {paymentMethod === "knet"
+                    ? isArabic ? "كي نت" : "Knet"
+                    : isArabic ? "الدفع عند التسليم - نقداً" : "Cash on Delivery"}
+                </p>
+                <img
+                  src={paymentMethod === "knet" ? "/knet-logo.svg" : "/cash-on-delivery.svg"}
+                  alt={paymentMethod === "knet" ? "Knet" : "Cash on Delivery"}
+                  style={{ height: 32 }}
+                />
               </div>
             </div>
           </CardContent>
