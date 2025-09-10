@@ -13,6 +13,14 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Pagination } from "@/components/ui/pagination";
 import { toast } from "sonner";
 import LoadingDots from "@/components/ui/loading-spinner";
+import Cookies from "js-cookie";
+
+// Hardcoded credentials (replace with env or secure storage in production)
+// const AUTH_EMAIL = "admin@amtronics.com";
+// const AUTH_PASSWORD = "supersecret";
+// Load credentials from environment variables
+const AUTH_EMAIL = process.env.NEXT_PUBLIC_AUTH_EMAIL;
+const AUTH_PASSWORD = process.env.NEXT_PUBLIC_AUTH_PASSWORD;
 
 const ITEMS_PER_PAGE = 5;
 
@@ -29,6 +37,10 @@ export default function OrdersList() {
   const [refreshing, setRefreshing] = useState(false);
   const [cancelPassword, setCancelPassword] = useState("");
   const [cancelError, setCancelError] = useState("");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   const isArabic = cartState.language === "ar";
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -188,17 +200,40 @@ export default function OrdersList() {
   };
 
   const handleCancelOrder = async (order: Order) => {
+    // Check cookie before opening dialog
+  const cookieAuth = Cookies.get("amtronics_order_auth");
+  if (cookieAuth === "true") {
+    setIsAuthorized(true);
+  } else {
+    setIsAuthorized(false);
+  }
     setOrderToCancel(order);
     setDialogOpen(true);
+  };
+
+  const handleAuthLogin = () => {
+    setAuthError("");
+    console.log(authEmail, authPassword);
+    console.log(AUTH_EMAIL, AUTH_PASSWORD);
+    
+    
+    if (authEmail === AUTH_EMAIL && authPassword === AUTH_PASSWORD) {
+      Cookies.set("amtronics_order_auth", "true", { expires: 1 });
+      setIsAuthorized(true);
+      setAuthEmail("");
+      setAuthPassword("");
+      setAuthError("");
+      toast.success(isArabic ? "تم تسجيل الدخول بنجاح" : "Login successful");
+    } else {
+      setAuthError(isArabic ? "بيانات الدخول غير صحيحة" : "Invalid credentials");
+    }
   };
 
   const confirmCancelOrder = async () => {
     if (!orderToCancel) return;
     setCancelError("");
-    // Example: hardcoded password, replace with your real logic
-    const requiredPassword = process.env.NEXT_PUBLIC_CASHIER_CANCELING_ORDER_PASSWORD;
-    if (cancelPassword !== requiredPassword) {
-      setCancelError(isArabic ? "كلمة المرور غير صحيحة. لا يمكنك إلغاء الطلب إلا إذا كنت مخولاً بذلك." : "Incorrect password. Only authorized roles can cancel orders.");
+    if (!isAuthorized) {
+      setCancelError(isArabic ? "يجب تسجيل الدخول أولاً" : "You must login first");
       return;
     }
     setCancelingOrderId(orderToCancel._id as string);
@@ -707,34 +742,65 @@ export default function OrdersList() {
               }
               <div className="mt-2 text-sm text-yellow-700 bg-yellow-50 rounded p-2">
                 {isArabic
-                  ? "ملاحظة: لا يمكن إلغاء الطلب إلا من قبل المستخدمين المخولين (مثلاً: الإدارة أو الدعم). يرجى إدخال كلمة المرور الخاصة بك للمتابعة."
-                  : "Note: Only authorized roles (e.g., admin or support) can cancel orders. Please enter your password to proceed."}
+                  ? "ملاحظة: لا يمكن إلغاء الطلب إلا من قبل المستخدمين المخولين (مثلاً: الإدارة أو الدعم)."
+                  : "Note: Only authorized roles (e.g., admin or support) can cancel orders."}
               </div>
             </DialogDescription>
           </DialogHeader>
-          <div className="my-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="cancel-password">
-              {isArabic ? "كلمة المرور" : "Password"}
-            </label>
-            <input
-              id="cancel-password"
-              type="password"
-              className="w-full border rounded px-3 py-2"
-              value={cancelPassword}
-              onChange={e => setCancelPassword(e.target.value)}
-              disabled={cancelingOrderId !== null}
-              autoFocus
-            />
-            {cancelError && <div className="text-red-600 text-sm mt-1">{cancelError}</div>}
-          </div>
+          {!isAuthorized ? (
+            <div className="my-4 space-y-2">
+              <label className="block text-sm font-medium mb-1" htmlFor="auth-email">
+                {isArabic ? "البريد الإلكتروني" : "Email"}
+              </label>
+              <input
+                id="auth-email"
+                type="email"
+                className="w-full border rounded px-3 py-2"
+                value={authEmail}
+                onChange={e => setAuthEmail(e.target.value)}
+                disabled={cancelingOrderId !== null}
+                autoFocus
+              />
+              <label className="block text-sm font-medium mb-1" htmlFor="auth-password">
+                {isArabic ? "كلمة المرور" : "Password"}
+              </label>
+              <input
+                id="auth-password"
+                type="password"
+                className="w-full border rounded px-3 py-2"
+                value={authPassword}
+                onChange={e => setAuthPassword(e.target.value)}
+                disabled={cancelingOrderId !== null}
+              />
+              {authError && <div className="text-red-600 text-sm mt-1">{authError}</div>}
+              <Button
+                variant="default"
+                className="mt-2"
+                onClick={handleAuthLogin}
+                disabled={cancelingOrderId !== null}
+              >
+                {isArabic ? "تسجيل الدخول" : "Login"}
+              </Button>
+            </div>
+          ) : (
+            <div className="my-4">
+              <div className="mb-2 text-green-700 font-semibold">
+                {isArabic ? "تم تسجيل الدخول كمستخدم مخول." : "Logged in as authorized user."}
+              </div>
+              {cancelError && <div className="text-red-600 text-sm mt-1">{cancelError}</div>}
+            </div>
+          )}
           <DialogFooter className="gap-2">
             <Button
               variant="outline"
               onClick={() => {
-                setDialogOpen(false);
-                setOrderToCancel(null);
-                setCancelPassword("");
-                setCancelError("");
+                setDialogOpen(false)
+                setOrderToCancel(null)
+                setCancelPassword("")
+                setCancelError("")
+                setAuthEmail("")
+                setAuthPassword("")
+                setAuthError("")
               }}
               disabled={cancelingOrderId !== null}
             >
@@ -743,7 +809,7 @@ export default function OrdersList() {
             <Button
               variant="destructive"
               onClick={confirmCancelOrder}
-              disabled={cancelingOrderId !== null}
+              disabled={cancelingOrderId !== null || !isAuthorized}
             >
               {cancelingOrderId !== null ? (
                 <LoadingDots />
