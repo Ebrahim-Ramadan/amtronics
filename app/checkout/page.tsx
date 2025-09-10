@@ -627,7 +627,7 @@ export default function CheckoutPage() {
         className="h-5 w-5 text-[#00B8DB] focus:ring-[#00B8DB] cursor-pointer"
       />
       <span className="text-sm font-medium text-neutral-700">
-        {isArabic ? "كي نت - أونلاين" : "Knet - Online"}
+        {isArabic ? "كي نت في المحل" : "In shiop (Knet)"}
       </span>
     </label>
   </div>
