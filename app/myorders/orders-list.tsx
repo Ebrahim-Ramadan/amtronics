@@ -218,7 +218,7 @@ export default function OrdersList() {
     
     
     if (authEmail === AUTH_EMAIL && authPassword === AUTH_PASSWORD) {
-      Cookies.set("amtronics_order_auth", "true", { expires: 1 });
+      Cookies.set("amtronics_order_auth", "true", { expires: 7 });
       setIsAuthorized(true);
       setAuthEmail("");
       setAuthPassword("");
