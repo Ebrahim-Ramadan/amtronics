@@ -371,15 +371,15 @@ export default function OrdersList() {
             return (
               <Card
                 key={order._id}
-                className={`group overflow-hidden rounded-lg shadow-sm transition-all duration-200 hover:shadow-md ${
+                className={`group overflow-hidden rounded-lg py-2 shadow-sm transition-all duration-200 hover:shadow-md ${
                   index === 0 && currentPage === 1
                     ? "border-2 border-[#FEEE18]"
                     : "border border-neutral-100"
                 }`}
               >
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-6 relative">
+                <div className="flex flex-col-reverse w-full md:flex-row items-center justify-between gap-2 p-2 md:p-6  relative">
                   
-                  <div className="flex flex-col flex-1">
+                  <div className="flex flex-col flex-1 w-full">
                     <CardTitle className="flex flex-col">
                       <div
                         onClick={(e) => {
@@ -405,7 +405,7 @@ export default function OrdersList() {
                       </div>
                     </CardTitle>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex flex-col items-end gap-2 justify-end md:w-fit w-full">
                     {/* Order Status */}
                     <Badge
   variant="default"
@@ -436,7 +436,7 @@ export default function OrdersList() {
                     
                     
                   </div>
-                </CardHeader>
+                </div>
                 <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
                   <div className="mb-4 grid grid-cols-1 gap-2 sm:gap-4 sm:grid-cols-2">
                     <div>
