@@ -218,7 +218,7 @@ export default function OrdersList() {
     
     
     if (authEmail === AUTH_EMAIL && authPassword === AUTH_PASSWORD) {
-      Cookies.set("amtronics_order_auth", "true", { expires: 7 });
+      Cookies.set("amtronics_order_auth", "true", { expires: 5 }); // Expires in 3 days
       setIsAuthorized(true);
       setAuthEmail("");
       setAuthPassword("");
@@ -460,7 +460,7 @@ export default function OrdersList() {
         {isArabic ? "طريقة الدفع:" : "Payment Method:"}{" "}
         <span className="font-medium">
           {order.paymentMethod === "knet"
-            ? isArabic ? "كي نت - أونلاين" : "Knet - Online"
+            ? isArabic ? "كي نت في المحل" : "In shop (Knet)"
             : isArabic ? "الدفع عند التسليم" : "Cash on Delivery"}
         </span>
       </p>
@@ -745,16 +745,23 @@ export default function OrdersList() {
               {isArabic ? "تأكيد إلغاء الطلب" : "Confirm Order Cancellation"}
             </DialogTitle>
             <DialogDescription>
-              {isArabic 
-                ? `هل أنت متأكد من أنك تريد إلغاء الطلب رقم ${orderToCancel?._id?.substring(0, 8)}...؟ لا يمكن التراجع عن هذا الإجراء.`
-                : `Are you sure you want to cancel order ${orderToCancel?._id?.substring(0, 8)}...? This action cannot be undone.`
-              }
-              <div className="mt-2 text-sm text-yellow-700 bg-yellow-50 rounded p-2">
-                {isArabic
-                  ? "ملاحظة: لا يمكن إلغاء الطلب إلا من قبل المستخدمين المخولين (مثلاً: الإدارة أو الدعم)."
-                  : "Note: Only authorized roles (e.g., admin or support) can cancel orders."}
-              </div>
-            </DialogDescription>
+  {isArabic 
+    ? `هل أنت متأكد من أنك تريد إلغاء الطلب رقم ${orderToCancel?._id?.substring(0, 8)}...؟ لا يمكن التراجع عن هذا الإجراء.`
+    : `Are you sure you want to cancel order ${orderToCancel?._id?.substring(0, 8)}...? This action cannot be undone.`
+  }
+  <div className="mt-2 text-sm text-yellow-700 bg-yellow-50 rounded p-2">
+    {isArabic
+      ? <>
+          <p>ملاحظة: لا يمكن إلغاء الطلب إلا من قبل المستخدمين المخولين (مثلاً: الإدارة أو الدعم).</p>
+          <p>إذا لم تكن مسؤول المتجر، يرجى التواصل معنا عبر واتساب على الرقم <a href="https://wa.me/+96555501387" className="underline text-blue-600">+96555501387</a> لإلغاء الطلب.</p>
+        </>
+      : <>
+          <p>Note: Only authorized roles (e.g., admin or support) can cancel orders.</p>
+          <p>If you are not a shop admin, please contact us via WhatsApp at <a href="https://wa.me/+96555501387" className="underline text-blue-600">+96555501387</a> to cancel the order.</p>
+        </>
+    }
+  </div>
+</DialogDescription>
           </DialogHeader>
           {!isAuthorized ? (
             <div className="my-4 space-y-2">
