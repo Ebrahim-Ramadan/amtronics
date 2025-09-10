@@ -645,9 +645,9 @@ export default function CheckoutPage() {
                       <span>{loadingMessage}</span>
                     </div>
                   ) : isArabic ? (
-                    paymentMethod === "knet" ? "تأكيد الطلب - دفع كي نت" : "تأكيد الطلب - دفع عند التسليم"
+                    paymentMethod === "knet" ? "تأكيد الطلب - دفع كي نت في المحل" : "تأكيد الطلب - دفع عند التسليم"
                   ) : (
-                    paymentMethod === "knet" ? "Confirm Order - Pay with Knet" : "Confirm Order - Cash on Delivery"
+                    paymentMethod === "knet" ? "Confirm Order - Pay with Knet in store" : "Confirm Order - Cash on Delivery"
                   )}
                 </Button>
               </div>
