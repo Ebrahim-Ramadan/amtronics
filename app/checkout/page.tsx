@@ -306,6 +306,7 @@ export default function CheckoutPage() {
           discount: discountAmount,
           promoCode: promoCode || "",
           shippingFee,
+          paymentMethod, // <-- Add this line
         }
 
         // Get existing orders from localStorage

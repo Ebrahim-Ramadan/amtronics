@@ -67,6 +67,7 @@ export interface Order {
   status: string;
   createdAt: Date;
   shippingFee?: number;
+  paymentMethod?: string;
   projectBundle?: {
     type: 'project-bundle';
     projectId: string;

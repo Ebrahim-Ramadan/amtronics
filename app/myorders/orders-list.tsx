@@ -455,6 +455,15 @@ export default function OrdersList() {
                         {isArabic ? "البريد الإلكتروني:" : "Email:"}{" "}
                         <span className="font-medium">{order.customerInfo.email}</span>
                       </p>
+                      {/* Payment Method */}
+      <p className="text-xs sm:text-sm text-neutral-600">
+        {isArabic ? "طريقة الدفع:" : "Payment Method:"}{" "}
+        <span className="font-medium">
+          {order.paymentMethod === "knet"
+            ? isArabic ? "كي نت - أونلاين" : "Knet - Online"
+            : isArabic ? "الدفع عند التسليم" : "Cash on Delivery"}
+        </span>
+      </p>
                     </div>
                     <div>
                       <h3 className="mb-1 text-sm font-semibold text-neutral-800">
