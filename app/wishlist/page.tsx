@@ -91,7 +91,7 @@ export default function WishlistPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
         {state.items.map((item: WishlistItem) => {
           if ((item as any).type === 'project') {
             // Project wishlist card
