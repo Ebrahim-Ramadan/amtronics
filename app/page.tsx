@@ -1,10 +1,9 @@
 import EnhancedHeroSlider from "@/components/enhanced-hero-slider";
 import EnhancedCategories from "@/components/enhanced-categories";
-import PromotionalGrid from "@/components/promotional-grid";
 import ProductCarousel from "@/components/product-carousel";
 import BrandShowcase from "@/components/brand-showcase";
 import LazyLoad from "@/components/lazyload";
-import ProjectDialog from "@/components/project-dialog"; // Import the new client component
+import ProjectsCarousel from "@/components/ProjectsCarousel";
 
 async function fetchProjects() {
   const res = await fetch(`${process.env.SITE_URL}/api/projects`, { cache: "no-store" });
@@ -45,25 +44,12 @@ export default async function Home() {
           />
         </LazyLoad>
 
-        <LazyLoad>
-
- {/* Projects Slider */}
-      {projects && projects.length > 0 && (
-        <section className="my-8 px-2">
-          <div className="rounded-xl bg-gradient-to-r from-yellow-50 via-white to-green-50 shadow-md py-6 px-2">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-[#0F172B] flex items-center gap-2">
-              <span className="inline-block w-2 h-6 bg-gradient-to-b from-[#FEEE00] to-[#00B8DB] rounded-full mr-2"></span>
-              Featured Projects
-            </h2>
-            <div className="flex gap-6 overflow-x-auto scrollbar-hidden pb-2">
-              {projects.map((project: any) => (
-                <ProjectDialog key={project._id} project={project} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-        </LazyLoad>
+      
+<LazyLoad>
+  {projects && projects.length > 0 && (
+    <ProjectsCarousel projects={projects} />
+  )}
+</LazyLoad>
 
         <LazyLoad>
           <ProductCarousel

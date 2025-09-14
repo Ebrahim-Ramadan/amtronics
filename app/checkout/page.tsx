@@ -744,52 +744,44 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            {/* Item List in Order Summary */}
-            {/* Cast to (CartItem | ProjectCartItem)[] for mixed cart support in summary */}
             <>
               {((state.items as Array<any>) as (import("@/lib/types").CartItem | import("@/lib/types").ProjectCartItem)[]).map((item) => {
                 if ("type" in item && item.type === "project-bundle") {
                   // Project bundle summary
                   const engineerCount = (item.engineerNames || []).length;
-                  // For bundles, we don't have explicit bundle objects, so use engineerNames.length as bundle count
-                  const bundleCount = engineerCount; // If you have bundle info, adjust accordingly
-                  const productCount = item.products.length;
                   return (
-                    <div key={item.projectId} className="flex flex-col gap-2 border-b pb-2 mb-2">
+                    <div key={item.projectId} className="flex flex-col gap-2 mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-[#0F172B]">{isArabic ? "مشروع:" : "Project:"} {item.projectName}</span>
-                        <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]">{item.engineerNames.length} {isArabic ? "مهندس" : "Engineers"}</span>
-                        <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-200">{item.engineerNames.length} {isArabic ? "حزمة" : "Bundles"}</span>
-                        <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium border border-green-200">{item.products.length} {isArabic ? "منتج" : "Products"}</span>
-                      </div>
-                      <div className="text-xs text-blue-700 mt-1">
-                        {isArabic ? "البريد الإلكتروني:" : "Engineer Email:"} {item.engineerEmails?.join(", ")}
-                      </div>
+                        </div>
+                     
                       <div className="grid grid-cols-1  gap-2 mt-2">
                         {item.products.map((prod: Product, idx: number) => (
-                          <div key={prod._id + idx} className="flex items-center gap-2 shadow-xl rounded-xl p-2">
-                            <div className="relative w-14 h-14 rounded-xl shadow-sm">
+                          <div key={prod._id + idx} className="flex items-center gap-2 shadow-sm rounded-xl p-2">
+                            <div className="relative w-14 h-14 rounded-xl shadow-xs">
                               <img
                                 src={prod.image?.split(",")[0] || "/placeholder.svg?height=64&width=64"}
                                 alt={isArabic ? prod.ar_name : prod.en_name}
                                 className="object-cover w-full h-full rounded-md"
                               />
-                              <span className="z-10 absolute -top-2 -right-2 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
+                              <span className="z-10 absolute -top-2 -left-4 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
                                 x{item.quantity}
                               </span>
                             </div>
                             <div className="flex flex-col gap-1 leading-tight">
-                              <span className="font-semibold">{isArabic ? prod.ar_name : prod.en_name}</span>
-                              <span>{prod.price} {isArabic ? "د.ك" : "KD"}</span>
+                              <span className="font-semibold ">{isArabic ? prod.ar_name : prod.en_name}</span>
+                              <span className="text-sm text-neutral-700">{prod.price} {isArabic ? "د.ك" : "KD"}</span>
                             </div>
-                            <span className="font-semibold ml-auto">
+                            <span className="font-semibold ml-auto ">
                               {(prod.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                             </span>
                           </div>
                         ))}
                       </div>
-                      <div className="flex justify-end mt-2">
-                        <span className="font-bold text-base">{(item.products.reduce((sum: number, p: Product) => sum + p.price, 0) * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}</span>
+                      <div className="flex justify-between mt-2">
+                        <p className="text-lg font-medium text-neutral-700">
+                          Subtotal
+                          </p> <p className="font-bold text-base">{(item.products.reduce((sum: number, p: Product) => sum + p.price, 0) * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}</p>
                       </div>
                     </div>
                   );

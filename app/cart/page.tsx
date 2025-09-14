@@ -105,10 +105,11 @@ console.log('state.items', state.items);
         <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {state.items.map((item, idx) => {
             if ("type" in item && item.type === "project-bundle") {
-              // ProjectCartItem rendering
+              // Only show selected bundles/products
               const engineerCount = (item.engineerNames || []).length;
-              const bundleCount = engineerCount; // If you have bundle info, adjust accordingly
+              const bundleCount = item.bundleIds?.length || 0;
               const productCount = item.products.length;
+
               return (
                 <Card
                   key={item.projectId}
@@ -116,17 +117,26 @@ console.log('state.items', state.items);
                 >
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex flex-col gap-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 items-center">
                         <div className="flex items-center gap-2">
                           <h3 className="font-bold text-base sm:text-lg text-[#0F172B]">
                             {isArabic ? "مشروع:" : "Project:"} {item.projectName}
                           </h3>
-                          <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]">{engineerCount} {isArabic ? "مهندس" : "Engineers"}</span>
-                          <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-200">{bundleCount} {isArabic ? "حزمة" : "Bundles"}</span>
-                          <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium border border-green-200">{productCount} {isArabic ? "منتج" : "Products"}</span>
-                          <Badge variant="secondary" className="text-xs">
-                            {item.engineerNames.length} {isArabic ? "مهندس" : "Engineers"}
-                          </Badge>
+                           <div className="flex flex-wrap gap-2 mb-2">
+                        {item.engineerNames.map((eng, i) => (
+                          <span
+                            key={i}
+                            className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]"
+                          >
+                            {eng}
+                          </span>
+                        ))}
+                        {/* {item.engineerEmails && item.engineerEmails.length > 0 && (
+                        <div className="text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                           {item.engineerEmails.join(", ")}
+                        </div>
+                      )} */}
+                      </div>
                         </div>
                         <div className="flex items-center gap-2 mt-2 sm:mt-0">
                           <Button
@@ -183,21 +193,7 @@ console.log('state.items', state.items);
                           </Button>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {item.engineerNames.map((eng, i) => (
-                          <span
-                            key={i}
-                            className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]"
-                          >
-                            {eng}
-                          </span>
-                        ))}
-                        {item.engineerEmails && item.engineerEmails.length > 0 && (
-                        <div className="text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                           {item.engineerEmails.join(", ")}
-                        </div>
-                      )}
-                      </div>
+                     
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {item.products.map((prod, i) => (

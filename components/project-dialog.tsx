@@ -8,7 +8,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Copy } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/lib/context";
 import { toast } from "sonner";
 import type { Product } from "@/lib/types";
@@ -17,16 +17,17 @@ import { HeartPlus } from "lucide-react";
 import { useWishlist } from "@/lib/wishlist-context";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Bundle {
   id: string;
   product: Product | null;
-  quantity?: number; // <-- Add quantity field
+  quantity?: number;
 }
 
 interface Engineer {
   name: string;
-  email: string; // <-- Add email field
+  email: string;
   bundle: Bundle[];
 }
 
@@ -39,33 +40,45 @@ interface Project {
 
 export default function ProjectDialog({ project }: { project: Project }) {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
   const { dispatch } = useCart();
   const { state: wishlistState, dispatch: wishlistDispatch } = useWishlist();
   const router = useRouter();
   const isWishlisted = wishlistState.items.some(item => item._id === project._id);
-  const toggleWishlist = () => {
-    if (isWishlisted) {
-      wishlistDispatch({ type: "REMOVE_ITEM", payload: project._id });
-      toast.info("Removed from wishlist");
-    } else {
-      wishlistDispatch({ type: "ADD_ITEM", payload: { _id: project._id, name: project.name, type: 'project', engineers: project.engineers } });
-      toast.success("Added to wishlist");
-    }
-  };
 
-  // Gather all products from all bundles, including quantity
-  const allProducts = (project.engineers?.flatMap((eng) =>
-    eng.bundle.map((b) => {
-      const p = b.product;
-      if (!p) return null;
-      return {
-        ...p,
-        _id: b.id,
-        quantity: b.quantity ?? 1, // <-- Use bundle quantity, default to 1
-      } as Product & { quantity: number };
-    })
-  ).filter((p): p is Product & { quantity: number } => !!p)) || [];
+  const [selectedBundles, setSelectedBundles] = useState<{ [engIdx: number]: number[] }>({});
+
+  useEffect(() => {
+    if (project.engineers) {
+      const initial: { [engIdx: number]: number[] } = {};
+      project.engineers.forEach((eng, idx) => {
+        initial[idx] = eng.bundle.length > 0 ? [0] : [];
+      });
+      setSelectedBundles(initial);
+    }
+  }, [project.engineers]);
+
+  const allProducts =
+    project.engineers?.flatMap((eng, engIdx) =>
+      selectedBundles[engIdx]
+        ? selectedBundles[engIdx]
+            .map(bIdx => {
+              const b = eng.bundle[bIdx];
+              if (!b || !b.product) return null;
+              return {
+                ...b.product,
+                _id: b.id,
+                quantity: b.quantity ?? 1,
+              } as Product & { quantity: number };
+            })
+            .filter((p): p is Product & { quantity: number } => !!p)
+        : []
+    ) || [];
+
+  const WantedArray =
+    project.engineers?.flatMap((eng, engIdx) =>
+      selectedBundles[engIdx]?.map(bIdx => ({ engineerIdx: engIdx, bundleIdx: bIdx })) || []
+    ) || [];
 
   const handleAddToCart = () => {
     if (!allProducts.length) return toast.error("No products to add");
@@ -76,8 +89,8 @@ export default function ProjectDialog({ project }: { project: Project }) {
         projectId: project._id,
         projectName: project.name,
         engineerNames: project.engineers?.map((e) => e.name) || [],
-        engineerEmails: project.engineers?.map((e) => e.email) || [], // <-- Add engineerEmails here
-        bundleIds: project.engineers?.flatMap((e) => e.bundle.map((b) => b.id)) || [],
+        engineerEmails: project.engineers?.map((e) => e.email) || [],
+        bundleIds: WantedArray,
         products: allProducts,
         quantity: 1,
       },
@@ -96,8 +109,8 @@ export default function ProjectDialog({ project }: { project: Project }) {
         projectId: project._id,
         projectName: project.name,
         engineerNames: project.engineers?.map((e) => e.name) || [],
-        engineerEmails: project.engineers?.map((e) => e.email) || [], // <-- Add engineerEmails here
-        bundleIds: project.engineers?.flatMap((e) => e.bundle.map((b) => b.id)) || [],
+        engineerEmails: project.engineers?.map((e) => e.email) || [],
+        bundleIds: WantedArray,
         products: allProducts,
         quantity: 1,
       },
@@ -108,23 +121,65 @@ export default function ProjectDialog({ project }: { project: Project }) {
     router.push("/checkout");
   };
 
-  // Update totalPrice calculation to multiply by quantity
   const totalPrice =
-    project.engineers?.reduce((sum, eng) => {
+    project.engineers?.reduce((sum, eng, engIdx) => {
       return (
         sum +
-        (eng.bundle?.reduce(
-          (bundleSum, b) => bundleSum + ((b.product?.price || 0) * (b.quantity ?? 1)),
+        (selectedBundles[engIdx]?.reduce(
+          (bundleSum, bIdx) =>
+            bundleSum +
+            ((eng.bundle[bIdx]?.product?.price || 0) * (eng.bundle[bIdx]?.quantity ?? 1)),
           0
         ) || 0)
       );
     }, 0) || 0;
 
+  const toggleWishlist = () => {
+    if (isWishlisted) {
+      wishlistDispatch({ type: "REMOVE_ITEM", payload: project._id });
+      toast.success("Removed from wishlist");
+    } else {
+      wishlistDispatch({ type: "ADD_ITEM", payload: project });
+      toast.success("Added to wishlist");
+    }
+  };
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(2);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function updateVisibleCount() {
+      if (window.innerWidth < 640) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(3);
+      }
+    }
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+    return () => window.removeEventListener('resize', updateVisibleCount);
+  }, []);
+
+  const maxIndex = Math.max(0, (project.engineers?.length || 0) - visibleCount);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev < maxIndex ? prev + 1 : prev));
+  };
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const engineerWidth = 340;
+  const containerWidth = visibleCount * engineerWidth;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <div
         onClick={() => setOpen(true)}
-        className="min-w-[400px] max-w-xs bg-white/80 border border-[#FEEE00] rounded-2xl shadow hover:shadow-xl transition p-6 flex-shrink-0 group relative overflow-hidden transition-all duration-200 cursor-pointer"
+        className="min-w-[320px] max-w-xs bg-white/80 border border-[#FEEE00] rounded-2xl shadow hover:shadow-xl transition p-6 flex-shrink-0 group relative overflow-hidden transition-all duration-200 cursor-pointer"
         style={{ boxShadow: "0 4px 24px 0 rgba(254,238,0,0.08)" }}
       >
         <h3 className="text-xl font-bold mb-2 text-[#0F172B] group-hover:text-[#00B8DB] transition-colors">
@@ -189,7 +244,10 @@ export default function ProjectDialog({ project }: { project: Project }) {
         </div>
       </div>
 
-      <DialogContent className="sm:max-w-[650px] bg-white rounded-2xl p-6">
+      <DialogContent
+        className="sm:max-w-[900px] bg-white rounded-2xl p-6"
+        style={{ maxHeight: "90vh", overflowY: "hidden" }}
+      >
         <DialogHeader>
           <div className="flex items-center justify-between gap-2">
             <DialogTitle className="text-2xl font-bold text-[#0F172B]">
@@ -219,51 +277,112 @@ export default function ProjectDialog({ project }: { project: Project }) {
             </Button>
           </DialogDescription>
         </DialogHeader>
-        <div className="border-t pt-4 space-y-6">
-          <h4 className="text-lg font-semibold text-[#0F172B] mb-2">Engineers & Bundles</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {project.engineers?.map((eng, idx) => (
-              <div key={idx} className="bg-[#FEEE00]/10 border border-[#FEEE00] rounded-xl p-4 flex flex-col gap-2 shadow-sm">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-[#FEEE00]/80 text-[#0F172B] px-3 py-1 rounded-full text-xs font-medium border border-[#FEEE00]">
-                    {eng.name}
-                  </span>
-                  {eng.email && (
-                    <span className="text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                      {eng.email}
+        <div className="space-y-6">
+          <div className="flex justify-end gap-2 mb-2" style={{ maxWidth: 900, margin: "0 auto" }}>
+            <Button variant="outline" size="icon" onClick={prevSlide} disabled={currentIndex === 0}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={nextSlide}
+              disabled={currentIndex >= maxIndex}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="w-full" style={{ maxWidth: 900, margin: "0 auto" }}>
+            <div
+              ref={carouselRef}
+              className="flex gap-6 transition-transform duration-300 sm:overflow-x-visible overflow-x-auto"
+              style={{
+                minWidth: "100%",
+                transform: visibleCount === 1 ? undefined : `translateX(-${currentIndex * (engineerWidth + 24)}px)`,
+                width: visibleCount === 1 ? undefined : `${(project.engineers?.length || 1) * (engineerWidth + 24)}px`,
+              }}
+            >
+              {project.engineers?.map((eng, engIdx) => (
+                <div
+                  key={engIdx}
+                  className="min-w-[320px] max-w-[340px] w-[340px] bg-[#FEEE00]/10 border border-[#FEEE00] rounded-xl p-4 flex flex-col gap-2 shadow-sm"
+                  style={{
+                    maxHeight: "450px",
+                    overflowY: "hidden",
+                    flex: visibleCount === 1 ? '0 0 auto' : undefined,
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-[#FEEE00]/80 text-[#0F172B] px-3 py-1 rounded-full text-xs font-medium border border-[#FEEE00]">
+                      {eng.name}
                     </span>
-                  )}
-                  <span className="text-xs text-gray-500">{eng.bundle.length} Bundle{eng.bundle.length !== 1 ? 's' : ''}</span>
+                    {/* {eng.email && (
+                      <span className="text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                        {eng.email}
+                      </span>
+                    )} */}
+                    {/* <span className="text-xs text-gray-500">{eng.bundle.length} Bundle{eng.bundle.length !== 1 ? 's' : ''}</span> */}
+                  </div>
+                  <div
+                    className="flex flex-col gap-3 pb-2"
+                    style={{
+                      maxHeight: "144px", // 2 products * 72px each (approx)
+                      overflowY: "auto",
+                    }}
+                  >
+                    {eng.bundle.map((b, bIdx) => b.product ? (
+                      <label
+                        key={bIdx}
+                        className="flex-shrink-0 flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2 cursor-pointer"
+                        style={{ minHeight: "64px", maxHeight: "72px" }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedBundles[engIdx]?.includes(bIdx) || false}
+                          onChange={() => {
+                            setSelectedBundles(prev => {
+                              const current = prev[engIdx] || [];
+                              let updated: number[];
+                              if (current.includes(bIdx)) {
+                                updated = current.filter(idx => idx !== bIdx);
+                              } else {
+                                updated = [...current, bIdx];
+                              }
+                              if (updated.length === 0 && eng.bundle.length > 0) {
+                                updated = [bIdx];
+                              }
+                              return { ...prev, [engIdx]: updated };
+                            });
+                          }}
+                          className="form-checkbox accent-[#FEEE00] h-4 w-4"
+                        />
+                        <img
+                          src={b.product.image.split(',')[0] || '/placeholder-image.jpg'}
+                          alt={b.product.en_name}
+                          className="w-12 h-12 object-cover rounded-md border border-gray-100"
+                          onError={e => (e.currentTarget.src = "/placeholder-image.jpg")}
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-[#0F172B]">{b.product.en_name}</p>
+                          <p className="text-xs text-gray-600">
+                            kwd {b.product.price.toFixed(2)}
+                            {b.quantity && b.quantity > 1 && (
+                              <span className="ml-2 text-xs text-gray-500">× {b.quantity}</span>
+                            )}
+                          </p>
+                          <p className="text-xs text-gray-500">Quantity: {b.quantity ?? 1}</p>
+                        </div>
+                      </label>
+                    ) : (
+                      <div key={bIdx} className="text-xs text-gray-400">No product</div>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 gap-3">
-                  {eng.bundle.map((b, bidx) => b.product ? (
-                    <div key={bidx} className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2">
-                      <img
-                        src={b.product.image.split(',')[0] || '/placeholder-image.jpg'}
-                        alt={b.product.en_name}
-                        className="w-12 h-12 object-cover rounded-md border border-gray-100"
-                        onError={e => (e.currentTarget.src = "/placeholder-image.jpg")}
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-[#0F172B]">{b.product.en_name}</p>
-                        <p className="text-xs text-gray-600">
-                          ${b.product.price.toFixed(2)}
-                          {b.quantity && b.quantity > 1 && (
-                            <span className="ml-2 text-xs text-gray-500">× {b.quantity}</span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div key={bidx} className="text-xs text-gray-400">No product</div>
-                  ))}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-        <div className="border-t pt-4">
-          <h4 className="text-lg font-semibold text-[#0F172B] mb-2">Total Price ${totalPrice.toFixed(2)}</h4>
+        <div >
+          <h4 className="text-lg font-semibold text-[#0F172B] mb-2">Total Price kwd {totalPrice.toFixed(2)}</h4>
         </div>
         <div className="flex gap-4 pt-4 border-t">
           <Button
