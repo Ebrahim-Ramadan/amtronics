@@ -4,7 +4,6 @@ export interface Product {
   sku: string
   en_name: string
   ar_name: string
-  en_description: string
   en_long_description: string
   ar_long_description: string
   en_category: string
@@ -12,10 +11,9 @@ export interface Product {
   image: string
   quantity_on_hand: number
   sold_quantity: number
-  visible_in_catalog: number
-  visible_in_search: number
+  // visible_in_catalog: number
+  // visible_in_search: number
   discount?: number
-  ar_brand?: string
   en_brand?: string
   ave_cost?: number
 }

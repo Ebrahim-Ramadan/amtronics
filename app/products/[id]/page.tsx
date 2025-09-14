@@ -15,7 +15,6 @@ import LoadingProductPage from "./product-loading"
 // --- SEO Metadata Helper ---
 function getProductMeta(product: Product, isArabic: boolean) {
   const title = isArabic ? product.ar_name : product.en_name
-  const description = product.en_description
   const images = product.image
     ? product.image.split(",").map((img) => img.trim())
     : ["/placeholder.svg"]
@@ -23,10 +22,10 @@ function getProductMeta(product: Product, isArabic: boolean) {
 
   return {
     title,
-    description,
+    description : title,
     openGraph: {
       title,
-      description,
+      description :title,
       url,
       type: "website", // <-- change from "product" to "website"
       images: images.map((src) => ({
@@ -39,7 +38,7 @@ function getProductMeta(product: Product, isArabic: boolean) {
     twitter: {
       card: "summary_large_image",
       title,
-      description,
+      description : title,
       images: images.map((src) => (src.startsWith("http") ? src : `https://amtronics.co${src}`)),
     },
     alternates: {
@@ -61,7 +60,6 @@ async function getProduct(id: string): Promise<Product | null> {
           sku: 1,
           en_name: 1,
           ar_name: 1,
-          en_description: 1,
           ar_description: 1,
           en_long_description: 1,
           ar_long_description: 1,
@@ -73,8 +71,6 @@ async function getProduct(id: string): Promise<Product | null> {
           image: 1,
           quantity_on_hand: 1,
           sold_quantity: 1,
-          visible_in_catalog: 1,
-          visible_in_search: 1,
           slug_url: 1,
           discount: 1,
           discount_type: 1,
@@ -203,9 +199,9 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
               </h1>
             )}
             <h1 className="text-xl md:text-3xl leading-6 md:leading-9 tracking-[.02em] font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
-          {isArabic ? product.en_description : product.en_description ? (
+          {isArabic ? product.ar_name : product.en_name ? (
   <p className="text-gray-600 leading-4 md:leading-5 text-sm md:text-base">
-    {isArabic ? product.en_description.substring(0, 200) : product.en_description.substring(0, 200)}
+    {isArabic ? product.ar_name.substring(0, 200) : product.en_name.substring(0, 200)}
     {isArabic ? (
       <Link prefetch={false} href="#description" className="text-[#00B9DA] cursor-pointer ml-2 hover:underline">عرض المزيد</Link>
     ) : (

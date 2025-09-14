@@ -9,7 +9,7 @@ export async function GET() {
     const categories = await db
       .collection("products")
       .aggregate([
-        { $match: { visible_in_catalog: 1 } },
+        {  },
         {
           $group: {
             _id: null,
