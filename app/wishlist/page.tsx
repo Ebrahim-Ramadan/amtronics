@@ -189,7 +189,6 @@ export default function WishlistPage() {
                         {isArabic ? product.ar_name : product.en_name}
                       </h3>
                     </Link>
-                    <p className="text-gray-500 text-sm">{isArabic ? product.ar_brand : product.en_brand}</p>
                   
                     <div className="flex items-center gap-2">
       <p className="text-gray-600 font-semibold text-base">

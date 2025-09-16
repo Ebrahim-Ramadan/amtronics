@@ -12,9 +12,8 @@ export interface Product {
   quantity_on_hand: number
   sold_quantity: number
   // visible_in_catalog: number
-  // visible_in_search: number
+  rating?: number
   discount?: number
-  en_brand?: string
   ave_cost?: number
 }
 

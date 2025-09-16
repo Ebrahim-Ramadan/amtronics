@@ -196,21 +196,30 @@ function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, s
               </Badge>
             )}
           </div>
-          <h3 className="font-medium text-sm line-clamp-2 mb-2">
+          <h3 className="font-medium text-sm truncate mb-2" dir={isArabic ? "rtl" : "ltr"}>
             {isArabic ? product.ar_name : product.en_name}
           </h3>
-          <div className="flex items-center gap-1 mb-2">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`h-3 w-3 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-              />
-            ))}
-            <span className="text-xs text-gray-500 ml-1">({product.sold_quantity})</span>
+          <div className="flex items-center gap-1 mb-2 bg-neutral-200/30 w-fit p-1 rounded-sm">
+             {(() => {
+              const starColor =
+                Math.random() > 0.5
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "fill-blue-500 text-blue-500";
+              return (
+                <>
+                <span className="text-xs font-semibold text-gray-700 ml-1">
+                    {product.rating}
+                  </span>
+                  <Star className={`h-3 w-3 ${starColor}`} />
+                  
+                  <span className="text-xs text-gray-500 ml-1">({product.sold_quantity})</span>
+                </>
+              );
+            })()}
           </div>
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-green-600">
-              {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+          <div className="flex items-center justify-between" dir={isArabic ? "rtl" : "ltr"}>
+            <span className="font-bold text-lg text-green-600">
+              <span className="text-sm font-normal">{isArabic ? "د.ك" : "KWD"}</span> {product.price.toFixed(2)} 
             </span>
             <Button
               size="sm"

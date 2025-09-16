@@ -75,7 +75,6 @@ async function getProduct(id: string): Promise<Product | null> {
           discount: 1,
           discount_type: 1,
           ar_brand: 1,
-          en_brand: 1,
           ave_cost: 1
         }
       }
@@ -193,11 +192,11 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
         {/* Product Details */}
         <div className="space-y-2 md:space-y-4">
           <div>
-            {(product.ar_brand || product.en_brand) && (
+            {/* {(product.ar_brand || product.en_brand) && (
               <h1 className="text-3xl font-bold mb-2">
                 {isArabic ? product.ar_brand : product.en_brand}
               </h1>
-            )}
+            )} */}
             <h1 className="text-xl md:text-3xl leading-6 md:leading-9 tracking-[.02em] font-bold mb-2">{isArabic ? product.ar_name : product.en_name}</h1>
           {isArabic ? product.ar_name : product.en_name ? (
   <p className="text-gray-600 leading-4 md:leading-5 text-sm md:text-base">
