@@ -120,7 +120,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="hover:underline" prefetch={false}>
+                <Link href="/returnspolicy" className="hover:underline" prefetch={false}>
                   {isArabic ? "سياسة الإرجاع" : "Return Policy"}
                 </Link>
               </li>
