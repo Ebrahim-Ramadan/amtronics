@@ -91,12 +91,14 @@ console.log('state.items', state.items);
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-8" dir={dir}>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8">
+      <div className="flex flex-row justify-between items-center mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
           {isArabic ? "سلة التسوق" : "Shopping Cart"}
         </h1>
         <Badge variant="secondary" className="text-xs sm:text-sm mt-2 sm:mt-0">
-          {isArabic ? `${itemCount} عناصر` : `${itemCount} Items`}
+          {isArabic
+            ? `${itemCount} عناصر`
+            : `${itemCount} Item${itemCount !== 1 ? "s" : ""}`}
         </Badge>
       </div>
 
@@ -117,16 +119,16 @@ console.log('state.items', state.items);
                 >
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex flex-col gap-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 items-center">
+                      <div className="flex flex-row items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-bold text-base sm:text-lg text-[#0F172B]">
-                            {isArabic ? "مشروع:" : "Project:"} {item.projectName}
+                          <h3 className="font-bold text-base capitalize sm:text-lg text-[#0F172B]">
+                             {item.projectName}
                           </h3>
-                           <div className="flex flex-wrap gap-2 mb-2">
+                           <div className="flex flex-wrap gap-2">
                         {item.engineerNames.map((eng, i) => (
                           <span
                             key={i}
-                            className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-xs font-medium border border-[#FEEE00]"
+                            className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-[10px] md:text-xs font-medium border border-[#FEEE00]"
                           >
                             {eng}
                           </span>
@@ -138,7 +140,7 @@ console.log('state.items', state.items);
                       )} */}
                       </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                        <div className="flex items-center md:gap-2 mt-2 sm:mt-0">
                           <Button
                             variant={
                               wishlistState.items.some(

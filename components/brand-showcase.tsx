@@ -31,11 +31,11 @@ export default function BrandShowcase() {
 			{/* Official Keyestudio Reseller Section - Vercel Inspired */}
 			<section
 				id="official-resellers"
-				className="my-12 flex flex-col items-center justify-center"
+				className="mb-12 flex flex-col items-center justify-center"
 			>
-				<div className="relative flex flex-col items-center justify-center w-full max-w-xl rounded-2xl border border-neutral-200 bg-gradient-to-br from-yellow-50 via-white to-yellow-100 shadow-xl py-10 px-6 md:px-16">
+				<div className="relative flex flex-col items-center justify-center w-full max-w-xl rounded-2xl border border-neutral-200 bg-gradient-to-br from-yellow-50 via-white to-yellow-100 shadow-sm py-10 px-6 md:px-16">
 					<div className="absolute top-4 right-4">
-						<span className="px-3 py-1 rounded-full bg-yellow-400 text-yellow-900 text-xs font-semibold shadow">
+						<span className="px-3 py-1 rounded-full bg-yellow-400 text-yellow-900 text-xs font-semibold shadow-lg">
 							{isArabic ? "موزع رسمي" : "Official Distributor"}
 						</span>
 					</div>
@@ -92,11 +92,8 @@ export default function BrandShowcase() {
 						className="flex items-center justify-center bg-white rounded-lg hover:shadow-md transition-shadow group"
 					>
 						<img
-							// unoptimized
 							src={brand.logo || "/placeholder.svg"}
 							alt={brand.name}
-							// width={200}
-							// height={100}
 							className="py-2 object-contain group-hover:scale-105 transition-transform"
 						/>
 					</Link>

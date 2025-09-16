@@ -93,7 +93,7 @@ export default function ProjectsCarousel({ projects }: { projects: any[] }) {
           onTouchEnd={handleTouchEnd}
         >
           {projects.map((project: any, idx: number) => (
-            <div key={project._id || idx} className="min-w-[320px] max-w-[320px]">
+            <div key={project._id || idx} className="min-w-[300px] max-w-[300px]">
               <ProjectDialog project={project} />
             </div>
           ))}

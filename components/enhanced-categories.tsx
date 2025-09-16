@@ -88,8 +88,8 @@ export default function EnhancedCategories() {
           prefetch={false}
             key={index}
             href={category.link}
-            className="group mb-1 md:mb-0 flex-shrink-0 md:flex-shrink md:w-auto min-w-[140px] md:min-w-0 flex flex-col items-center justify-center"
-            style={{ maxWidth: '180px' }}
+            className="group mb-1 md:mb-0 flex-shrink-0 md:flex-shrink md:w-auto min-w-[100px] md:min-w-0 flex flex-col items-center justify-center"
+            // style={{ maxWidth: '180px' }}
           >
             <div
               className={`${category.color} rounded-xl p-2 md:p-2 mb-2 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300 shadow-sm flex items-center justify-center w-full`}

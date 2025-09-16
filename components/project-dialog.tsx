@@ -179,7 +179,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <div
         onClick={() => setOpen(true)}
-        className="min-w-[320px] max-w-xs bg-white/80 border border-[#FEEE00] rounded-2xl shadow hover:shadow-xl transition p-6 flex-shrink-0 group relative overflow-hidden transition-all duration-200 cursor-pointer"
+        className="min-w-[300px] max-w-xs bg-white/80 border border-[#FEEE00] rounded-2xl shadow hover:shadow-xl transition p-4 md:p-6 flex-shrink-0 group relative overflow-hidden transition-all duration-200 cursor-pointer"
         style={{ boxShadow: "0 4px 24px 0 rgba(254,238,0,0.08)" }}
       >
         <h3 className="text-xl font-bold mb-2 text-[#0F172B] group-hover:text-[#00B8DB] transition-colors">
@@ -206,7 +206,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
             </span>
           ))}
         </span>
-        <div className="flex gap-2 mt-4 flex flex-col md:flex-row items-center justify-between w-full">
+        <div className="flex gap-2 mt-4 flex flex-row items-center justify-between w-full">
           <div className="flex gap-2 w-full">
             <Button
               size="sm"
@@ -304,7 +304,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
               {project.engineers?.map((eng, engIdx) => (
                 <div
                   key={engIdx}
-                  className="min-w-[320px] max-w-[340px] w-[340px] bg-[#FEEE00]/10 border border-[#FEEE00] rounded-xl p-4 flex flex-col gap-2 shadow-sm"
+                  className="min-w-[300px] max-w-[340px] w-[340px] bg-[#FEEE00]/10 border border-[#FEEE00] rounded-xl p-4 flex flex-col gap-2 shadow-sm"
                   style={{
                     maxHeight: "450px",
                     overflowY: "hidden",

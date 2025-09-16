@@ -96,7 +96,10 @@ export default function ProductsPage() {
 
   return (
     <div className=" mx-auto px-2 py-4 md:px-12 md:py-6">
-      <h1 className="text-3xl font-bold mb-2 md:mb-4">{isArabic ? "المنتجات" : "Products"}</h1>
+<div className="flex items-center justify-between flex-row">
+      <h1 className="text-3xl font-bold mb-2 md:mb-4">{isArabic ? "المنتجات" : "Products"} </h1>
+<p>({products.length})</p>
+</div>
       {/* Filters */}
       <div className="flex justify-end flex-row gap-2 md:gap-4 mb-2 md:mb-8">
       
