@@ -1,5 +1,9 @@
 import { Product } from "./types";
 
+function randomRating() {
+  return +(Math.random() * (4.9 - 4.3) + 4.3).toFixed(1);
+}
+
 export const STATIC_PRODUCTS: Record<string, Product[]> = {
   bestsellers: [
     {
@@ -15,7 +19,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/61735210162676d34b2988340_46640577.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735210163676d34b3633f88_70395771.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735210164676d34b41194d0_27324765.jpg",
       "quantity_on_hand": 100,
       "sold_quantity": 215,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0
     },
     {
@@ -31,7 +35,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11735061605676af065b381d9_59285621.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/41735061606676af066b3b5d3_93632648.jpg",
       "quantity_on_hand": 95,
       "sold_quantity": 180,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0.9
     },
     {
@@ -47,7 +51,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/6173495405867694c4aed15c8_83358393.jpg",
       "quantity_on_hand": 80,
       "sold_quantity": 155,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 8.5
     },
     {
@@ -63,7 +67,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735211782676d3b0618ce22_54038311.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/71735211782676d3b06afad91_46265732.jpg",
       "quantity_on_hand": 90,
       "sold_quantity": 135,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 3.8
     },
     {
@@ -79,7 +83,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/21735054938676ad65a7137e9_49152257.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/41735054938676ad65af0ecf4_51422220.jpg",
       "quantity_on_hand": 200,
       "sold_quantity": 230,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0.15
     },
     {
@@ -97,7 +101,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "sold_quantity": 0,
       "discount": 0,
       // "discount_type": null,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0
     },
     {
@@ -113,7 +117,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/21735376389676fbe05e64cc7_30769112.jpg",
       "quantity_on_hand": 150,
       "sold_quantity": 160,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 1
     },
     {
@@ -129,7 +133,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/51735373914676fb45ac6f965_27300660.jpg",
       "quantity_on_hand": 45,
       "sold_quantity": 62,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0
     },
     {
@@ -145,7 +149,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/81735205603676d22e3095cf0_61139857.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/01735205601676d22e1b26737_55137842.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735205600676d22e0f03a71_29334887.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11735205602676d22e26d3935_54470013.jpg",
       "quantity_on_hand": 75,
       "sold_quantity": 175,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 3.6
     },
     {
@@ -161,7 +165,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735059624676ae8a85e0075_37589883.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/81735059623676ae8a7eae649_94411536.jpg",
       "quantity_on_hand": 60,
       "sold_quantity": 120,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 2.1
     }
   ],
@@ -179,7 +183,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/917376172776791ef7d04a5a3_10407579.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/817376172776791ef7d6945f7_74615826.jpg",
       "quantity_on_hand": 50,
       "sold_quantity": 84,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 5.4
     },
     {
@@ -195,7 +199,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/71735401698677020e2d84d81_80727574.jpg",
       "quantity_on_hand": 120,
       "sold_quantity": 190,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0.75
     },
     {
@@ -211,7 +215,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/817354645436771165f72b0e2_13384994.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/31735464544677116606870a8_45403813.jpg",
       "quantity_on_hand": 40,
       "sold_quantity": 77,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 6.95
     },
     {
@@ -227,7 +231,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/4173926433467ab114e6c3e03_60195648.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735208726676d2f16a11057_21552284.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/81735208726676d2f1613bf16_67446354.jpg",
       "quantity_on_hand": 60,
       "sold_quantity": 104,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 2.75
     },
     {
@@ -243,7 +247,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735059624676ae8a85e0075_37589883.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/81735059623676ae8a7eae649_94411536.jpg",
       "quantity_on_hand": 90,
       "sold_quantity": 112,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 2.1
     },
     {
@@ -259,7 +263,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/21735376389676fbe05e64cc7_30769112.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/41735376391676fbe07233229_29104412.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/51735376390676fbe06947437_19168949.jpg",
       "quantity_on_hand": 85,
       "sold_quantity": 143,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 1
     },
     {
@@ -275,7 +279,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/4173496936867698818290d01_41805954.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/01734969368676988188f49f7_45619102.jpg",
       "quantity_on_hand": 35,
       "sold_quantity": 93,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 7.75
     },
     {
@@ -291,7 +295,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11737306257678d3091746ca1_28149164.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/31737306257678d3091eb7aa9_94982771.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/51737306258678d309293ae47_67133829.jpg",
       "quantity_on_hand": 25,
       "sold_quantity": 61,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 6.2
     },
     {
@@ -307,7 +311,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/01735238292676da294f25850_62977393.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11735238293676da2957699e6_87941635.jpg",
       "quantity_on_hand": 90,
       "sold_quantity": 63,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 1.4
     },
     {
@@ -323,7 +327,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735058045676ae27d238478_94141420.jpg",
       "quantity_on_hand": 100,
       "sold_quantity": 80,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0.7
     }
   ],
@@ -342,7 +346,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/317348910826768564a413083_14286283.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/017348910806768564867abe3_14744371.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11734891081676856492bde79_42252943.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/5173489108167685649b00a39_44933882.jpg",
       "quantity_on_hand": 35,
       "sold_quantity": 174,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 10.5
     },
     {
@@ -358,7 +362,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/21735060514676aec22141ea8_34382249.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11735060514676aec22e6f625_38801915.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11735060515676aec23ef2104_19258887.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/51735060516676aec24afdae1_27732798.jpg",
       "quantity_on_hand": 74,
       "sold_quantity": 198,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 4
     },
     {
@@ -376,7 +380,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "sold_quantity": 0,
       "discount": 0,
       // "discount_type": null,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 6.201
     },
     {
@@ -394,7 +398,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "sold_quantity": 5,
       "discount": 0,
       // "discount_type": null,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0.338
     },
     {
@@ -412,7 +416,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "sold_quantity": 3,
       "discount": 0,
       // "discount_type": null,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0.735
     },
     {
@@ -428,7 +432,7 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11735210588676d365c9bb3e8_62712965.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/41735210587676d365bcf13b5_12062825.jpg",
       "quantity_on_hand": 60,
       "sold_quantity": 101,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 3.1
     },
     {
@@ -444,24 +448,24 @@ export const STATIC_PRODUCTS: Record<string, Product[]> = {
       "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/91735212167676d3c87b55aa3_11400405.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/81735212168676d3c8828e663_73495882.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/41735212169676d3c8912df74_92849890.jpg,https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/41735212169676d3c89c9ee18_35094034.jpg",
       "quantity_on_hand": 95,
       "sold_quantity": 86,
-      "rating": 4.5,
+      "rating": randomRating(),
       "ave_cost": 0.75
     },
-    // {
-    //   "_id": "2067643",
-    //   "id": 2067643,
-    //   "sku": "6040",
-    //   "en_name": "HC-SR04 Ultrasonic Sensor",
-    //   "ar_name": "حساس الموجات فوق الصوتية HC-SR04",
-    //   "en_long_description": "Used in robotics, automation, and security.",
-    //   "ar_long_description": "يُستخدم في الروبوتات والتطبيقات الأمنية.",
-    //   "en_category": "Distance",
-    //   "price": 2.25,
-    //   "image": "/placeholder.svg",
-    //   "quantity_on_hand": 78,
-    //   "sold_quantity": 133,
-    //   "rating": 4.5,
-    //   "ave_cost": 1.5
-    // }
+    {
+      "_id": "6837f9ab571e0fa754eb5aa7",
+      "id": 2101580,
+      "sku": "6013",
+      "en_name": "FOREX SHEET  30X40 CM",
+      "ar_name": "FOREX SHEET  30X40 CM",
+      "en_long_description": "<p>FOREX SHEET&nbsp; 30X40 CM</p>",
+      "ar_long_description": "<p>FOREX SHEET&nbsp; 30X40 CM</p>",
+      "en_category": "Bread Board & PCB",
+      "price": 1.25,
+      "image": "https://zfloos-production-storage.s3.eu-central-1.amazonaws.com/public/upload/companies/4247/products/11738255911679bae273b92a6_41102132.jpg",
+      "quantity_on_hand": 50,
+      "sold_quantity": 15,
+      "rating": randomRating(),
+      "ave_cost": 1.5
+    }
   ]
 }
