@@ -49,7 +49,11 @@ export default function ProductsPage() {
 
         url += params.toString();
 
-        const response = await fetch(url);
+        // const response = await fetch(url);
+        const response = await fetch(url, {
+          next: { revalidate: 300 }, // Enable Next.js caching for 5 minutes
+          cache: "force-cache",      // Use cached response if available
+        });
         const data = await response.json();
         console.log("data", data);
         setProducts(data.products);
@@ -96,12 +100,10 @@ export default function ProductsPage() {
 
   return (
     <div className=" mx-auto px-2 py-4 md:px-12 md:py-6">
-<div className="flex items-center justify-between flex-row">
-      <h1 className="text-3xl font-bold mb-2 md:mb-4">{isArabic ? "المنتجات" : "Products"} </h1>
-<p>({products.length})</p>
-</div>
-      {/* Filters */}
-      <div className="flex justify-end flex-row gap-2 md:gap-4 mb-2 md:mb-8">
+<div className="flex items-center justify-between flex-col md:flex-row mb-4">
+      <h1 className="gap-2 flex items-center text-3xl font-bold w-full">{isArabic ? "المنتجات" : "Products"} <span className="text-gray-500 font-normal text-sm">({products.length})</span></h1>
+
+ <div className="flex flex-row gap-2 md:gap-4 self-end w-full md:w-auto mt-4 md:mt-0">
       
 
         <Select value={selectedCategory} onValueChange={handleCategoryChange}>
@@ -124,6 +126,9 @@ export default function ProductsPage() {
           </Button>
         )}
       </div>
+</div>
+      {/* Filters */}
+     
 
       {/* Products Grid */}
       {loading ? (

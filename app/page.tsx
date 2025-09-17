@@ -7,6 +7,7 @@ import ProjectsCarousel from "@/components/ProjectsCarousel";
 
 async function fetchProjects() {
   const res = await fetch(`${process.env.SITE_URL}/api/projects`, { cache: "no-store" });
+  
   if (!res.ok) return [];
   return res.json();
 }

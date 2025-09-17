@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Star, CheckCheck, HeartPlus, ChevronLeft, ChevronRight } from "lucide-react"
+import { Star, CheckCheck, HeartPlus, ChevronLeft, ChevronRight, DiamondPercent, CopySlash, CheckIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -11,6 +11,7 @@ import { useCart } from "@/lib/context"
 import { toast } from "sonner"
 import { useState, useEffect, useRef } from "react"
 import { useWishlist } from "@/lib/wishlist-context"
+import { redirect } from "next/navigation"
 
 interface ProductCardProps {
   product: Product
@@ -60,6 +61,11 @@ export default function ProductCard({ product }: ProductCardProps) {
   }, [])
 
   const addToCart = () => {
+    if (showCheck) {
+      redirect('/cart')
+      return;
+    }
+    
     setAddToCartLoading(true)
     setShowCheck(false)
     setTimeout(() => {
@@ -67,7 +73,8 @@ export default function ProductCard({ product }: ProductCardProps) {
       toast.success(isArabic ? "تمت الإضافة إلى السلة" : "Added to cart")
       setAddToCartLoading(false)
       setShowCheck(true)
-      setTimeout(() => setShowCheck(false), 2000)
+      // setShowCheck(false)
+      // setTimeout(() => , 2000)
     }, 200)
   }
 
@@ -328,20 +335,23 @@ export default function ProductCard({ product }: ProductCardProps) {
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <Button onClick={addToCart} className="w-full" disabled={product.quantity_on_hand === 0 || addToCartLoading}>
+        <Button onClick={addToCart} className={`w-full ${showCheck && 'bg-[#00B8DB] hover:bg-[#00B8DB]/90 text-white' }`} disabled={product.quantity_on_hand === 0 || addToCartLoading}>
           {!addToCartLoading && !showCheck &&
             <img
-            // unoptimized
               src='/quick-atc-add-to-cart-grey.svg'
-              // width={20}
-              // height={20}
               alt="Add to Cart"
             />
           }
           {addToCartLoading ? (
             <span className="h-4 w-4 mr-2 animate-spin border-2 border-gray-300 border-t-transparent rounded-full inline-block align-middle"></span>
           ) : showCheck ? (
-            <><CheckCheck className="h-4 w-4 mr-2 text-green-500" />{isArabic ? "تمت الإضافة" : "Added"}</>
+            <>
+            <img
+            src="/payment_menu_icon.svg"
+            alt={isArabic ? "توجه للبيع" : "checkout"}
+            className="w-5 h-5 "
+            />
+            {isArabic ? "توجه للبيع" : "checkout"}</>
           ) : (
             isArabic ? "أضف للسلة" : "Add to Cart"
           )}
