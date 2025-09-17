@@ -179,10 +179,10 @@ export default function ProjectDialog({ project }: { project: Project }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <div
         onClick={() => setOpen(true)}
-        className="min-w-[300px] max-w-xs bg-white/80 border border-[#FEEE00] rounded-2xl shadow hover:shadow-xl transition p-4 md:p-6 flex-shrink-0 group relative overflow-hidden transition-all duration-200 cursor-pointer"
+        className="min-w-[300px] max-w-xs bg-white/60 backdrop-blur-xl border border-[#00B8DB]/10 rounded-2xl hover:shadow-lg transition p-4 md:p-6 flex-shrink-0 group relative overflow-hidden transition-all duration-200 cursor-pointer"
         style={{ boxShadow: "0 4px 24px 0 rgba(254,238,0,0.08)" }}
       >
-        <h3 className="text-xl font-bold mb-2 text-[#0F172B] group-hover:text-[#00B8DB] transition-colors">
+        <h3 className="capitalize text-xl font-bold mb-2 text-[#0F172B] group-hover:text-[#00B8DB] transition-colors">
           {project.name}
         </h3>
         <div className="flex gap-2 mb-2">
@@ -225,7 +225,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
             <Button
               size="sm"
               variant="secondary"
-              className="px-3 py-1 text-xs font-semibold"
+              className="px-3 py-1 text-xs font-bold border border-[#00B8DB]/10"
               onClick={e => { e.stopPropagation(); handleBuyNow(); }}
               disabled={loading}
             >
@@ -233,13 +233,13 @@ export default function ProjectDialog({ project }: { project: Project }) {
             </Button>
           </div>
           <Button
-            size="icon"
+            size="sm"
             variant={isWishlisted ? "outline" : "ghost"}
             className={isWishlisted ? "text-red-500 border-red-500 hover:text-red-600" : "text-gray-500 hover:text-red-500"}
             onClick={e => { e.stopPropagation(); toggleWishlist(); }}
             aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <HeartPlus className={`h-5 w-5 ${isWishlisted ? 'fill-red-500' : 'fill-transparent'}`} />
+            <HeartPlus className={` ${isWishlisted ? 'fill-red-500' : 'fill-transparent'}`} />
           </Button>
         </div>
       </div>
@@ -382,7 +382,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
           </div>
         </div>
         <div >
-          <h4 className="text-lg font-semibold text-[#0F172B] mb-2">Total Price kwd {totalPrice.toFixed(2)}</h4>
+          <h4 className="text-lg font-semibold text-[#0F172B] mb-2">Total: kwd {totalPrice.toFixed(2)}</h4>
         </div>
         <div className="flex gap-4 pt-4 border-t">
           <Button
@@ -399,7 +399,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
             Add to Cart
           </Button>
           <Button
-            className="flex-1 font-bold"
+            className="flex-1 font-bold border border-[#00B8DB]/10"
             size="lg"
             variant="secondary"
             onClick={handleBuyNow}

@@ -64,7 +64,7 @@ export default function ProjectsCarousel({ projects }: { projects: any[] }) {
   };
 
   return (
-    <div className="bg-gradient-to-r from-yellow-50 via-white to-green-50 rounded-lg p-3 md:p-6 relative shadow-xs hover:shadow-sm transition-shadow duration-300">
+    <div className="bg-gradient-to-r from-[#ffebe4] via-[#de6270] to-[#ba2990cc] rounded-lg p-3 md:p-6 relative shadow-xs hover:shadow-sm transition-shadow duration-300">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <h2 className="text-xl md:text-2xl font-bold">
           <span className="text-red-600">Featured</span> Projects

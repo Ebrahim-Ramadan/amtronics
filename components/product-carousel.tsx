@@ -19,7 +19,7 @@ interface ProductCarouselProps {
   bgColor?: string
 }
 
-function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, showCheck, products }: {
+function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, showCheck, products, bgColor }: {
   product: Product,
   type: string,
   isArabic: boolean,
@@ -27,6 +27,7 @@ function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, s
   addLoading: { [id: string]: boolean },
   showCheck: { [id: string]: boolean },
   products: Product[],
+  bgColor: string,
 }) {
   const images = product.image ? product.image.split(',').map(img => img.trim()) : ["/placeholder.svg?height=200&width=200"];
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -186,13 +187,13 @@ function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, s
               ))}
             </div>
             {type === "deals" && (
-              <Badge className="absolute top-2 left-2 bg-red-500">
+              <Badge className="absolute -top-2 left-0 z-50 bg-[#FDEF18] text-black text-xs">
                 {isArabic ? "عرض خاص" : "Special Deal"}
               </Badge>
             )}
             {type === "bestsellers" && (
-              <Badge className="absolute top-2 z-50 left-2 bg-[#FEEE00] text-black text-xs">
-                #{products.indexOf(product) + 1} {isArabic ? "الأكثر مبيعاً" : "Best Seller"}
+              <Badge className={`absolute -top-2 z-50 left-0 ${bgColor} text-black text-xs`}>
+                 {isArabic ? "الأكثر مبيعاً" : "Best Seller"}
               </Badge>
             )}
           </div>
@@ -200,26 +201,17 @@ function CarouselProductCard({ product, type, isArabic, addToCart, addLoading, s
             {isArabic ? product.ar_name : product.en_name}
           </h3>
           <div className="flex items-center gap-1 mb-2 bg-neutral-200/30 w-fit p-1 rounded-sm">
-             {(() => {
-              const starColor =
-                Math.random() > 0.5
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "fill-blue-500 text-blue-500";
-              return (
-                <>
-                <span className="text-xs font-semibold text-gray-700 ml-1">
+           <span className="text-xs font-semibold text-gray-700 ml-1">
                     {product.rating}
                   </span>
-                  <Star className={`h-3 w-3 ${starColor}`} />
+                  <Star className='h-3 w-3 fill-yellow-400 text-yellow-400'/>
                   
                   <span className="text-xs text-gray-500 ml-1">({product.sold_quantity})</span>
-                </>
-              );
-            })()}
+            
           </div>
           <div className="flex items-center justify-between" dir={isArabic ? "rtl" : "ltr"}>
-            <span className="font-bold text-lg text-green-600">
-              <span className="text-sm font-normal">{isArabic ? "د.ك" : "KWD"}</span> {product.price.toFixed(2)} 
+            <span className="font-bold text-lg text-[#00B8DB]">
+              <span className="text-sm font-medium">{isArabic ? "د.ك" : "KWD"}</span> {product.price.toFixed(2)} 
             </span>
             <Button
               size="sm"
@@ -328,12 +320,12 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
         <h2 className="text-xl md:text-2xl font-bold">
           {isArabic ? (
             <>
-              <span className="text-red-600">{arTitle.split(" ")[0]}</span>{" "}
+              <span className="text-[#00B8DB]">{arTitle.split(" ")[0]}</span>{" "}
               {arTitle.split(" ").slice(1).join(" ")}
             </>
           ) : (
             <>
-              <span className="text-red-600">{title.split(" ")[0]}</span>{" "}
+              <span className="text-[#00B8DB]">{title.split(" ")[0]}</span>{" "}
               {title.split(" ").slice(1).join(" ")}
             </>
           )}
@@ -367,6 +359,7 @@ export default function ProductCarousel({ title, arTitle, type, bgColor = "bg-wh
               addLoading={addLoading}
               showCheck={showCheck}
               products={products}
+              bgColor={bgColor}
             />
           ))}
         </div>
