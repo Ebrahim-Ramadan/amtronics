@@ -3,8 +3,6 @@ import clientPromise from "@/lib/mongodb"
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url)
-
     const client = await clientPromise
     const db = client.db("amtronics")
 

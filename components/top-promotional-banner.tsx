@@ -8,7 +8,7 @@ import { useCart } from "@/lib/context"
 type Offer = {
   _id: string
   offerDescription: string
-  offersText: string
+  offerText: string
   ar_offerDescription?: string
   ar_offerText?: string
   active: boolean
@@ -41,7 +41,7 @@ export default function TopPromotionalBanner() {
       <div className="container mx-auto px-2 md:px-4 flex items-center md:justify-center">
         <div className="text-center">
           <p className="font-bold text-sm md:text-lg">
-            {isArabic ? offer.ar_offerText : offer.offersText}
+            {isArabic ? offer.ar_offerText : offer.offerText}
           </p>
           <p className="text-xs md:text-sm opacity-90">
             {isArabic ? offer.ar_offerDescription : offer.offerDescription}
