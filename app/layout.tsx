@@ -13,9 +13,6 @@ import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
 import { FixedWhatsappIcon } from "@/components/fixed-whatsapp-icon";
 
-const inter = Inter({ subsets: ["latin"] });
-const notoSansArabic = Noto_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "700"] });
-
 export const metadata: Metadata = {
   title: {
     default: "Amtronics - Electronics & Educational Kits Store",
@@ -141,13 +138,13 @@ export const metadata: Metadata = {
     siteName: "Amtronics",
     images: [
       {
-        url: "https://amtronics.co/og-image-en.jpg",
+        url: "https://amtronics.co/favicon.ico",
         width: 1200,
         height: 630,
         alt: "Amtronics Electronics Store",
       },
       {
-        url: "https://amtronics.co/og-image-ar.jpg",
+        url: "https://amtronics.co/favicon.ico",
         width: 1200,
         height: 630,
         alt: "أمترونيكس - متجر الإلكترونيات",
@@ -159,7 +156,7 @@ export const metadata: Metadata = {
     title: "Amtronics - Electronics & Educational Kits Store",
     description:
       "Shop premium electronics, educational kits, Raspberry Pi, and lab equipment. Free delivery in Kuwait.",
-    images: ["https://amtronics.co/og-image-en.jpg"],
+    images: ["https://amtronics.co/favicon.ico"],
   },
 };
 
