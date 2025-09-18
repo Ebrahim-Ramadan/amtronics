@@ -244,7 +244,7 @@ console.log('state.items', state.items);
                           src={item.product.image.split(",")[0] || "/placeholder.svg?height=128&width=128"}
                           alt={isArabic ? item.product.ar_name : item.product.en_name}
                           // fill
-                          className="rounded-lg object-contain"
+                          className="rounded-lg object-contain h-24 w-full sm:h-32 sm:w-32"
                           // sizes="(max-width: 640px) 100vw, 128px"
                           // priority
                         />

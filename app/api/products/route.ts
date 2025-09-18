@@ -31,8 +31,11 @@ export async function GET(request: Request) {
     ]
 
     if (category && category.includes("&")) {
+
       // Split and trim categories
       const categories = category.split("&").map(c => c.trim())
+      if (category.includes("Motor & Pump")) categories.push("Servo", "Stepper Motor");
+
       // Search each category individually and combine results
       let combinedProducts: any[] = []
       for (const cat of categories) {

@@ -87,7 +87,7 @@ export default function ProjectsCarousel({ projects }: { projects: any[] }) {
         <div
           ref={carouselRef}
           className="flex gap-4 transition-transform duration-300"
-          style={{ transform: `translateX(-${currentIndex * 340}px)` }}
+          style={{ transform: `translateX(-${currentIndex * 310}px)` }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}

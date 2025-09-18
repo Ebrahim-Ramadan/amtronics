@@ -750,7 +750,7 @@ export default function CheckoutPage() {
                   // Project bundle summary
                   const engineerCount = (item.engineerNames || []).length;
                   return (
-                    <div key={item.projectId} className="flex flex-col gap-2 mb-2">
+                    <div key={item.projectId} className="flex flex-col gap-2 mb-4">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-[#0F172B]">{isArabic ? "مشروع:" : "Project:"} {item.projectName}</span>
                         </div>
@@ -778,17 +778,17 @@ export default function CheckoutPage() {
                           </div>
                         ))}
                       </div>
-                      <div className="flex justify-between mt-2">
+                      {/* <div className="flex justify-between mt-2">
                         <p className="text-lg font-medium text-neutral-700">
                           Subtotal
                           </p> <p className="font-bold text-base">{(item.products.reduce((sum: number, p: Product) => sum + p.price, 0) * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}</p>
-                      </div>
+                      </div> */}
                     </div>
                   );
                 } else if ("product" in item) {
                   // Regular product summary
                   return (
-                    <div key={item.product._id} className="flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
+                    <div key={item.product._id} className=" flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
                       <div className="flex items-center gap-3 w-full">
                         <div className="relative w-24 h-24 rounded-xl shadow-sm">
                           {item.product.image ? (
@@ -802,7 +802,7 @@ export default function CheckoutPage() {
                               <span>{isArabic ? "لا صورة" : "No Image"}</span>
                             </div>
                           )}
-                          <span className="z-10 absolute -top-2 -right-2 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
+                          <span className="z-10 absolute -top-2 -left-2 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
                             x{item.quantity}
                           </span>
                         </div>

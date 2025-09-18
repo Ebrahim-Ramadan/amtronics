@@ -51,7 +51,7 @@ export default function ProductsPage() {
 
         // const response = await fetch(url);
         const response = await fetch(url, {
-          next: { revalidate: 300 }, // Enable Next.js caching for 5 minutes
+          next: { revalidate: 1000 }, // Enable Next.js caching for 5 minutes
           cache: "force-cache",      // Use cached response if available
         });
         const data = await response.json();

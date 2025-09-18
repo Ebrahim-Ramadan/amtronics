@@ -8,31 +8,25 @@ export function cn(...inputs: ClassValue[]) {
 
 export const  categories = [
   "Arduino",
-  "Filament",
-  "Potentiometer",
   "Raspberry Pi",
+  "Keyestudio",
   "Bread Board & PCB",
   "Kits",
+  "Filament & 3D Print",
   "Modules",
   "Sparkfun",
   "Transistor & Regulator",
-  "Power Supply",
   "Accessories",
   "Switch",
   "Resistor & Potentiometer",
   "Sensor",
   "DFRobot",
-  "Keyestudio",
-  "Servo & Stepper Motor",
   "Led & Diode",
   "IC",
-  "3D Print",
   "Capacitors",
   "Batteries & Power Supply",
   "Tools",
-  "DC Motor & Pump",
-  "Motor",
-
+  "Motor & Pump", //"Servo & Stepper Motor",
 ]
 
 
