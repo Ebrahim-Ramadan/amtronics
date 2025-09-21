@@ -751,7 +751,7 @@ export default function CheckoutPage() {
                 if ("type" in item && item.type === "project-bundle") {
                   // Project bundle summary
                   return (
-                    <div key={item.projectId} className="flex flex-col gap-2 mb-4">
+                    <div key={item.projectId} className="flex flex-col gap-2 my-4">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-[#0F172B]">{isArabic ? "مشروع:" : "Project:"} {item.projectName}</span>
                         </div>
