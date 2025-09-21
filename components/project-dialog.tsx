@@ -46,33 +46,38 @@ export default function ProjectDialog({ project }: { project: Project }) {
   const router = useRouter();
   const isWishlisted = wishlistState.items.some(item => item._id === project._id);
 
-  // Change selectedBundles to a simple array of selected engineer indices
-  const [selectedEngineers, setSelectedEngineers] = useState<number[]>([]);
+  const [selectedBundles, setSelectedBundles] = useState<{ [engIdx: number]: number[] }>({});
 
   useEffect(() => {
-    if (project.engineers && project.engineers.length > 0) {
-      setSelectedEngineers([0]); // Default: first engineer selected
+    if (project.engineers) {
+      const initial: { [engIdx: number]: number[] } = {};
+      project.engineers.forEach((eng, idx) => {
+        initial[idx] = eng.bundle.length > 0 ? [0] : [];
+      });
+      setSelectedBundles(initial);
     }
   }, [project.engineers]);
 
   const allProducts =
     project.engineers?.flatMap((eng, engIdx) =>
-      selectedEngineers.includes(engIdx)
-        ? eng.bundle
-            .filter(b => b.product)
-            .map(b => ({
-              ...b.product!,
-              _id: b.id,
-              quantity: b.quantity ?? 1,
-            }))
+      selectedBundles[engIdx]
+        ? selectedBundles[engIdx]
+            .map(bIdx => {
+              const b = eng.bundle[bIdx];
+              if (!b || !b.product) return null;
+              return {
+                ...b.product,
+                _id: b.id,
+                quantity: b.quantity ?? 1,
+              } as Product & { quantity: number };
+            })
+            .filter((p): p is Product & { quantity: number } => !!p)
         : []
     ) || [];
 
   const WantedArray =
     project.engineers?.flatMap((eng, engIdx) =>
-      selectedEngineers.includes(engIdx)
-        ? eng.bundle.map((_, bIdx) => ({ engineerIdx: engIdx, bundleIdx: bIdx }))
-        : []
+      selectedBundles[engIdx]?.map(bIdx => ({ engineerIdx: engIdx, bundleIdx: bIdx })) || []
     ) || [];
 
   const handleAddToCart = () => {
@@ -118,13 +123,14 @@ export default function ProjectDialog({ project }: { project: Project }) {
 
   const totalPrice =
     project.engineers?.reduce((sum, eng, engIdx) => {
-      if (!selectedEngineers.includes(engIdx)) return sum;
       return (
         sum +
-        eng.bundle.reduce(
-          (bundleSum, b) => bundleSum + ((b.product?.price || 0) * (b.quantity ?? 1)),
+        (selectedBundles[engIdx]?.reduce(
+          (bundleSum, bIdx) =>
+            bundleSum +
+            ((eng.bundle[bIdx]?.product?.price || 0) * (eng.bundle[bIdx]?.quantity ?? 1)),
           0
-        )
+        ) || 0)
       );
     }, 0) || 0;
 
@@ -308,40 +314,50 @@ export default function ProjectDialog({ project }: { project: Project }) {
                     flex: visibleCount === 1 ? '0 0 auto' : undefined,
                   }}
                 >
-                  <label className="flex items-center gap-2 mb-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedEngineers.includes(engIdx)}
-                      onChange={() => {
-                        setSelectedEngineers(prev => {
-                          if (prev.includes(engIdx)) {
-                            // Remove engineer
-                            return prev.length === 1 ? prev : prev.filter(idx => idx !== engIdx);
-                          } else {
-                            // Add engineer
-                            return [...prev, engIdx];
-                          }
-                        });
-                      }}
-                      className="form-checkbox accent-[#FEEE00] h-5 w-5"
-                    />
+                  <div className="flex items-center gap-2 mb-2">
                     <span className="bg-[#FEEE00]/80 text-[#0F172B] px-3 py-1 rounded-full text-xs font-medium border border-[#FEEE00]">
                       {eng.name}
                     </span>
-                  </label>
+                    {/* {eng.email && (
+                      <span className="text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                        {eng.email}
+                      </span>
+                    )} */}
+                    {/* <span className="text-xs text-gray-500">{eng.bundle.length} Bundle{eng.bundle.length !== 1 ? 's' : ''}</span> */}
+                  </div>
                   <div
                     className="flex flex-col gap-3 pb-2"
                     style={{
-                      maxHeight: "144px",
+                      maxHeight: "144px", // 2 products * 72px each (approx)
                       overflowY: "auto",
                     }}
                   >
                     {eng.bundle.map((b, bIdx) => b.product ? (
-                      <div
+                      <label
                         key={bIdx}
-                        className="flex-shrink-0 flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2"
+                        className="flex-shrink-0 flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2 cursor-pointer relative"
                         style={{ minHeight: "64px", maxHeight: "72px" }}
                       >
+                        <input
+                          type="checkbox"
+                          checked={selectedBundles[engIdx]?.includes(bIdx) || false}
+                          onChange={() => {
+                            setSelectedBundles(prev => {
+                              const current = prev[engIdx] || [];
+                              let updated: number[];
+                              if (current.includes(bIdx)) {
+                                updated = current.filter(idx => idx !== bIdx);
+                              } else {
+                                updated = [...current, bIdx];
+                              }
+                              if (updated.length === 0 && eng.bundle.length > 0) {
+                                updated = [bIdx];
+                              }
+                              return { ...prev, [engIdx]: updated };
+                            });
+                          }}
+                          className=" form-checkbox accent-[#FEEE00] h-4 w-4"
+                        />
                         <img
                           src={b.product.image.split(',')[0] || '/placeholder-image.jpg'}
                           alt={b.product.en_name}
@@ -352,13 +368,13 @@ export default function ProjectDialog({ project }: { project: Project }) {
                           <p className="text-sm font-medium text-[#0F172B]">{b.product.en_name}</p>
                           <p className="text-xs text-gray-600">
                             kwd {b.product.price.toFixed(2)}
-                            {b.quantity && b.quantity > 1 && (
+                            {/* {b.quantity  && (
                               <span className="ml-2 text-xs text-gray-500">× {b.quantity}</span>
-                            )}
+                            )} */}
                           </p>
-                          <p className="text-xs text-gray-500">Quantity: {b.quantity ?? 1}</p>
+                          <p className="absolute top-0 right-0 h-4 text-xs justify-center bg-blue-500 rounded-full text-white flex w-4">{b.quantity ?? 1}</p>
                         </div>
-                      </div>
+                      </label>
                     ) : (
                       <div key={bIdx} className="text-xs text-gray-400">No product</div>
                     ))}
