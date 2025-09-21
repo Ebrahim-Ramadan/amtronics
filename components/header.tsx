@@ -293,8 +293,9 @@ export default function Header() {
                 </Button>
               </Link>
               <Link href="/myorders" prefetch={false}
-              className="hover:bg-white p-2 rounded-md"
+              className="flex items-center gap-2 hover:bg-white p-2 rounded-md "
               > 
+              <span className="hidden md:block md:text-xs font-medium">My orders</span>
               <Image
               src='/orders_menu_icon.svg'
               width={20}
