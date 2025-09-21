@@ -694,7 +694,7 @@ export default function CheckoutPage() {
           <CardHeader>
             <CardTitle className="text-xl md:text-3xl">{isArabic ? "ملخص الطلب" : "Order Summary"}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent >
             {/* Promo Code */}
             <div>
               <div className="flex gap-2">
@@ -750,7 +750,6 @@ export default function CheckoutPage() {
               {((state.items as Array<any>) as (import("@/lib/types").CartItem | import("@/lib/types").ProjectCartItem)[]).map((item) => {
                 if ("type" in item && item.type === "project-bundle") {
                   // Project bundle summary
-                  const engineerCount = (item.engineerNames || []).length;
                   return (
                     <div key={item.projectId} className="flex flex-col gap-2 mb-4">
                       <div className="flex items-center gap-2">
@@ -790,9 +789,9 @@ export default function CheckoutPage() {
                 } else if ("product" in item) {
                   // Regular product summary
                   return (
-                    <div key={item.product._id} className="flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
-                      <div className="flex items-center gap-3 w-full">
-                        <div className="relative w-24 h-24 rounded-xl shadow-sm">
+                    <>
+                    <div key={item.product._id} className="flex items-start items-end md:gap-4 gap-2 flex-row mt-8 w-full">
+                     <div className="relative w-24 h-24 rounded-xl shadow-sm">
                           {item.product.image ? (
                             <img
                               src={item.product.image.split(",")[0]}
@@ -812,32 +811,47 @@ export default function CheckoutPage() {
                           <span className="font-semibold">
                             {isArabic ? item.product.ar_name : item.product.en_name}
                           </span>
-                          <span>
+                         <div className="flex gap-4 items-center justify-between w-full">
+                           <span className="text-sm text-neutral-700">
                             {item.product.price} {isArabic ? "د.ك" : "KD"}
                           </span>
-                          {/* Woldering checkbox */}
-                          <label className="flex items-center gap-2 mt-1 text-xs">
-                            <input
-                              type="checkbox"
-                              checked={!!item.welding}
-                              onChange={e => {
-                                dispatch({
-                                  type: "UPDATE_WELDING",
-                                  payload: {
-                                    productId: item.product._id,
-                                    welding: e.target.checked
-                                  }
-                                })
-                              }}
-                            />
-                            {isArabic ? "تلحيم" : "Welding"}
-                          </label>
-                        </div>
-                      </div>
-                      <span className="font-semibold">
+                            <span className="font-semibold">
                         {(item.product.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                       </span>
+                         </div>
+                                   
+                          
+                        </div>
+                   
                     </div>
+                                 {/* Woldering checkbox */}
+{item.product.is_soldering && (
+  <label className="flex flex-col gap-1 mb-2 text-xs ">
+    <span>
+      
+    </span>
+    <span className="flex items-center gap-2 mt-1">
+      <input
+        type="checkbox"
+        checked={!!item.welding}
+        onChange={e => {
+          dispatch({
+            type: "UPDATE_WELDING",
+            payload: {
+              productId: item.product._id,
+              welding: e.target.checked
+            }
+          })
+        }}
+      />
+      {isArabic
+        ? "هذا المنتج قابل للتلحيم. يرجى اختيار هذا الخيار إذا كنت ترغب في تلحيم المنتج."
+        : "This product is weldable. Check this box if you'd like us to weld it for you."}
+    </span>
+  </label>
+)}
+        
+</>
                   );
                 }
                 return null;
