@@ -7,8 +7,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       alternates: {
         languages: {
-          en: "https://amtronics.co/en",
-          ar: "https://amtronics.co/ar",
+          en: "https://amtronics.co/",
+          ar: "https://amtronics.co/",
         },
       },
     },

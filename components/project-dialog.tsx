@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Copy } from "lucide-react";
+import { Copy, Maximize, Maximize2, MoveDiagonal, ZoomIn } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/lib/context";
 import { toast } from "sonner";
@@ -182,10 +182,13 @@ export default function ProjectDialog({ project }: { project: Project }) {
         className="min-w-[300px] max-w-xs bg-white/60 backdrop-blur-xl border border-[#00B8DB]/10 rounded-2xl hover:shadow-lg transition p-4 md:p-6 flex-shrink-0 group relative overflow-hidden transition-all duration-200 cursor-pointer"
         style={{ boxShadow: "0 4px 24px 0 rgba(254,238,0,0.08)" }}
       >
-        <h3 className="capitalize text-xl font-bold mb-2 text-[#0F172B] group-hover:text-[#00B8DB] transition-colors">
+       <div className="flex items-center justify-between">
+         <h3 className="capitalize text-xl font-bold mb-2 text-[#0F172B] group-hover:text-[#00B8DB] transition-colors">
           {project.name}
         </h3>
-        <div className="flex gap-2 mb-2">
+        <Maximize2  className="h-3 w-3 group-hover:w-4 transition-all duration-200 text-[#de6270] group-hover:text-[#ba2990cc]"  />
+       </div>
+        {/* <div className="flex gap-2 mb-2">
           <span className="bg-[#FEEE00]/80 text-[#0F172B] px-2 py-0.5 rounded-full text-[10px] font-medium border border-[#FEEE00]">
             {project.engineers?.length ?? 0} Engineer{(project.engineers?.length ?? 0) === 1 ? '' : 's'}
           </span>
@@ -195,8 +198,8 @@ export default function ProjectDialog({ project }: { project: Project }) {
           <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-[10px] font-medium border border-green-200">
             {project.engineers?.reduce((sum, eng) => sum + (eng.bundle?.filter(b => b.product).length || 0), 0)} Products
           </span>
-        </div>
-        <span className="text-sm text-[#00B8DB] font-semibold mb-1">
+        </div> */}
+        <span className="text-sm text-[#00B8DB] font-semibold mb-1 gap-2 flex ">
           {project.engineers?.map((eng, idx) => (
             <span
               key={idx}
