@@ -15,6 +15,7 @@ export interface Product {
   rating?: number
   discount?: number
   ave_cost?: number
+  is_soldering?: boolean
 }
 
 export interface CartItem {

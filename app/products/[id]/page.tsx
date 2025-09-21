@@ -75,7 +75,8 @@ async function getProduct(id: string): Promise<Product | null> {
           discount: 1,
           discount_type: 1,
           ar_brand: 1,
-          ave_cost: 1
+          ave_cost: 1,
+          is_soldering: 1
         }
       }
     )
@@ -266,6 +267,15 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
               >
                 {isArabic ? "متوفر" : "In Stock"}
                 {product.quantity_on_hand != null && ` (${product.quantity_on_hand})`}
+              </Badge>
+            )}
+            {product.is_soldering && (
+              <Badge
+                variant="secondary"
+                className="bg-yellow-100 text-yellow-800 ml-2"
+                aria-label={isArabic ? "قيد التشغيل" : "Soldering"}
+              >
+                {isArabic ? "قابل للحام" : "weldable"}
               </Badge>
             )}
           </div>
