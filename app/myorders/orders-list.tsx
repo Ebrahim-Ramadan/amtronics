@@ -626,6 +626,11 @@ export default function OrdersList() {
                                         ? `سعر الوحدة: ${((item as CartItem).product?.price?.toFixed(2) || "0.00")} د.ك`
                                         : `Unit Price: ${((item as CartItem).product?.price?.toFixed(2) || "0.00")} KD`}
                                     </span>
+                                     {(item as CartItem).welding && (
+                  <span className="text-xs sm:text-sm text-[#52A8FF] font-semibold mt-1">
+                    {isArabic ? "تم اختيار التلحيم" : "Welding checked"}
+                  </span>
+                )}
                                   </div>
                                 </div>
                                 <div className="flex flex-col items-end leading-tight">

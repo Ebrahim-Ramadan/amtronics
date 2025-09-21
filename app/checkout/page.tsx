@@ -184,6 +184,8 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log(state.items)
+    
     if (paymentMethod === "knet" && !isAuthorized) {
       toast.error(isArabic ? "يجب تسجيل الدخول كمستخدم مخول لدفع كي نت" : "You must login as an authorized user to pay with Knet")
       return
@@ -788,7 +790,7 @@ export default function CheckoutPage() {
                 } else if ("product" in item) {
                   // Regular product summary
                   return (
-                    <div key={item.product._id} className=" flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
+                    <div key={item.product._id} className="flex md:items-start justify-between items-end md:gap-4 flex-col md:flex-row">
                       <div className="flex items-center gap-3 w-full">
                         <div className="relative w-24 h-24 rounded-xl shadow-sm">
                           {item.product.image ? (
@@ -813,6 +815,23 @@ export default function CheckoutPage() {
                           <span>
                             {item.product.price} {isArabic ? "د.ك" : "KD"}
                           </span>
+                          {/* Woldering checkbox */}
+                          <label className="flex items-center gap-2 mt-1 text-xs">
+                            <input
+                              type="checkbox"
+                              checked={!!item.welding}
+                              onChange={e => {
+                                dispatch({
+                                  type: "UPDATE_WELDING",
+                                  payload: {
+                                    productId: item.product._id,
+                                    welding: e.target.checked
+                                  }
+                                })
+                              }}
+                            />
+                            {isArabic ? "تلحيم" : "Welding"}
+                          </label>
                         </div>
                       </div>
                       <span className="font-semibold">

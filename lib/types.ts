@@ -20,6 +20,7 @@ export interface Product {
 export interface CartItem {
   product: Product
   quantity: number
+  welding: boolean
 }
 
 // New: ProjectCartItem for project bundles
@@ -75,6 +76,7 @@ export interface Order {
     engineerEmails: string[]; // <-- Add this line
     bundleIds: string[];
   };
+  notes?: string;
 }
 
 export interface CustomerInfo {

@@ -15,6 +15,7 @@ type CartAction =
   | { type: "ADD_ITEM"; payload: Product }
   | { type: "REMOVE_ITEM"; payload: string }
   | { type: "UPDATE_QUANTITY"; payload: { productId: string; quantity: number } }
+  | { type: "UPDATE_WELDING"; payload: { productId: string; welding: boolean } } 
   | { type: "CLEAR_CART" }
   | { type: "SET_LANGUAGE"; payload: "en" | "ar" }
   | { type: "LOAD_CART"; payload: CartState }
@@ -47,7 +48,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       } else {
         return {
           ...state,
-          items: [...state.items, { product: action.payload, quantity: 1 }],
+          items: [...state.items, { product: action.payload, quantity: 1 , welding: false }],
           total: state.total + action.payload.price,
         }
       }
@@ -105,6 +106,16 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           return item
         }),
         total: state.total + item.product.price * quantityDiff,
+      }
+    }
+     case "UPDATE_WELDING": {
+      return {
+        ...state,
+        items: state.items.map(item =>
+          "product" in item && item.product._id === action.payload.productId
+            ? { ...item, welding: action.payload.welding }
+            : item
+        ),
       }
     }
     case "CLEAR_CART":

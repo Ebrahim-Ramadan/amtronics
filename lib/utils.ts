@@ -27,6 +27,7 @@ export const  categories = [
   "Batteries & Power Supply",
   "Tools",
   "Motor & Pump", //"Servo & Stepper Motor",
+  "DIY"
 ]
 
 
