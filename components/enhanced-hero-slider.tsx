@@ -42,7 +42,7 @@ const heroSlides = [
     ar_discount: "اشتري 2 واحصل على 1 مجاناً",
     image: "/hero-slider/smart-home-revolution-slide-image.webp",
     bgColor: "bg-gradient-to-r from-green-700 via-emerald-600 to-teal-700",
-    link: "/products?search=sensor",
+    link: "/products?category=Keyestudio",
     products: getRandomProducts(STATIC_PRODUCTS.deals, 3).map(p => ({
       id: p._id,
       name: p.en_name,
@@ -60,7 +60,7 @@ const heroSlides = [
     ar_discount: "اشتري 2 واحصل على 1 مجاناً",
     image: "/hero-slider/soldering-slide-image.webp",
     bgColor: "bg-gradient-to-r from-orange-700 via-red-600 to-pink-600",
-    link: "/products?featured=true",
+    link: "/products?category=Keyestudio",
     products: getRandomProducts(STATIC_PRODUCTS.recommended, 3).map(p => ({
       id: p._id,
       name: p.en_name,
@@ -169,15 +169,6 @@ export default function EnhancedHeroSlider() {
     touchStartX.current = null
     touchEndX.current = null
   }
-
-  const currentSlideData = heroSlides[currentSlide]
-
-  // Slide transition classes
-  const slideTransition = isSliding
-    ? slideDirection === 'right'
-      ? 'animate-slide-left'
-      : 'animate-slide-right'
-    : ''
 
   // Helper to render a slide
   const renderSlide = (slideIdx: number, transitionClass: string) => {
