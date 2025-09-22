@@ -340,7 +340,7 @@ export default function ProjectDialog({ project }: { project: Project }) {
                     {eng.bundle.map((b, bIdx) => b.product ? (
                       <div
                         key={bIdx}
-                        className="flex-shrink-0 flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2"
+                        className="relative flex-shrink-0 flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2"
                         style={{ minHeight: "64px", maxHeight: "72px" }}
                       >
                         <img
@@ -353,11 +353,11 @@ export default function ProjectDialog({ project }: { project: Project }) {
                           <p className="text-sm font-medium text-[#0F172B]">{b.product.en_name}</p>
                           <p className="text-xs text-gray-600">
                             kwd {b.product.price.toFixed(2)}
-                            {b.quantity && b.quantity > 1 && (
+                            {/* {b.quantity  && (
                               <span className="ml-2 text-xs text-gray-500">× {b.quantity}</span>
-                            )}
+                            )} */}
                           </p>
-                          <p className="text-xs text-gray-500">Quantity: {b.quantity ?? 1}</p>
+                          <p className="absolute top-0 left-0 h-4 text-xs justify-center bg-blue-500 rounded-full text-white flex w-4">{b.quantity ?? 1}</p>
                         </div>
                       </div>
                     ) : (
