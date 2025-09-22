@@ -20,7 +20,12 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-  const selectedCategory = searchParams.get("category") || "all";
+  // Find canonical category for select value (case-insensitive)
+  const urlCategory = searchParams.get("category");
+  const selectedCategory =
+    urlCategory
+      ? categories.find(cat => cat.toLowerCase() === urlCategory.toLowerCase()) || urlCategory
+      : "all";
   const currentPage = Number(searchParams.get("page")) || 1;
   const [totalProducts, setTotalProducts] = useState(0);
   const isArabic = state.language === "ar";
@@ -51,8 +56,8 @@ export default function ProductsPage() {
 
         // const response = await fetch(url);
         const response = await fetch(url, {
-          next: { revalidate: 1000 }, // Enable Next.js caching for 5 minutes
-          cache: "force-cache",      // Use cached response if available
+          // next: { revalidate: 1000 }, // Enable Next.js caching for 5 minutes
+          // cache: "force-cache",      // Use cached response if available
         });
         const data = await response.json();
         console.log("data", data);
@@ -70,16 +75,24 @@ export default function ProductsPage() {
 
 
 
-  const handleCategoryChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value === "all") {
-      params.delete("category");
-    } else {
-      params.set("category", value);
-    }
-    params.delete("page"); // Reset to page 1 on category change
-    router.push(`/products?${params.toString()}`);
-  };
+// ...existing code...
+
+const handleCategoryChange = (value: string) => {
+  const params = new URLSearchParams(searchParams.toString());
+  if (value.toLowerCase() === "all") {
+    params.delete("category");
+  } else {
+    // Find canonical category (case-insensitive match)
+    const canonicalCategory = categories.find(
+      (cat) => cat.toLowerCase() === value.toLowerCase()
+    ) || value;
+    params.set("category", canonicalCategory);
+  }
+  params.delete("page"); // Reset to page 1 on category change
+  router.push(`/products?${params.toString()}`);
+};
+
+// ...existing code...
 
   const clearFilters = () => {
     setSearchQuery("");

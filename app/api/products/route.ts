@@ -26,8 +26,8 @@ export async function GET(request: Request) {
     // Helper to build $or for a category string
     const buildCategoryOr = (cat: string) => [
       { en_category: { $regex: escapeRegex(cat), $options: "i" } },
-      { en_name: { $regex: escapeRegex(cat), $options: "i" } },
-      { en_long_description: { $regex: escapeRegex(cat), $options: "i" } },
+      // { en_name: { $regex: escapeRegex(cat), $options: "i" } },
+      // { en_long_description: { $regex: escapeRegex(cat), $options: "i" } },
     ]
 
     if (category && category.includes("&")) {

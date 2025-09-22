@@ -25,15 +25,6 @@ export default async function Home() {
       {/* Enhanced Categories */}
       <EnhancedCategories />
 
-      
-     
-
-
-
-      {/* Promotional Grid Sections */}
-      {/* <div className="px-2">
-        <PromotionalGrid />
-      </div> */}
 
       {/* Product Carousels */}
       <div className="px-2 space-y-4 py-4">
