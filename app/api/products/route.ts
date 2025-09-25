@@ -10,20 +10,28 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
+    const search = searchParams.get("search");
     const limit = Number.parseInt(searchParams.get("limit") || "15");
     const skip = Number.parseInt(searchParams.get("skip") || "0");
 
-    if (!category) {
-      return NextResponse.json({ error: "Category is required" }, { status: 400 });
+    if (!category && !search) {
+      return NextResponse.json({ error: "Category or search term is required" }, { status: 400 });
     }
 
     const client = await clientPromise;
     const db = client.db("amtronics");
 
-    // Build query for category
-    const query = {
-      en_category: { $regex: escapeRegex(category), $options: "i" },
-    };
+    // Build query
+    const query: any = {};
+    if (category) {
+      query.en_category = { $regex: escapeRegex(category), $options: "i" };
+    }
+    if (search) {
+      query.$or = [
+        { en_name: { $regex: escapeRegex(search), $options: "i" } },
+        { ar_name: { $regex: escapeRegex(search), $options: "i" } },
+      ];
+    }
 
     // Fetch products
     const products = await db
