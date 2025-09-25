@@ -76,7 +76,10 @@ async function getProduct(id: string): Promise<Product | null> {
           discount_type: 1,
           ar_brand: 1,
           ave_cost: 1,
-          is_soldering: 1
+          is_soldering: 1,
+          hasVarieties: 1,
+          varieties: 1,
+          
         }
       }
     )
@@ -130,10 +133,6 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
     notFound()
   }
 
-  const discountedPrice = product.discount
-    ? product.price - product.price * (product.discount / 100)
-    : product.price
-  console.log('discountedPrice', discountedPrice);
 
   // Breadcrumbs
   const category = product.en_category
@@ -141,7 +140,6 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
 
   // Stock status: Treat quantity_on_hand as Infinity if null
   const availableStock = product.quantity_on_hand ?? Infinity
-  const isOutOfStock = availableStock === 0
 
   return (
     <div className="container mx-auto px-4 py-2 md:py-4">
@@ -202,11 +200,19 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
           {isArabic ? product.ar_name : product.en_name ? (
   <p className="text-gray-600 leading-4 md:leading-5 text-sm md:text-base">
     {isArabic ? product.ar_name.substring(0, 200) : product.en_name.substring(0, 200)}
-    {isArabic ? (
+      <Link prefetch={false} href="#description" className="text-[#00B9DA] text-sm cursor-pointer ml-2 hover:underline">
+      {isArabic?
+    ' عرض المزيد'
+    :
+    'See More'
+    }
+      </Link>
+    
+    {/* {isArabic ? (
       <Link prefetch={false} href="#description" className="text-[#00B9DA] cursor-pointer ml-2 hover:underline">عرض المزيد</Link>
     ) : (
       <Link prefetch={false} href="#description" className="text-[#00B9DA] cursor-pointer ml-2 hover:underline">See More</Link>
-    )}
+    )} */}
   </p>
 ) : null}
           </div>
@@ -227,27 +233,9 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
             </span>
           </div> */}
 
-          {/* Price */}
-          <div className="space-y-2">
-            {product.discount ? (
-              <div className="flex items-center gap-3">
-                <span className="text-3xl font-bold text-green-600">
-                  {discountedPrice.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                </span>
-                <span className="text-xl text-gray-500 line-through">
-                  {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                </span>
-              </div>
-            ) : (
-              <span className="text-3xl font-bold">
-                {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-              </span>
-            )}
-          </div>
-
           {/* Stock Status */}
           <div>
-            {isOutOfStock ? (
+            {availableStock === 0 ? (
               <Badge
                 variant="secondary"
                 className="bg-red-100 text-red-800"

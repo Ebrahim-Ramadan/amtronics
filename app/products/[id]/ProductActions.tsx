@@ -24,17 +24,21 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
   const [shopNowLoading, setShopNowLoading] = useState(false)
   const [addToCartLoading, setAddToCartLoading] = useState(false)
   const [showCheck, setShowCheck] = useState(false)
+  const [selectedVariety, setSelectedVariety] = useState(product.varieties[0]); // Initialize with the first variety
   const router = useRouter()
 
   // Treat quantity_on_hand as Infinity if null to allow unlimited purchases
   const availableStock = product.quantity_on_hand ?? Infinity
+  const isOutOfStock = availableStock === 0
+  const isQuantityMaxed = quantity >= availableStock
+  const isLoading = shopNowLoading || addToCartLoading
 
   const addToCart = () => {
     setAddToCartLoading(true)
     setShowCheck(false)
     setTimeout(() => {
       for (let i = 0; i < quantity; i++) {
-        dispatch({ type: "ADD_ITEM", payload: product })
+        dispatch({ type: "ADD_ITEM", payload: { ...product, price: selectedVariety.price } }) // Use selected variety price
       }
       toast.success(isArabic ? "تمت إضافة المنتج إلى السلة" : "Product Added to Cart")
       setAddToCartLoading(false)
@@ -58,18 +62,40 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
   const handleShopNow = async () => {
     setShopNowLoading(true)
     for (let i = 0; i < quantity; i++) {
-      dispatch({ type: "ADD_ITEM", payload: product })
+      dispatch({ type: "ADD_ITEM", payload: { ...product, price: selectedVariety.price } }) // Use selected variety price
     }
     toast.success(isArabic ? "تمت إضافة المنتج إلى السلة" : "Product Added to Cart")
     router.push("/checkout")
   }
 
-  const isOutOfStock = availableStock === 0
-  const isQuantityMaxed = quantity >= availableStock
-  const isLoading = shopNowLoading || addToCartLoading
+  // Calculate total price
+  const totalPrice = selectedVariety.price * quantity;
 
   return (
     <div className="space-y-4">
+      {/* Variety Selection */}
+      {product.hasVarieties && product.varieties.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <select
+            id="variety-select"
+            value={selectedVariety.en_name_variant}
+            onChange={(e) => {
+              const selected = product.varieties.find(v => v.en_name_variant === e.target.value);
+              if (selected) {
+                setSelectedVariety(selected);
+              }
+            }}
+            className="border rounded p-2"
+          >
+            {product.varieties.map((variety, index) => (
+              <option key={index} value={variety.en_name_variant}>
+                {variety.en_name_variant}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="flex items-center gap-4">
         <label className="font-medium" htmlFor="quantity-input">
           {isArabic ? "الكمية:" : "Quantity:"}
@@ -99,6 +125,11 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
         </div>
       </div>
 
+      {/* Display Total Price */}
+      <div className="text-xl md:text-2xl font-bold">
+        {totalPrice.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+      </div>
+
       <div className="flex flex-col gap-2 w-full">
         <Button
           onClick={addToCart}
@@ -110,14 +141,11 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
           {addToCartLoading ? (
             <LoadingDots aria-label={isArabic ? "جارٍ إضافة المنتج" : "Adding product"} />
           ) : showCheck ? (
-            <>
-              <CheckCheck className="h-5 w-5 text-white" />
-              {isArabic ? "تمت الإضافة" : "Added"}
-            </>
+            <CheckCheck className="h-5 w-5 text-white" />
           ) : (
             <>
               <Image
-              unoptimized
+                unoptimized
                 src="/quick-atc-add-to-cart-grey.svg"
                 width={20}
                 height={20}

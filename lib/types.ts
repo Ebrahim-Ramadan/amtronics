@@ -16,8 +16,14 @@ export interface Product {
   discount?: number
   ave_cost?: number
   is_soldering?: boolean
+  hasVarieties?: boolean; // New field to indicate if product has varieties
+  varieties?: Variety[]; // New field for product varieties
 }
-
+interface Variety {
+  en_name_variant: string
+  price: number
+  image: string
+}
 export interface CartItem {
   product: Product
   quantity: number
