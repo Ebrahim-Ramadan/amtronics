@@ -251,14 +251,14 @@ export default function ProductImageGallery({
         </div>
       )}
 
-      {discount && discount > 0 && (
+      {/* {discount && discount > 0 && (
         <Badge
           className="absolute top-4 left-4 bg-red-500 text-white"
           aria-label={isArabic ? `خصم ${discount}%` : `${discount}% off`}
         >
           -{discount}%
         </Badge>
-      )}
+      )} */}
     </div>
   );
 }
