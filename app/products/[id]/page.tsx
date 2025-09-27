@@ -100,6 +100,8 @@ interface ProductPageProps {
 // --- SEO Metadata Export ---
 export async function generateMetadata({ params, searchParams }: ProductPageProps) {
   const product = await getProduct(params.id)
+  console.log('product', product)
+  
   const isArabic = searchParams.lang === "ar"
 
   if (!product) {

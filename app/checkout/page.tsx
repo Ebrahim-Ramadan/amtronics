@@ -811,6 +811,12 @@ export default function CheckoutPage() {
                           <span className="font-semibold">
                             {isArabic ? item.product.ar_name : item.product.en_name}
                           </span>
+                           {/* Show variety if exists */}
+            {item.product.variety && (
+              <span className="block text-xs text-gray-500 mt-1">
+                {isArabic ? "النوع:" : "Variety:"} {item.product.variety}
+              </span>
+            )}
                          <div className="flex gap-4 items-center justify-between w-full">
                            <span className="text-sm text-neutral-700">
                             {item.product.price} {isArabic ? "د.ك" : "KD"}

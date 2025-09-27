@@ -28,31 +28,47 @@ const CartContext = createContext<{
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
-    case "ADD_ITEM": {
-      const existingItem = state.items.find((item) => {
-        if ("product" in item) {
-          return item.product._id === action.payload._id
-        }
-        return false
-      }) as CartItem | undefined
-      if (existingItem) {
-        return {
-          ...state,
-          items: state.items.map((item) =>
-            "product" in item && item.product._id === action.payload._id
-              ? { ...item, quantity: item.quantity + 1 }
-              : item,
-          ),
-          total: state.total + action.payload.price,
-        }
-      } else {
-        return {
-          ...state,
-          items: [...state.items, { product: action.payload, quantity: 1 , welding: false }],
-          total: state.total + action.payload.price,
-        }
-      }
+// ...existing code...
+case "ADD_ITEM": {
+  const productKey = action.payload.variety 
+    ? `${action.payload._id}-${action.payload.variety}` 
+    : action.payload._id
+
+  const existingItem = state.items.find((item) => {
+    if ("product" in item) {
+      const existingKey = item.product.variety 
+        ? `${item.product._id}-${item.product.variety}` 
+        : item.product._id
+      return existingKey === productKey
     }
+    return false
+  }) as CartItem | undefined
+
+  if (existingItem) {
+    return {
+      ...state,
+      items: state.items.map((item) => {
+        if ("product" in item) {
+          const existingKey = item.product.variety 
+            ? `${item.product._id}-${item.product.variety}` 
+            : item.product._id
+          return existingKey === productKey
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        }
+        return item
+      }),
+      total: state.total + action.payload.price,
+    }
+  } else {
+    return {
+      ...state,
+      items: [...state.items, { product: action.payload, quantity: 1, welding: false }],
+      total: state.total + action.payload.price,
+    }
+  }
+}
+// ...existing code...
     case "REMOVE_ITEM": {
       // Find if the payload matches a project-bundle or a product
       const itemToRemove = state.items.find((item) => {

@@ -28,6 +28,7 @@ export interface CartItem {
   product: Product
   quantity: number
   welding: boolean
+  variety?: string;
 }
 
 // New: ProjectCartItem for project bundles

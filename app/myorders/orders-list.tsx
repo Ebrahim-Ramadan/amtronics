@@ -621,6 +621,12 @@ export default function OrdersList() {
                                     <span className="font-semibold text-sm sm:text-base text-neutral-800">
                                       {isArabic ? (item as CartItem).product?.ar_name || "منتج" : (item as CartItem).product?.en_name || "Product"}
                                     </span>
+                                    {/* Show variety if exists */}
+                {(item as CartItem).product?.variety && (
+                  <span className="block text-xs text-gray-500">
+                    {isArabic ? "النوع:" : "Variety:"} {(item as CartItem).product.variety}
+                  </span>
+                )}
                                     <span className="text-xs sm:text-sm text-neutral-500">
                                       {isArabic
                                         ? `سعر الوحدة: ${((item as CartItem).product?.price?.toFixed(2) || "0.00")} د.ك`

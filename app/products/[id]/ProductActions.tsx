@@ -1,3 +1,4 @@
+//// filepath: e:\amtronics\app\products\[id]\ProductActions.tsx
 "use client"
 
 import { useState } from "react"
@@ -24,75 +25,120 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
   const [shopNowLoading, setShopNowLoading] = useState(false)
   const [addToCartLoading, setAddToCartLoading] = useState(false)
   const [showCheck, setShowCheck] = useState(false)
-  const [selectedVariety, setSelectedVariety] = useState(product.varieties[0]); // Initialize with the first variety
+
+  type Variety = Product["varieties"][number]
+  const initialVariety: Variety | null =
+    product.hasVarieties && product.varieties?.length
+      ? product.varieties[0]
+      : null
+
+  const [selectedVariety, setSelectedVariety] = useState<Variety | null>(initialVariety)
+
   const router = useRouter()
 
-  // Treat quantity_on_hand as Infinity if null to allow unlimited purchases
   const availableStock = product.quantity_on_hand ?? Infinity
   const isOutOfStock = availableStock === 0
   const isQuantityMaxed = quantity >= availableStock
   const isLoading = shopNowLoading || addToCartLoading
 
+  // Unit price logic:
+  // If hasVarieties is true use selected variety price; otherwise use product.price
+  const unitPrice = product.hasVarieties
+    ? (selectedVariety?.price ?? 0)
+    : product.price
+
+  const totalPrice = unitPrice * quantity
+
+// ...existing code...
+const buildCartItem = () => {
+  if (product.hasVarieties) {
+    if (!selectedVariety) {
+      toast.error(isArabic ? "يرجى اختيار نوع المنتج" : "Please select a product variety")
+      return null
+    }
+    return {
+      ...product,
+      price: selectedVariety.price,
+      variety: selectedVariety.en_name_variant,
+      // Remove the varieties array to avoid storing all varieties
+      varieties: undefined,
+      hasVarieties: true
+    }
+  }
+  return { 
+    ...product, 
+    price: product.price,
+    varieties: undefined // Clean up for consistency
+  }
+}
+// ...existing code...
+
   const addToCart = () => {
+    const item = buildCartItem()
+    if (!item) return
     setAddToCartLoading(true)
     setShowCheck(false)
     setTimeout(() => {
       for (let i = 0; i < quantity; i++) {
-        dispatch({ type: "ADD_ITEM", payload: { ...product, price: selectedVariety.price } }) // Use selected variety price
+        dispatch({ type: "ADD_ITEM", payload: item })
       }
       toast.success(isArabic ? "تمت إضافة المنتج إلى السلة" : "Product Added to Cart")
       setAddToCartLoading(false)
       setShowCheck(true)
       setTimeout(() => setShowCheck(false), 1000)
-    }, 200)
+    }, 150)
   }
 
-  const isWishlisted = wishlistState.items.some(item => item._id === product._id)
-
-  const toggleWishlist = () => {
-    if (isWishlisted) {
-      wishlistDispatch({ type: "REMOVE_ITEM", payload: product._id })
-      toast.info(isArabic ? "تمت الإزالة من قائمة الرغبات" : "Removed from wishlist")
-    } else {
-      wishlistDispatch({ type: "ADD_ITEM", payload: product })
-      toast.success(isArabic ? "تمت الإضافة إلى قائمة الرغبات" : "Added to wishlist")
-    }
-  }
-
-  const handleShopNow = async () => {
+  const handleShopNow = () => {
+    const item = buildCartItem()
+    if (!item) return
     setShopNowLoading(true)
     for (let i = 0; i < quantity; i++) {
-      dispatch({ type: "ADD_ITEM", payload: { ...product, price: selectedVariety.price } }) // Use selected variety price
+      dispatch({ type: "ADD_ITEM", payload: item })
     }
     toast.success(isArabic ? "تمت إضافة المنتج إلى السلة" : "Product Added to Cart")
     router.push("/checkout")
   }
 
-  // Calculate total price
-  const totalPrice = selectedVariety.price * quantity;
+  const isWishlisted = wishlistState.items.some(item => item._id === product._id)
+  const toggleWishlist = () => {
+    if (isWishlisted) {
+      wishlistDispatch({ type: "REMOVE_ITEM", payload: product._id })
+      toast.info(isArabic ? "تمت الإزالة من قائمة الرغبات" : "Removed from wishlist")
+    } else {
+      wishlistDispatch({ type: "ADD_ITEM", payload: buildCartItem() ?? product })
+      toast.success(isArabic ? "تمت الإضافة إلى قائمة الرغبات" : "Added to wishlist")
+    }
+  }
 
   return (
     <div className="space-y-4">
-      {/* Variety Selection */}
-      {product.hasVarieties && product.varieties.length > 0 && (
+      {product.hasVarieties && product.varieties?.length > 0 && (
         <div className="flex flex-col gap-2">
-          <select
-            id="variety-select"
-            value={selectedVariety.en_name_variant}
-            onChange={(e) => {
-              const selected = product.varieties.find(v => v.en_name_variant === e.target.value);
-              if (selected) {
-                setSelectedVariety(selected);
-              }
-            }}
-            className="border rounded p-2"
-          >
-            {product.varieties.map((variety, index) => (
-              <option key={index} value={variety.en_name_variant}>
-                {variety.en_name_variant}
-              </option>
-            ))}
-          </select>
+          <label className="font-medium" htmlFor="variety-select">
+            {isArabic ? "النوع:" : "Variety:"}
+          </label>
+            <select
+              id="variety-select"
+              value={selectedVariety?.en_name_variant || ""}
+              onChange={(e) => {
+                const sel = product.varieties.find(v => v.en_name_variant === e.target.value)
+                if (sel) setSelectedVariety(sel)
+              }}
+              className="border rounded p-2"
+            >
+              {product.varieties.map(v => (
+                <option key={v.en_name_variant} value={v.en_name_variant}>
+                  {v.en_name_variant} - {v.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                </option>
+              ))}
+            </select>
+        </div>
+      )}
+
+      {!product.hasVarieties && (
+        <div className="text-xl font-bold">
+          {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
         </div>
       )}
 
@@ -104,84 +150,69 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
           <Button
             variant="outline"
             size="icon"
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            onClick={() => setQuantity(q => Math.max(1, q - 1))}
             disabled={isLoading}
-            aria-label={isArabic ? "تقليل الكمية" : "Decrease quantity"}
-          >
-            -
-          </Button>
-          <span className="w-12 text-center" id="quantity-input">
-            {quantity}
-          </span>
+          >-</Button>
+          <span className="w-12 text-center" id="quantity-input">{quantity}</span>
           <Button
             variant="outline"
             size="icon"
-            onClick={() => setQuantity(quantity + 1)}
+            onClick={() => setQuantity(q => q + 1)}
             disabled={isQuantityMaxed || isLoading}
-            aria-label={isArabic ? "زيادة الكمية" : "Increase quantity"}
-          >
-            +
-          </Button>
+          >+</Button>
         </div>
       </div>
 
-      {/* Display Total Price */}
-      <div className="text-xl md:text-2xl font-bold">
-        {totalPrice.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+      <div className="text-lg font-bold">
+        {isArabic ? "الإجمالي:" : "Total:"} {totalPrice.toFixed(2)} {isArabic ? "د.ك" : "KD"}
       </div>
 
       <div className="flex flex-col gap-2 w-full">
         <Button
           onClick={addToCart}
-          size="lg"
-          className="w-full"
-          disabled={isOutOfStock || isLoading}
-          aria-label={isArabic ? "أضف إلى السلة" : "Add to Cart"}
+            size="lg"
+            className="w-full"
+            disabled={isOutOfStock || isLoading}
         >
-          {addToCartLoading ? (
-            <LoadingDots aria-label={isArabic ? "جارٍ إضافة المنتج" : "Adding product"} />
-          ) : showCheck ? (
-            <CheckCheck className="h-5 w-5 text-white" />
-          ) : (
-            <>
-              <Image
-                unoptimized
-                src="/quick-atc-add-to-cart-grey.svg"
-                width={20}
-                height={20}
-                alt={isArabic ? "أضف إلى السلة" : "Add to Cart"}
-              />
-              {isArabic ? "أضف للسلة" : "Add to Cart"}
-            </>
-          )}
+          {addToCartLoading
+            ? <LoadingDots />
+            : showCheck
+              ? <CheckCheck className="h-5 w-5 text-white" />
+              : (
+                <>
+                  <Image
+                    unoptimized
+                    src="/quick-atc-add-to-cart-grey.svg"
+                    width={20}
+                    height={20}
+                    alt=""
+                  />
+                  {isArabic ? "أضف للسلة" : "Add to Cart"}
+                </>
+              )}
         </Button>
-        <div className="flex flex-row gap-2 w-full md:flex-row md:justify-center">
+
+        <div className="flex flex-row gap-2 w-full">
           <Button
             onClick={handleShopNow}
             size="lg"
             className="flex-1"
             disabled={isOutOfStock || isLoading}
-            aria-label={isArabic ? "اشتري الآن" : "Buy Now"}
           >
-            {shopNowLoading ? (
-              <LoadingDots aria-label={isArabic ? "جارٍ الانتقال إلى الدفع" : "Proceeding to checkout"} />
-            ) : isArabic ? (
-              "اشتري الآن"
-            ) : (
-              "Buy Now"
-            )}
+            {shopNowLoading ? <LoadingDots /> : (isArabic ? "اشتري الآن" : "Buy Now")}
           </Button>
+
           <Button
             variant="outline"
             size="lg"
-            className={`flex-1 ${isWishlisted ? 'text-red-500 border-red-500 hover:text-red-600' : 'text-gray-500 hover:text-red-500'}`}
+            className={`flex-1 ${isWishlisted ? "text-red-500 border-red-500" : "text-gray-500"}`}
             onClick={toggleWishlist}
             disabled={isLoading}
-            aria-label={isArabic ? (isWishlisted ? "إزالة من قائمة الرغبات" : "أضف إلى قائمة الرغبات") : (isWishlisted ? "Remove from wishlist" : "Add to wishlist")}
           >
-            <HeartPlus className={`h-5 w-5 fill-current ${isWishlisted ? '' : 'fill-transparent'}`} />
+            <HeartPlus className={`h-5 w-5 ${isWishlisted ? "" : "fill-transparent"}`} />
             {isArabic ? "قائمة الرغبات" : "Wishlist"}
           </Button>
+
           <ShareButton product_id={product._id} />
         </div>
       </div>

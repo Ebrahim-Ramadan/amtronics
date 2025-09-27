@@ -108,9 +108,9 @@ console.log('state.items', state.items);
           {state.items.map((item, idx) => {
             if ("type" in item && item.type === "project-bundle") {
               // Only show selected bundles/products
-              const engineerCount = (item.engineerNames || []).length;
-              const bundleCount = item.bundleIds?.length || 0;
-              const productCount = item.products.length;
+              // const engineerCount = (item.engineerNames || []).length;
+              // const bundleCount = item.bundleIds?.length || 0;
+              // const productCount = item.products.length;
 
               return (
                 <Card
@@ -231,10 +231,14 @@ console.log('state.items', state.items);
                 </Card>
               );
             } else if ("product" in item) {
+              const key =
+      item.product.variety
+        ? `${item.product._id}-${item.product.variety}`
+        : item.product._id;
               // Regular product rendering
               return (
                 <Card
-                  key={item.product._id}
+                  key={key}
                   className="overflow-hidden hover:shadow-lg transition-shadow"
                 >
                   <CardContent className="p-4 sm:p-6">
@@ -243,10 +247,7 @@ console.log('state.items', state.items);
                         <img
                           src={item.product.image.split(",")[0] || "/placeholder.svg?height=128&width=128"}
                           alt={isArabic ? item.product.ar_name : item.product.en_name}
-                          // fill
                           className="rounded-lg object-contain h-24 w-full sm:h-32 sm:w-32"
-                          // sizes="(max-width: 640px) 100vw, 128px"
-                          // priority
                         />
                         <Button
                           variant="outline"
@@ -292,6 +293,12 @@ console.log('state.items', state.items);
                           <h3 className="font-semibold text-base sm:text-lg">
                             {isArabic ? item.product.ar_name : item.product.en_name}
                           </h3>
+                          {/* Show variety if exists */}
+                          {item.product.variety && (
+                <span className="block text-xs text-gray-500 mt-1">
+                  {isArabic ? "النوع:" : "Variety:"} {item.product.variety}
+                </span>
+              )}
                         </div>
                         <div className="flex items-center gap-4">
                           <p className="font-medium text-primary text-sm sm:text-base">
