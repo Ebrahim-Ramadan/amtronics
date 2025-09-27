@@ -29,6 +29,8 @@ export async function GET(request: Request) {
     if (search) {
       query.$or = [
         { en_name: { $regex: escapeRegex(search), $options: "i" } },
+        { en_long_description: { $regex: escapeRegex(search), $options: "i" } },
+        { en_category: { $regex: escapeRegex(search), $options: "i" } },
         { ar_name: { $regex: escapeRegex(search), $options: "i" } },
       ];
     }
