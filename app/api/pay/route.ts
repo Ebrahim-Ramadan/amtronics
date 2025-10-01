@@ -7,6 +7,8 @@ export async function POST(req: NextRequest) {
     const { amount, orderId } = await req.json();
     const accessToken = await getAccessToken();
     console.log('accessToken', accessToken);
+    const returnUrl = `https://28980b98aab3.ngrok-free.app/api/cbk/result`;
+    console.log('returnUrl', returnUrl);
     
     const checkoutUrl = `${process.env.CBK_TEST_URL}/ePay/pg/epay?_v=${accessToken}`;
 
@@ -19,7 +21,7 @@ const formHtml = `
     <input type="hidden" name="tij_MerchantPaymentTrack" value="${orderId}" />
     <input type="hidden" name="tij_MerchantPaymentCurrency" value="KWD" />
     <input type="hidden" name="tij_MerchantPaymentRef" value="Order Payment" />
-    <input type="hidden" name="tij_MerchReturnUrl" value="https://yourdomain.com/api/cbk/result" />
+    <input type="hidden" name="tij_MerchReturnUrl" value="${returnUrl}" />
   </form>
   <script>document.getElementById("payForm").submit();</script>
 `;

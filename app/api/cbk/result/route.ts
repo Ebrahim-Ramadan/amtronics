@@ -1,4 +1,3 @@
-// app/api/cbk/result/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "@/lib/cbk";
 import axios from "axios";
@@ -7,7 +6,8 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const encrp = searchParams.get("encrp");
-
+    console.log("searchParams", searchParams);
+    
     if (!encrp) {
       return NextResponse.json({ error: "Missing encrp param" }, { status: 400 });
     }
