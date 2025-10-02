@@ -1,7 +1,6 @@
-//// filepath: e:\amtronics\app\products\[id]\ProductActions.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { CheckCheck, HeartPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/context"
@@ -33,11 +32,30 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
       : null
 
   const [selectedVariety, setSelectedVariety] = useState<Variety | null>(initialVariety)
+  
+  // Track the available stock based on selected variant
+  const [availableStock, setAvailableStock] = useState<number>(
+    product.hasVarieties 
+      ? (initialVariety?.quantity ?? 0) 
+      : (product.quantity_on_hand ?? 0)
+  )
 
   const router = useRouter()
 
-  const availableStock = product.quantity_on_hand ?? Infinity
-  const isOutOfStock = availableStock === 0
+  // Update available stock when variant changes
+  useEffect(() => {
+    if (product.hasVarieties) {
+      setAvailableStock(selectedVariety?.quantity ?? 0)
+      // Reset quantity if it exceeds available stock
+      if (quantity > (selectedVariety?.quantity ?? 0)) {
+        setQuantity(Math.max(1, selectedVariety?.quantity ?? 0))
+      }
+    } else {
+      setAvailableStock(product.quantity_on_hand ?? 0)
+    }
+  }, [selectedVariety, product.hasVarieties, product.quantity_on_hand])
+
+  const isOutOfStock = availableStock <= 0
   const isQuantityMaxed = quantity >= availableStock
   const isLoading = shopNowLoading || addToCartLoading
 
@@ -49,29 +67,48 @@ export default function ProductActions({ product, isArabic }: ProductActionsProp
 
   const totalPrice = unitPrice * quantity
 
-// ...existing code...
-const buildCartItem = () => {
-  if (product.hasVarieties) {
-    if (!selectedVariety) {
-      toast.error(isArabic ? "يرجى اختيار نوع المنتج" : "Please select a product variety")
+  const buildCartItem = () => {
+    if (product.hasVarieties) {
+      if (!selectedVariety) {
+        toast.error(isArabic ? "يرجى اختيار نوع المنتج" : "Please select a product variety")
+        return null
+      }
+      
+      // Check if variant has enough stock
+      if (selectedVariety.quantity < quantity) {
+        toast.error(isArabic 
+          ? `المخزون غير كافٍ. المتوفر: ${selectedVariety.quantity}` 
+          : `Insufficient stock. Available: ${selectedVariety.quantity}`
+        )
+        return null
+      }
+      
+      return {
+        ...product,
+        price: selectedVariety.price,
+        variety: selectedVariety.en_name_variant,
+        quantity_on_hand: selectedVariety.quantity, // Include variant's stock
+        // Remove the varieties array to avoid storing all varieties
+        varieties: undefined,
+        hasVarieties: true
+      }
+    }
+    
+    // Check if product has enough stock
+    if (product.quantity_on_hand < quantity) {
+      toast.error(isArabic 
+        ? `المخزون غير كافٍ. المتوفر: ${product.quantity_on_hand}` 
+        : `Insufficient stock. Available: ${product.quantity_on_hand}`
+      )
       return null
     }
-    return {
-      ...product,
-      price: selectedVariety.price,
-      variety: selectedVariety.en_name_variant,
-      // Remove the varieties array to avoid storing all varieties
-      varieties: undefined,
-      hasVarieties: true
+    
+    return { 
+      ...product, 
+      price: product.price,
+      varieties: undefined // Clean up for consistency
     }
   }
-  return { 
-    ...product, 
-    price: product.price,
-    varieties: undefined // Clean up for consistency
-  }
-}
-// ...existing code...
 
   const addToCart = () => {
     const item = buildCartItem()
@@ -79,9 +116,10 @@ const buildCartItem = () => {
     setAddToCartLoading(true)
     setShowCheck(false)
     setTimeout(() => {
-      for (let i = 0; i < quantity; i++) {
-        dispatch({ type: "ADD_ITEM", payload: item })
-      }
+      dispatch({ 
+        type: "ADD_ITEM", 
+        payload: { ...item, quantity: quantity } // Pass quantity directly
+      })
       toast.success(isArabic ? "تمت إضافة المنتج إلى السلة" : "Product Added to Cart")
       setAddToCartLoading(false)
       setShowCheck(true)
@@ -93,9 +131,10 @@ const buildCartItem = () => {
     const item = buildCartItem()
     if (!item) return
     setShopNowLoading(true)
-    for (let i = 0; i < quantity; i++) {
-      dispatch({ type: "ADD_ITEM", payload: item })
-    }
+    dispatch({ 
+      type: "ADD_ITEM", 
+      payload: { ...item, quantity: quantity } // Pass quantity directly
+    })
     toast.success(isArabic ? "تمت إضافة المنتج إلى السلة" : "Product Added to Cart")
     router.push("/checkout")
   }
@@ -118,28 +157,52 @@ const buildCartItem = () => {
           <label className="font-medium" htmlFor="variety-select">
             {isArabic ? "النوع:" : "Variety:"}
           </label>
-            <select
-              id="variety-select"
-              value={selectedVariety?.en_name_variant || ""}
-              onChange={(e) => {
-                const sel = product.varieties.find(v => v.en_name_variant === e.target.value)
-                if (sel) setSelectedVariety(sel)
-              }}
-              className="border rounded p-2"
-            >
-              {product.varieties.map(v => (
-                <option key={v.en_name_variant} value={v.en_name_variant}>
-                  {v.en_name_variant} - {v.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                </option>
-              ))}
-            </select>
+          <select
+            id="variety-select"
+            value={selectedVariety?.en_name_variant || ""}
+            onChange={(e) => {
+              const sel = product.varieties.find(v => v.en_name_variant === e.target.value)
+              if (sel) setSelectedVariety(sel)
+            }}
+            className="border rounded p-2"
+          >
+            {product.varieties.map(v => (
+              <option 
+                key={v.en_name_variant} 
+                value={v.en_name_variant}
+                disabled={v.quantity <= 0}
+              >
+                {v.en_name_variant} - {v.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                {v.quantity <= 0 ? (isArabic ? " (نفذت الكمية)" : " (Out of stock)") : 
+                 v.quantity < 5 ? (isArabic ? ` (${v.quantity} متبقي)` : ` (${v.quantity} left)`) : ''}
+              </option>
+            ))}
+          </select>
+          
+          {/* Show selected variant's stock */}
+          {selectedVariety && (
+            <p className={`text-sm ${selectedVariety.quantity < 5 ? "text-amber-600" : "text-green-600"}`}>
+              {isArabic 
+                ? `المتوفر: ${selectedVariety.quantity} قطعة` 
+                : `Available: ${selectedVariety.quantity} units`}
+            </p>
+          )}
         </div>
       )}
 
       {!product.hasVarieties && (
-        <div className="text-xl font-bold">
-          {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
-        </div>
+        <>
+          <div className="text-xl font-bold">
+            {product.price.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+          </div>
+          
+          {/* Show product stock */}
+          <p className={`text-sm ${availableStock < 5 ? "text-amber-600" : "text-green-600"}`}>
+            {isArabic 
+              ? `المتوفر: ${availableStock} قطعة` 
+              : `Available: ${availableStock} units`}
+          </p>
+        </>
       )}
 
       <div className="flex items-center gap-4">
@@ -151,14 +214,14 @@ const buildCartItem = () => {
             variant="outline"
             size="icon"
             onClick={() => setQuantity(q => Math.max(1, q - 1))}
-            disabled={isLoading}
+            disabled={isLoading || isOutOfStock}
           >-</Button>
           <span className="w-12 text-center" id="quantity-input">{quantity}</span>
           <Button
             variant="outline"
             size="icon"
             onClick={() => setQuantity(q => q + 1)}
-            disabled={isQuantityMaxed || isLoading}
+            disabled={isQuantityMaxed || isLoading || isOutOfStock}
           >+</Button>
         </div>
       </div>
@@ -170,9 +233,9 @@ const buildCartItem = () => {
       <div className="flex flex-col gap-2 w-full">
         <Button
           onClick={addToCart}
-            size="lg"
-            className="w-full"
-            disabled={isOutOfStock || isLoading}
+          size="lg"
+          className="w-full"
+          disabled={isOutOfStock || isLoading}
         >
           {addToCartLoading
             ? <LoadingDots />
@@ -187,7 +250,9 @@ const buildCartItem = () => {
                     height={20}
                     alt=""
                   />
-                  {isArabic ? "أضف للسلة" : "Add to Cart"}
+                  {isOutOfStock 
+                    ? (isArabic ? "نفذت الكمية" : "Out of Stock")
+                    : (isArabic ? "أضف للسلة" : "Add to Cart")}
                 </>
               )}
         </Button>
@@ -199,7 +264,11 @@ const buildCartItem = () => {
             className="flex-1"
             disabled={isOutOfStock || isLoading}
           >
-            {shopNowLoading ? <LoadingDots /> : (isArabic ? "اشتري الآن" : "Buy Now")}
+            {shopNowLoading 
+              ? <LoadingDots /> 
+              : isOutOfStock
+                ? (isArabic ? "نفذت الكمية" : "Out of Stock")
+                : (isArabic ? "اشتري الآن" : "Buy Now")}
           </Button>
 
           <Button

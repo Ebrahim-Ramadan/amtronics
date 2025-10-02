@@ -6,7 +6,8 @@ export async function POST(req: NextRequest) {
   try {
     const { amount, orderId } = await req.json();
     const accessToken = await getAccessToken();
-    console.log('accessToken', accessToken);
+    console.log('process.env.CBK_TEST_URL', process.env.CBK_TEST_URL);
+    console.log('process.env.CBK_ENCRP_KEY', process.env.CBK_ENCRP_KEY);
     const returnUrl = `https://28980b98aab3.ngrok-free.app/api/cbk/result`;
     console.log('returnUrl', returnUrl);
     
