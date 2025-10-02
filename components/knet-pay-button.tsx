@@ -1,36 +1,61 @@
-"use client";
-import { useState } from "react";
+'use client';
+import { useState } from 'react';
 
-export function KNETPaymentButton({ amount }: { amount: string }) {
+export default function PaymentButton({ amount, trackid = "ass5"}: { amount: any; trackid: string }) {
   const [loading, setLoading] = useState(false);
-  
-  // Option 1: Convert to integer (removes decimal places)
-  const formattedAmount = Math.floor(Number(amount)); // e.g. "2.000" -> 2
+  // Format amount as integer value
+  const formattedAmount = Math.floor(Number(amount));
 
-  console.log('formattedAmount', formattedAmount, typeof formattedAmount);
-
-  const handlePay = async () => {
+  const handlePayment = async () => {
     setLoading(true);
-    const res = await fetch("/api/pay", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: formattedAmount, orderId: Date.now().toString() }),
-    });
+    try {
+      // Get HTML form from the API
+      const res = await fetch('/api/initiate-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formattedAmount,
+          trackid,
+          reference: `REF-${Date.now()}`,
+          returl: window.location.origin + '/payment-result', // Use origin for dynamic URL
+        }),
+      });
 
-    const html = await res.text();
-    const popup = window.open("", "_self");
-    if (popup) popup.document.write(html);
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Failed with status ${res.status}: ${errorText}`);
+      }
+
+      // Response is HTML form, not JSON
+      const htmlContent = await res.text();
+      
+      // Create temporary container and inject HTML
+      const tempContainer = document.createElement('div');
+      tempContainer.innerHTML = htmlContent;
+      document.body.appendChild(tempContainer);
+      
+      // Find and submit the form
+      const form = tempContainer.querySelector('form');
+      if (form) {
+        form.submit();
+      } else {
+        throw new Error('Payment form not found in response');
+      }
+    } catch (error) {
+      console.error('Payment failed', error);
+      alert('Payment initialization failed. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <button
-      onClick={handlePay}
+    <button 
+      onClick={handlePayment} 
       disabled={loading}
-      className="px-4 py-2 bg-blue-600 text-white rounded"
+      className="w-full py-3 rounded-md bg-[#00B8DB] text-white font-medium hover:bg-[#009cba] transition-colors"
     >
-      {loading ? "Redirecting..." : "Pay with KNET"}
+      {loading ? 'Processing...' : `Pay ${formattedAmount} KWD with KNET`}
     </button>
   );
 }
-
-export default KNETPaymentButton;
