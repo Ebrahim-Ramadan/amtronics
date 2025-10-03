@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useCart } from '@/lib/context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -23,6 +24,7 @@ export default function HWSD() {
     description: '',
     serviceType: 'hardware',
     price: 0,
+    notes: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -202,9 +204,16 @@ export default function HWSD() {
                         </span>
                       </div>
                     )}
+                    
+                    {submittedData.notes && (
+                      <div className="col-span-2">
+                        <span className="text-sm font-medium text-gray-600 block mb-1">
+                          {isArabic ? 'ملاحظات' : 'Notes'}
+                        </span>
+                        <p className="text-gray-700">{submittedData.notes}</p>
+                      </div>
+                    )}
                   </div>
-
-                  
                 </div>
               </div>
             </CardContent>
@@ -273,10 +282,21 @@ export default function HWSD() {
                       onChange={handleChange}
                       placeholder={isArabic ? 'السعر التقريبي بالدينار الكويتي' : 'Estimated price in KWD'}
                     />
-                   
                   </div>
-
-                 
+                  
+                  <div>
+                    <Label htmlFor="notes" className="text-sm font-medium">
+                      {isArabic ? 'ملاحظات' : 'Notes'}
+                    </Label>
+                    <Textarea
+                      id="notes"
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleChange}
+                      placeholder={isArabic ? 'أي معلومات أو ملاحظات إضافية' : 'Any additional information or notes'}
+                      rows={3}
+                    />
+                  </div>
                 </div>
               </CardContent>
               

@@ -106,8 +106,6 @@ export interface HWSDFee {
   title: string;
   serviceType: "hardware" | "software" | "both";
   price: number;
-  timeEstimate: string;
-  status: "pending" | "in-progress" | "completed" | "canceled";
   createdAt: string;
   updatedAt?: string;
   notes?: string;
