@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart, Globe, Menu, ChevronLeft, ChevronRight, Heart, SearchIcon } from "lucide-react";
+import { Search, ShoppingCart, Globe, Menu, ChevronLeft, ChevronRight, Heart, SearchIcon, ChevronDown, ShoppingBag, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -292,17 +292,44 @@ export default function Header() {
                   )}
                 </Button>
               </Link>
-              <Link href="/myorders" prefetch={false}
-              className="flex items-center gap-2 hover:bg-white p-2 rounded-md "
-              > 
-              <span className="hidden md:block md:text-xs font-medium">My orders</span>
-              <Image
-              src='/orders_menu_icon.svg'
-              width={20}
-              height={20}
-              alt="Orders"
-              />
-              </Link>
+             
+              <div className="relative group">
+  <Button 
+    variant="ghost" 
+    size="sm" 
+    className="flex items-center gap-1 text-gray-800 group-hover:bg-white p-2 rounded-md"
+  >
+    <span className="hidden md:block md:text-xs font-medium">
+      {isArabic ? "خدماتي" : "My Services"}
+    </span>
+    <Image
+      src='/orders_menu_icon.svg'
+      width={20}
+      height={20}
+      alt="Services"
+    />
+    <ChevronDown size={14} className="ml-1 transition-transform group-hover:rotate-180" />
+  </Button>
+  
+  <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg overflow-hidden z-50 origin-top-right scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200">
+    <div className="py-1">
+      <Link href="/myorders" prefetch={false} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+        <Image
+      src='/orders_menu_icon.svg'
+      width={20}
+      height={20}
+      alt="Services"
+    />
+        <span className="text-sm text-gray-700">{isArabic ? "طلباتي" : "My Orders"}</span>
+      </Link>
+      
+      <Link href="/hwsd" prefetch={false} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+        <Cpu size={16} className="text-gray-600" />
+        <span className="text-sm text-gray-700">{isArabic ? "رسوم  الهاردوير والسوفتوير" : "Hardware&Software Fees"}</span>
+      </Link>
+    </div>
+  </div>
+</div>
               </div>
               
             </div>

@@ -98,3 +98,17 @@ export interface CustomerInfo {
   street: string
   house: string
 }
+
+// Add this to your existing types file
+
+export interface HWSDFee {
+  _id?: string;
+  title: string;
+  serviceType: "hardware" | "software" | "both";
+  price: number;
+  timeEstimate: string;
+  status: "pending" | "in-progress" | "completed" | "canceled";
+  createdAt: string;
+  updatedAt?: string;
+  notes?: string;
+}
