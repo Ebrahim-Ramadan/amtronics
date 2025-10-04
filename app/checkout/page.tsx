@@ -655,7 +655,7 @@ export default function CheckoutPage() {
                 </Button>
               </div>
             </form>
-              <KNETPaymentButton amount={(state.total - discountAmount + shippingFee).toFixed(2)} />
+             {/* <KNETPaymentButton amount={(state.total - discountAmount + shippingFee).toFixed(2)} /> */}
 
             {/* Auth Dialog for Knet using shadcn/ui Dialog */}
             <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
@@ -760,27 +760,35 @@ export default function CheckoutPage() {
                         </div>
                      
                       <div className="grid grid-cols-1  gap-2 mt-2">
-                        {item.products.map((prod: Product, idx: number) => (
-                          <div key={prod._id + idx} className="flex items-center gap-2 shadow-sm rounded-xl p-2">
-                            <div className="relative w-14 h-14 rounded-xl shadow-xs">
-                              <img
-                                src={prod.image?.split(",")[0] || "/placeholder.svg?height=64&width=64"}
-                                alt={isArabic ? prod.ar_name : prod.en_name}
-                                className="object-cover w-full h-full rounded-md"
-                              />
-                              <span className="z-10 absolute -top-2 -left-4 bg-[#00B8DB] text-white text-xs font-semibold flex items-center justify-center rounded-full min-w-[1rem] min-h-[1rem] px-1 py-0.5">
-                                x{item.quantity}
-                              </span>
-                            </div>
-                            <div className="flex flex-col gap-1 leading-tight">
-                              <span className="font-semibold ">{isArabic ? prod.ar_name : prod.en_name}</span>
-                              <span className="text-sm text-neutral-700">{prod.price} {isArabic ? "د.ك" : "KD"}</span>
-                            </div>
-                            <span className="font-semibold ml-auto ">
-                              {(prod.price * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                            </span>
-                          </div>
-                        ))}
+                       {item.products.map((prod: Product, idx: number) => (
+  <div key={prod._id + idx} className="flex items-center gap-2 shadow-sm rounded-xl p-2">
+    <div className="relative w-14 h-14 rounded-xl shadow-xs">
+      <img
+        src={prod.image?.split(",")[0] || "/placeholder.svg?height=64&width=64"}
+        alt={isArabic ? prod.ar_name : prod.en_name}
+        className="object-cover w-full h-full rounded-md"
+      />
+      {/* Show bundle product quantity */}
+      {prod.quantity > 1 && (
+        <span className="z-10 absolute -top-2 -left-4 bg-blue-500 text-white text-xs font-bold rounded-full min-w-[1.5rem] min-h-[1rem] px-2 py-0.5">
+          {prod.quantity}x
+        </span>
+      )}
+     
+    </div>
+    <div className="flex flex-col gap-1 leading-tight">
+      <span className="font-semibold">{isArabic ? prod.ar_name : prod.en_name}</span>
+      <span className="text-xs text-neutral-700">
+        {isArabic ? "الكمية:" : "Qty:"} {prod.quantity}
+      </span>
+      <span className="text-sm text-neutral-700">{prod.price} {isArabic ? "د.ك" : "KD"}</span>
+    </div>
+    <span className="font-semibold ml-auto ">
+      {/* Total for this product: price * bundle qty * project qty */}
+      {(prod.price * prod.quantity * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+    </span>
+  </div>
+))}
                       </div>
                       {/* <div className="flex justify-between mt-2">
                         <p className="text-lg font-medium text-neutral-700">

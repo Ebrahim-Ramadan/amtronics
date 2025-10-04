@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useWishlist } from "@/lib/wishlist-context";
 import type { Product } from "@/lib/types";
-import type { ProjectCartItem } from "@/lib/types";
 import { EmptyCart } from "@/components/empty-cart";
 
 const policyItems = {
@@ -203,13 +202,19 @@ console.log('state.items', state.items);
                             key={prod._id + i}
                             className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-2 sm:p-3"
                           >
-                            <img
-                              src={prod.image.split(",")[0] || "/placeholder.svg?height=64&width=64"}
-                              alt={isArabic ? prod.ar_name : prod.en_name}
-                              // width={48}
-                              // height={48}
-                              className="rounded-md object-contain w-12 h-12 sm:w-16 sm:h-16"
-                            />
+                            <div className="relative">
+                              <img
+                                src={prod.image.split(",")[0] || "/placeholder.svg?height=64&width=64"}
+                                alt={isArabic ? prod.ar_name : prod.en_name}
+                                className="rounded-md object-contain w-12 h-12 sm:w-16 sm:h-16"
+                              />
+                              {/* Quantity badge */}
+                              {prod.quantity > 1 && (
+                                <span className="absolute -top-2 -left-2 bg-blue-500 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow">
+                                  {prod.quantity}
+                                </span>
+                              )}
+                            </div>
                             <div className="flex-1">
                               <p className="text-sm font-medium text-[#0F172B]">
                                 {isArabic ? prod.ar_name : prod.en_name}

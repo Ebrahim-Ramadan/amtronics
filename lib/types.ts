@@ -9,9 +9,10 @@ export interface Product {
   en_category: string
   price: number
   image: string
+  
   quantity_on_hand: number
   sold_quantity: number
-  // visible_in_catalog: number
+  quantity?: number
   rating?: number
   discount?: number
   ave_cost?: number
