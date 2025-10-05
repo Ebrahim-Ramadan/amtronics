@@ -4,7 +4,6 @@ import ProductCarousel from "@/components/product-carousel";
 import BrandShowcase from "@/components/brand-showcase";
 import LazyLoad from "@/components/lazyload";
 import ProjectsCarousel from "@/components/ProjectsCarousel";
-import PromotionalGrid from "@/components/promotional-grid";
 
 async function fetchProjects() {
   const res = await fetch(`${process.env.SITE_URL}/api/projects`, { cache: "no-store" });

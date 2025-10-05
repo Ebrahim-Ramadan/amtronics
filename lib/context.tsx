@@ -26,49 +26,94 @@ const CartContext = createContext<{
   dispatch: React.Dispatch<CartAction>
 } | null>(null)
 
+/**
+ * Ensure cart totals are always computed from the full items array.
+ * This helper normalizes items (numbers) and computes per-item totals and overall total.
+ */
+function computeItemTotal(item: any) {
+  if (!item) return 0;
+  if (item.type === "project-bundle") {
+    const bundleSum =
+      (item.products || []).reduce(
+        (s: number, p: any) => s + Number(p.price || 0) * Number(p.quantity || 1),
+        0
+      ) || 0;
+    return Number(bundleSum * Number(item.quantity || 1));
+  }
+  // normal single product item
+  if (item.product) {
+    return Number(item.product.price || 0) * Number(item.quantity || 1);
+  }
+  return 0;
+}
+
+function calculateTotals(items: any[]) {
+  const normalizedItems = (items || []).map((it) => {
+    if (!it) return it;
+    if (it.type === "project-bundle") {
+      const products = (it.products || []).map((p: any) => ({
+        ...p,
+        price: Number(p.price || 0),
+        quantity: Number(p.quantity || 1),
+      }));
+      const quantity = Number(it.quantity || 1);
+      const total = products.reduce((s: number, p: any) => s + p.price * p.quantity, 0) * quantity;
+      return { ...it, products, quantity, total: Number(total) };
+    }
+    if (it.product) {
+      const product = { ...it.product, price: Number(it.product.price || 0) };
+      const quantity = Number(it.quantity || 1);
+      const total = product.price * quantity;
+      return { ...it, product, quantity, total: Number(total) };
+    }
+    return it;
+  });
+
+  const total = normalizedItems.reduce((sum: number, it: any) => sum + (Number(it.total) || 0), 0);
+  return { normalizedItems, total: Number(total) };
+}
+
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
-// ...existing code...
-case "ADD_ITEM": {
-  const productKey = action.payload.variety 
-    ? `${action.payload._id}-${action.payload.variety}` 
-    : action.payload._id
+    case "ADD_ITEM": {
+      const productKey = action.payload.variety 
+        ? `${action.payload._id}-${action.payload.variety}` 
+        : action.payload._id
 
-  const existingItem = state.items.find((item) => {
-    if ("product" in item) {
-      const existingKey = item.product.variety 
-        ? `${item.product._id}-${item.product.variety}` 
-        : item.product._id
-      return existingKey === productKey
-    }
-    return false
-  }) as CartItem | undefined
-
-  if (existingItem) {
-    return {
-      ...state,
-      items: state.items.map((item) => {
+      const existingItem = state.items.find((item) => {
         if ("product" in item) {
           const existingKey = item.product.variety 
             ? `${item.product._id}-${item.product.variety}` 
             : item.product._id
           return existingKey === productKey
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
         }
-        return item
-      }),
-      total: state.total + action.payload.price,
+        return false
+      }) as CartItem | undefined
+
+      if (existingItem) {
+        return {
+          ...state,
+          items: state.items.map((item) => {
+            if ("product" in item) {
+              const existingKey = item.product.variety 
+                ? `${item.product._id}-${item.product.variety}` 
+                : item.product._id
+              return existingKey === productKey
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+            }
+            return item
+          }),
+          total: state.total + action.payload.price,
+        }
+      } else {
+        return {
+          ...state,
+          items: [...state.items, { product: action.payload, quantity: 1, welding: false }],
+          total: state.total + action.payload.price,
+        }
+      }
     }
-  } else {
-    return {
-      ...state,
-      items: [...state.items, { product: action.payload, quantity: 1, welding: false }],
-      total: state.total + action.payload.price,
-    }
-  }
-}
-// ...existing code...
     case "REMOVE_ITEM": {
       // Find if the payload matches a project-bundle or a product
       const itemToRemove = state.items.find((item) => {
@@ -167,11 +212,23 @@ case "ADD_ITEM": {
           total: state.total + action.payload.products.reduce((sum, p) => sum + p.price, 0) * action.payload.quantity,
         }
       } else {
-        return {
-          ...state,
-          items: [...state.items, action.payload],
-          total: state.total + action.payload.products.reduce((sum, p) => sum + p.price, 0) * action.payload.quantity,
-        }
+        // normalize incoming bundle before adding
+        const incoming = action.payload;
+        const normalizedBundle = {
+          ...incoming,
+          type: "project-bundle",
+          quantity: Number(incoming.quantity || 1),
+          products: (incoming.products || []).map((p: any) => ({
+            ...p,
+            price: Number(p.price || 0),
+            quantity: Number(p.quantity || 1),
+          })),
+        };
+        // attach total to the bundle
+        normalizedBundle.total = computeItemTotal(normalizedBundle);
+        const newItems = [...state.items, normalizedBundle];
+        const { normalizedItems, total } = calculateTotals(newItems);
+        return { ...state, items: normalizedItems, total };
       }
     }
     default:
