@@ -778,13 +778,10 @@ export default function CheckoutPage() {
     </div>
     <div className="flex flex-col gap-1 leading-tight">
       <span className="font-semibold">{isArabic ? prod.ar_name : prod.en_name}</span>
-      <span className="text-xs text-neutral-700">
-        {isArabic ? "الكمية:" : "Qty:"} {prod.quantity}
-      </span>
+     
       <span className="text-sm text-neutral-700">{prod.price} {isArabic ? "د.ك" : "KD"}</span>
     </div>
     <span className="font-semibold ml-auto ">
-      {/* Total for this product: price * bundle qty * project qty */}
       {(prod.price * prod.quantity * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
     </span>
   </div>
