@@ -17,7 +17,7 @@ export default function PaymentButton({ amount, trackid = "ass5"}: { amount: any
           formattedAmount,
           trackid,
           reference: `REF-${Date.now()}`,
-          returl: 'https://b61876969196.ngrok-free.app/payment-result',
+          returl: 'https://amtronics.co/payment-result',
         }),
       });
 
