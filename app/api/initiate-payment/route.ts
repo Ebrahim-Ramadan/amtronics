@@ -5,39 +5,65 @@ const CLIENT_ID = process.env.CBK_CLIENT_ID;
 const CLIENT_SECRET = process.env.CBK_CLIENT_SECRET;
 const ENCRP_KEY = process.env.CBK_ENCRP_KEY;
 const BASE_URL = process.env.CBK_TEST_URL;
+console.log(CLIENT_ID, CLIENT_SECRET, ENCRP_KEY, BASE_URL);
 
 async function getAccessToken() {
   try {
-    const auth = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
+    // Create credentials - don't encode the whole string, only password
+    const encodedPassword = Buffer.from(CLIENT_SECRET || '').toString('base64');
+    
+    console.log('Attempting authentication with:', {
+      url: `${BASE_URL}/ePay/api/cbk/online/pg/merchant/Authenticate`,
+      merchantId: CLIENT_ID?.slice(0, 5) + '...',
+    });
+
     const response = await axios.post(
       `${BASE_URL}/ePay/api/cbk/online/pg/merchant/Authenticate`,
       {
-        ClientId: CLIENT_ID,
-        ClientSecret: CLIENT_SECRET,
-        ENCRP_KEY
+        id: CLIENT_ID,         // Changed from merchantId to id
+        password: encodedPassword  // Send base64 encoded password
       },
       {
         headers: {
-          Authorization: `Basic ${auth}`,
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive'
         },
+        timeout: 30000  // Increased timeout to 30 seconds
       }
     );
 
-    const data = response.data;
-    console.log('Authentication response:', data);
-    
-    if (data.Status === '1') return data.AccessToken;
-    throw new Error(`Authentication failed: ${JSON.stringify(data)}`);
-  } catch (error) {
-    console.error('Authentication error:', error);
-    throw error;
+    if (!response.data?.token) {  // Changed from AccessToken to token
+      throw new Error(`Invalid authentication response: ${JSON.stringify(response.data)}`);
+    }
+
+    return response.data.token;
+
+  } catch (error: any) {
+    console.error('Authentication error details:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      requestConfig: {
+        url: error.config?.url,
+        method: error.config?.method,
+        headers: error.config?.headers,
+        data: error.config?.data
+      }
+    });
+
+    throw new Error(
+      `Authentication failed: ${error.response?.data?.message || error.message}`
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    console.log('body00', body);
     
     const {
       formattedAmount,

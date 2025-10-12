@@ -17,7 +17,7 @@ export default function PaymentButton({ amount, trackid = "ass5"}: { amount: any
           formattedAmount,
           trackid,
           reference: `REF-${Date.now()}`,
-          returl: window.location.origin + '/payment-result', // Use origin for dynamic URL
+          returl: 'https://b61876969196.ngrok-free.app/payment-result',
         }),
       });
 
@@ -28,6 +28,7 @@ export default function PaymentButton({ amount, trackid = "ass5"}: { amount: any
 
       // Response is HTML form, not JSON
       const htmlContent = await res.text();
+      console.log('htmlContent', htmlContent);
       
       // Create temporary container and inject HTML
       const tempContainer = document.createElement('div');

@@ -655,7 +655,7 @@ export default function CheckoutPage() {
                 </Button>
               </div>
             </form>
-             {/* <KNETPaymentButton amount={(state.total - discountAmount + shippingFee).toFixed(2)} /> */}
+             <KNETPaymentButton amount={(state.total - discountAmount + shippingFee).toFixed(2)} />
 
             {/* Auth Dialog for Knet using shadcn/ui Dialog */}
             <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>

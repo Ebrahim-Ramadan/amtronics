@@ -1,4 +1,3 @@
-// app/api/payment-result/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
@@ -21,7 +20,10 @@ async function getAccessToken() {
     }
   );
 
+  console.log('response', response);
+
   const data = response.data;
+  
   if (data.Status === '1') return data.AccessToken;
   throw new Error('Authentication failed');
 }
@@ -44,7 +46,8 @@ export async function GET(request: NextRequest) {
   try {
     const accessToken = await getAccessToken();
     const url = `${BASE_URL}/ePay/api/cbk/online/pg/GetTransactions/${encrp}/${accessToken}`;
-
+    console.log('url', url);
+    
     const auth = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
     const response = await axios.get(url, {
       headers: {
