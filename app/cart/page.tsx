@@ -227,9 +227,12 @@ console.log('state.items', state.items);
                         ))}
                       </div>
                       <div className="flex justify-end mt-2">
-                        <p className="font-semibold text-base sm:text-lg">
+                        {/* <p className="font-semibold text-base sm:text-lg">
                           {(item.products.reduce((sum, p) => sum + p.price, 0) * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                        </p>
+                        </p> */}
+                        <p className="font-semibold text-base sm:text-lg">
+  {(item.products.reduce((sum, p) => sum + (p.price * (p.quantity || 1)), 0) * item.quantity).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+</p>
                       </div>
                     </div>
                   </CardContent>

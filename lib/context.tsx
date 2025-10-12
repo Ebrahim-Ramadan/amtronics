@@ -33,11 +33,11 @@ const CartContext = createContext<{
 function computeItemTotal(item: any) {
   if (!item) return 0;
   if (item.type === "project-bundle") {
-    const bundleSum =
-      (item.products || []).reduce(
-        (s: number, p: any) => s + Number(p.price || 0) * Number(p.quantity || 1),
-        0
-      ) || 0;
+    // Fix: Account for both bundle quantity and individual product quantities
+    const bundleSum = (item.products || []).reduce(
+      (s: number, p: any) => s + (Number(p.price || 0) * Number(p.quantity || 1)),
+      0
+    );
     return Number(bundleSum * Number(item.quantity || 1));
   }
   // normal single product item
