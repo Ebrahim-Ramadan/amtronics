@@ -22,7 +22,7 @@ const brands = [
 	},
 	{
 		name: "Yahboom",
-		logo: "/categories/Yahboom.webp",
+		logo: "/brands/Yahboom.webp",
 		link: "/products?category=Yahboom",
 	},
 	{
