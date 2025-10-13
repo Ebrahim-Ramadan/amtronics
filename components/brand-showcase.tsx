@@ -20,6 +20,16 @@ const brands = [
 		logo: "/brands/sparkfun.png",
 		link: "/products?category=Sparkfun",
 	},
+	{
+		name: "Yahboom",
+		logo: "/categories/Yahboom.webp",
+		link: "/products?category=Yahboom",
+	},
+	{
+		name: "Acebott",
+		logo: "/brands/Acebott.webp",
+		link: "/products?category=Acebott",
+	},
 ]
 
 export default function BrandShowcase() {

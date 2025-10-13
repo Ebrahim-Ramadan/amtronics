@@ -10,6 +10,8 @@ export const  categories = [
   "Arduino",
   "Raspberry Pi",
   "Keyestudio",
+  "Acebott",
+  "Yahboom",
   "Bread Board & PCB",
   "Kits",
   "Filament & 3D Print",
