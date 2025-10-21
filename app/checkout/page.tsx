@@ -159,13 +159,26 @@ export default function CheckoutPage() {
 
       if (response.ok) {
         const promo = await response.json()
-        console.log('promo', promo);
-        
-        const calculatedDiscountAmount = (state.total * promo.percentage) / 100;
+        let calculatedDiscountAmount = 0;
+        if (promo.type === "percentage") {
+          calculatedDiscountAmount = (Number(state.total) * Number(promo.value)) / 100;
+        } else if (promo.type === "fixed") {
+          calculatedDiscountAmount = Number(promo.value);
+        }
         setDiscountAmount(calculatedDiscountAmount)
         setPromoError("")
-        setIsPromoApplied(true) // Set promo applied status to true
+        setIsPromoApplied(true)
         toast.info(isArabic ? "تم تطبيق الخصم" : "Discount Applied")
+
+        // --- Store discount and promoCode to localStorage ---
+        try {
+          localStorage.setItem("checkout_discount", JSON.stringify({
+            discountAmount: calculatedDiscountAmount,
+            promoCode: promoCode
+          }));
+        } catch (err) {
+          console.error("Error saving discount to localStorage:", err);
+        }
       } else {
         const error = await response.json()
         setPromoError(error.error)
@@ -380,6 +393,21 @@ export default function CheckoutPage() {
   const handleAreaChange = (value: string) => {
     setCustomerInfo(prev => ({ ...prev, area: value }))
   }
+
+  // --- On component mount, restore discount from localStorage ---
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("checkout_discount");
+      if (stored) {
+        const { discountAmount, promoCode } = JSON.parse(stored);
+        setDiscountAmount(Number(discountAmount) || 0);
+        setPromoCode(promoCode || "");
+        setIsPromoApplied(!!discountAmount);
+      }
+    } catch (err) {
+      // ignore
+    }
+  }, []);
 
   return (
     <div className="mx-auto md:px-16 py-4 md:py-6" dir={dir}>
@@ -655,7 +683,7 @@ export default function CheckoutPage() {
                 </Button>
               </div>
             </form>
-             <KNETPaymentButton amount={(state.total - discountAmount + shippingFee).toFixed(2)} />
+             {/* <KNETPaymentButton amount={(state.total - discountAmount + shippingFee).toFixed(2)} /> */}
 
             {/* Auth Dialog for Knet using shadcn/ui Dialog */}
             <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
@@ -864,7 +892,6 @@ export default function CheckoutPage() {
     </span>
   </label>
 )}
-        
 </>
                   );
                 }
@@ -880,7 +907,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between text-lg font-bold">
                 <span>{isArabic ? "المجموع" : "Total"}</span>
                 <span>
-                  {(state.total - discountAmount + shippingFee).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                  {(Math.max(0, Number(state.total) - Number(discountAmount)) + Number(shippingFee)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                 </span>
               </div>
               {discountAmount > 0 && (

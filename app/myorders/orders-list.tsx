@@ -674,7 +674,7 @@ export default function OrdersList() {
                         {isArabic ? "المجموع الفرعي:" : "Subtotal:"}
                       </span>
                       <span className="text-sm sm:text-base text-neutral-700 font-semibold">
-                        {(order.total - (order.discount || 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                        {Math.max(0, Number(order.total) - Number(order.discount || 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -682,7 +682,7 @@ export default function OrdersList() {
                         {isArabic ? "رسوم التوصيل:" : "Shipping Fee:"}
                       </span>
                       <span className="text-sm sm:text-base text-neutral-700">
-                        {(order.shippingFee ?? 0).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                        {(Number(order.shippingFee) ?? 0).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                       </span>
                     </div>
                     {order.discount > 0 && (
@@ -691,7 +691,7 @@ export default function OrdersList() {
                           {isArabic ? "الخصم المطبق:" : "Applied Discount:"}
                         </span>
                         <span className="text-sm sm:text-base text-green-600 font-semibold">
-                          -{order.discount.toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                          -{Number(order.discount).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                         </span>
                       </div>
                     )}
@@ -700,7 +700,7 @@ export default function OrdersList() {
                         {isArabic ? "المجموع الكلي:" : "Total Amount:"}
                       </span>
                       <span className="text-base sm:text-lg font-bold text-[#00B8DB]">
-                        {(order.total - (order.discount || 0) + (order.shippingFee ?? 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                        {(Math.max(0, Number(order.total) - Number(order.discount || 0)) + Number(order.shippingFee ?? 0)).toFixed(2)} {isArabic ? "د.ك" : "KD"}
                       </span>
                     </div>
                     
