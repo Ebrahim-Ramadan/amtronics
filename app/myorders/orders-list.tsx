@@ -571,9 +571,14 @@ export default function OrdersList() {
                                       <span className="font-medium text-blue-800">
                                         {isArabic ? "سعر الحزمة:" : "Bundle Price:"}
                                       </span>
-                                      <span className="text-blue-700 font-semibold">
-                                        {((item as ProjectBundleItem).products?.reduce((sum, p) => sum + p.price, 0) || 0).toFixed(2)} {isArabic ? "د.ك" : "KD"}
-                                      </span>
+<span className="text-blue-700 font-semibold">
+  {(
+    ((item as ProjectBundleItem).products?.reduce(
+      (sum, p) => sum + (p.price * (p.quantity ?? 1)), // multiply by product quantity
+      0
+    ) || 0)
+  ).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+</span>
                                     </div>
                                     {order.discount > 0 && (
                                       <div className="flex items-center justify-between">
