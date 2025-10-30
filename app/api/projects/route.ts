@@ -53,16 +53,8 @@ export async function GET() {
 
             // If product has varieties, try to match the variety by name in the project doc
             if (product && product.hasVarieties && Array.isArray(product.varieties)) {
-              // Try to find the variety name in the project doc's bundle name
-              // Example: "Micro SD Card  - Micro SD Card-128GB"
-              // Look for a variety whose en_name_variant is included in the bundle name
-              const bundleName = eng.name || ""; // Or use another field if the variety name is elsewhere
-              // Actually, the project doc's bundle name is not clear, so let's try to match by the engineer's bundle array
-              // If the project doc's bundle has a name field, use it, otherwise try to match by en_name_variant
-              // We'll try to match by en_name_variant being included in the bundleName or in the product name in the project doc
-
-              // Try to find the variety by checking if any en_name_variant is included in the bundleName or in the project doc
-              let foundVariety = null;
+                  const bundleName = eng.name || ""; 
+                let foundVariety = null;
               if (b.name) {
                 foundVariety = product.varieties.find(
                   (v: any) =>
