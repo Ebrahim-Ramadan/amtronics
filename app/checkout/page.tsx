@@ -46,7 +46,7 @@ export default function CheckoutPage() {
   const dir = isArabic ? "rtl" : "ltr"
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>("")
   const [availableAreas, setAvailableAreas] = useState<{ english: string; arabic: string }[]>([])
-  const [shippingFee] = useState(2)
+  const [shippingFee, setShippingFee] = useState(2)
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "knet">("cod")
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [authEmail, setAuthEmail] = useState("")
@@ -408,6 +408,16 @@ export default function CheckoutPage() {
       // ignore
     }
   }, []);
+
+  // Update shipping fee calculation based on payment method
+  const calculateShippingFee = (method: "cod" | "knet") => {
+    return method === "cod" ? 2 : 0; // 2 KD for delivery, 0 for pickup
+  }
+
+  // Update shipping fee when payment method changes
+  useEffect(() => {
+    setShippingFee(calculateShippingFee(paymentMethod))
+  }, [paymentMethod])
 
   return (
     <div className="mx-auto md:px-16 py-4 md:py-6" dir={dir}>
@@ -900,10 +910,12 @@ export default function CheckoutPage() {
             </>
             {/* Totals */}
             <div className="border-t border-[#00B8DB] pt-4">
-              <div className="flex justify-between text-base">
-                <span>{isArabic ? "رسوم التوصيل" : "Shipping Fee"}</span>
-                <span>{shippingFee.toFixed(2)} {isArabic ? "د.ك" : "KD"}</span>
-              </div>
+              {paymentMethod === "cod" && (
+    <div className="flex justify-between text-base">
+      <span>{isArabic ? "رسوم التوصيل" : "Shipping Fee"}</span>
+      <span>{shippingFee.toFixed(2)} {isArabic ? "د.ك" : "KD"}</span>
+    </div>
+  )}
               <div className="flex justify-between text-lg font-bold">
                 <span>{isArabic ? "المجموع" : "Total"}</span>
                 <span>
@@ -926,13 +938,14 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">
                   {paymentMethod === "knet"
-                    ? isArabic ? "كي نت" : "Knet"
+                    ? isArabic ? "رقع من المحل" : "In-Shop (Knet)"
                     : isArabic ? "الدفع عند التسليم - نقداً" : "Cash on Delivery"}
                 </p>
                 <img
-                  src={paymentMethod === "knet" ? "/knet-logo.svg" : "/cash-on-delivery.svg"}
+                  src={paymentMethod === "knet" ? "/inshop-knet.webp" : "/cash-on-delivery.svg"}
                   alt={paymentMethod === "knet" ? "Knet" : "Cash on Delivery"}
                   style={{ height: 32 }}
+                  className="rounded-full"
                 />
               </div>
             </div>
