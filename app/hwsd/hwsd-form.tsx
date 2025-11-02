@@ -85,6 +85,8 @@ export default function HWSD() {
         return isArabic ? 'سوفتوير' : 'Software';
       case 'both':
         return isArabic ? 'كلاهما' : 'Both';
+      case '3dprint':
+        return isArabic ? 'طباعة ثلاثية الأبعاد' : '3D Print';
       default:
         return type;
     }
@@ -190,6 +192,9 @@ export default function HWSD() {
                             <Code className="h-4 w-4 text-blue-600" />
                           </div>
                         )}
+                        {submittedData.serviceType === '3dprint' && (
+                          <HelpCircle className="h-4 w-4 mr-2 text-green-600" />
+                        )}
                         <span className="ml-1">{getServiceTypeName(submittedData.serviceType)}</span>
                       </div>
                     </div>
@@ -258,10 +263,17 @@ export default function HWSD() {
                           {isArabic ? 'سوفتوير' : 'Software'}
                         </Label>
                       </div>
+                     
                       <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="3dprint" id="3dprint" />
+                        <Label htmlFor="3dprint" className="cursor-pointer">
+                          {isArabic ? 'طباعة ثلاثية الأبعاد' : '3D Print'}
+                        </Label>
+                      </div>
+                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="both" id="both" />
                         <Label htmlFor="both" className="cursor-pointer">
-                          {isArabic ? 'كلاهما' : 'Both'}
+                          {isArabic ? 'كلهم' : 'All'}
                         </Label>
                       </div>
                     </RadioGroup>
