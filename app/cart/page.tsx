@@ -411,13 +411,29 @@ console.log('state.items', state.items);
                   <img
                     src="/payment_menu_icon.svg"
                     alt={isArabic ? "إتمام الطلب" : "Proceed to Checkout"}
-                    // width={18}
-                    // height={18}
                     className="mr-2"
                   />
                   {isArabic ? "إتمام الطلب" : "Proceed to Checkout"}
                 </Button>
               </Link>
+
+              {/* Clear Cart Button */}
+              <Button
+                variant="outline"
+                className="w-full mt-3 text-sm text-red-600 hover:text-red-700"
+                onClick={() => {
+                  const confirmMessage = isArabic
+                    ? "هل أنت متأكد من إزالة جميع العناصر من السلة؟"
+                    : "Are you sure you want to remove all items from the cart?";
+                  if (confirm(confirmMessage)) {
+                    dispatch({ type: "CLEAR_CART" });
+                    toast.success(isArabic ? "تم إفراغ السلة" : "Cart cleared");
+                  }
+                }}
+                aria-label={isArabic ? "إفراغ السلة" : "Clear cart"}
+              >
+                {isArabic ? "إفراغ السلة" : "Clear Cart"}
+              </Button>
             </CardContent>
           </Card>
           <div className="my-4 text-xs sm:text-sm text-neutral-600 space-y-2">
