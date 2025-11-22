@@ -79,6 +79,7 @@ async function getProduct(id: string): Promise<Product | null> {
           is_soldering: 1,
           hasVarieties: 1,
           varieties: 1,
+          allow_whatsapp_inquiry: 1,
           
         }
       }
@@ -237,7 +238,7 @@ async function ProductPage({ params, searchParams }: ProductPageProps) {
 
           {/* Stock Status */}
           <div>
-            {availableStock === 0 ? (
+            {(availableStock === 0 || product.allow_whatsapp_inquiry) ? (
               <Badge
                 variant="secondary"
                 className="bg-red-100 text-red-800"

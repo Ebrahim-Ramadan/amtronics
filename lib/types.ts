@@ -9,7 +9,7 @@ export interface Product {
   en_category: string
   price: number
   image: string
-  
+  allow_whatsapp_inquiry?:boolean
   quantity_on_hand: number
   sold_quantity: number
   quantity?: number
