@@ -458,9 +458,11 @@ export default function OrdersList() {
                       {/* Payment Method */}
       <p className="text-xs sm:text-sm text-neutral-600">
         {isArabic ? "طريقة الدفع:" : "Payment Method:"}{" "}
-        <span className="font-medium">
+         <span className="font-medium">
           {order.paymentMethod === "knet"
             ? isArabic ? "كي نت في المحل" : "In shop (Knet)"
+            : order.paymentMethod === "pickup"
+            ? isArabic ? "الاستلام من المحل" : "Pickup from Shop"
             : isArabic ? "الدفع عند التسليم" : "Cash on Delivery"}
         </span>
       </p>
@@ -687,7 +689,9 @@ export default function OrdersList() {
                         {isArabic ? "رسوم التوصيل:" : "Shipping Fee:"}
                       </span>
                       <span className="text-sm sm:text-base text-neutral-700">
-                        {(Number(order.shippingFee) ?? 0).toFixed(2)} {isArabic ? "د.ك" : "KD"}
+                        {order.paymentMethod === "cod" 
+                          ? (Number(order.shippingFee) ?? 2).toFixed(2)
+                          : "0.00"} {isArabic ? "د.ك" : "KD"}
                       </span>
                     </div>
                     {order.discount > 0 && (

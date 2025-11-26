@@ -47,7 +47,7 @@ export default function CheckoutPage() {
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>("")
   const [availableAreas, setAvailableAreas] = useState<{ english: string; arabic: string }[]>([])
   const [shippingFee, setShippingFee] = useState(2)
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "knet">("cod")
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "knet" | "pickup">("cod")
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [authEmail, setAuthEmail] = useState("")
   const [authPassword, setAuthPassword] = useState("")
@@ -79,7 +79,7 @@ export default function CheckoutPage() {
     }
   }
 
-  const handlePaymentMethodChange = (method: "cod" | "knet") => {
+  const handlePaymentMethodChange = (method: "cod" | "knet" | "pickup") => {
     if (method === "knet" && !isAuthorized) {
       setShowAuthDialog(true)
       return
@@ -410,8 +410,8 @@ export default function CheckoutPage() {
   }, []);
 
   // Update shipping fee calculation based on payment method
-  const calculateShippingFee = (method: "cod" | "knet") => {
-    return method === "cod" ? 2 : 0; // 2 KD for delivery, 0 for pickup
+  const calculateShippingFee = (method: "cod" | "knet" | "pickup") => {
+    return method === "cod" ? 2 : 0; // 2 KD for delivery, 0 for pickup/knet
   }
 
   // Update shipping fee when payment method changes
@@ -644,7 +644,7 @@ export default function CheckoutPage() {
   <label className="mb-2 block text-sm font-semibold text-neutral-800">
     {isArabic ? "طريقة الدفع" : "Payment Method"}
   </label>
-  <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+  <div className="flex flex-col gap-4">
     <label className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-all hover:bg-neutral-100 focus-within:ring-2 focus-within:ring-[#00B8DB] cursor-pointer">
       <input
         type="radio"
@@ -656,6 +656,19 @@ export default function CheckoutPage() {
       />
       <span className="text-sm font-medium text-neutral-700">
         {isArabic ? "الدفع عند التسليم" : "Cash on Delivery"}
+      </span>
+    </label>
+    <label className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-all hover:bg-neutral-100 focus-within:ring-2 focus-within:ring-[#00B8DB] cursor-pointer">
+      <input
+        type="radio"
+        name="paymentMethod"
+        value="pickup"
+        checked={paymentMethod === "pickup"}
+        onChange={() => setPaymentMethod("pickup")}
+        className="h-5 w-5 text-[#00B8DB] focus:ring-[#00B8DB] cursor-pointer"
+      />
+      <span className="text-sm font-medium text-neutral-700">
+        {isArabic ? "الاستلام من المحل" : "Pickup from Shop"}
       </span>
     </label>
     <label className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-all hover:bg-neutral-100 focus-within:ring-2 focus-within:ring-[#00B8DB] cursor-pointer">
@@ -686,9 +699,9 @@ export default function CheckoutPage() {
                       <span>{loadingMessage}</span>
                     </div>
                   ) : isArabic ? (
-                    paymentMethod === "knet" ? "تأكيد الطلب - دفع كي نت في المحل" : "تأكيد الطلب - دفع عند التسليم"
+                    paymentMethod === "knet" ? "تأكيد الطلب - دفع كي نت في المحل" : paymentMethod === "pickup" ? "تأكيد الطلب - الاستلام من المحل" : "تأكيد الطلب - دفع عند التسليم"
                   ) : (
-                    paymentMethod === "knet" ? "Confirm Order - Pay with Knet in store" : "Confirm Order - Cash on Delivery"
+                    paymentMethod === "knet" ? "Confirm Order - Pay with Knet in store" : paymentMethod === "pickup" ? "Confirm Order - Pickup from Shop" : "Confirm Order - Cash on Delivery"
                   )}
                 </Button>
               </div>
@@ -938,12 +951,14 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">
                   {paymentMethod === "knet"
-                    ? isArabic ? "رقع من المحل" : "In-Shop (Knet)"
+                    ? isArabic ? "دفع كي نت في المحل" : "In-Shop (Knet)"
+                    : paymentMethod === "pickup"
+                    ? isArabic ? "الاستلام من المحل" : "Pickup from Shop"
                     : isArabic ? "الدفع عند التسليم - نقداً" : "Cash on Delivery"}
                 </p>
                 <img
                   src={paymentMethod === "knet" ? "/inshop-knet.webp" : "/cash-on-delivery.svg"}
-                  alt={paymentMethod === "knet" ? "Knet" : "Cash on Delivery"}
+                  alt={paymentMethod === "knet" ? "Knet" : paymentMethod === "pickup" ? "Pickup" : "Cash on Delivery"}
                   style={{ height: 32 }}
                   className="rounded-full"
                 />
