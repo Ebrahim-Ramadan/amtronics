@@ -181,3 +181,5 @@ export async function POST(request: Request) {
 - Check `lib/cbk.ts` to understand how authentication works
 - Add `ObjectId` import from `mongodb` if needed: `import { ObjectId } from "mongodb"`
 
+
+and continue with the other endpoints
