@@ -104,7 +104,7 @@ Create a new file: `app/api/payments/knet/init/route.ts`
 - Create a payment session/transaction with CBK
 - Return payment URL or payment data to frontend
 
-**Template:**
+**Template Example:**
 ```tsx
 import { NextResponse } from "next/server"
 import { getAccessToken } from "@/lib/cbk"
