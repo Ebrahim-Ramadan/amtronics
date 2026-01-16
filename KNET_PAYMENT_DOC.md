@@ -147,4 +147,37 @@ export async function POST(request: Request) {
     //   }
     // )
 
-    // Update order in database 
+    // Update order in database with payment session ID
+    const client = await clientPromise
+    const db = client.db("amtronics")
+    await db.collection("orders").updateOne(
+      { _id: new ObjectId(orderId) },
+      {
+        $set: {
+          paymentSessionId: paymentResponse.data.SessionId, // or whatever CBK returns
+          paymentStatus: "pending"
+        }
+      }
+    )
+
+    return NextResponse.json({
+      success: true,
+      paymentUrl: paymentResponse.data.PaymentUrl, // URL to redirect user to
+      sessionId: paymentResponse.data.SessionId
+    })
+
+  } catch (error) {
+    console.error("Error initializing Knet payment:", error)
+    return NextResponse.json(
+      { error: "Failed to initialize payment" },
+      { status: 500 }
+    )
+  }
+}
+```
+
+**Important Notes:**
+- Replace the `TODO` section with actual CBK API calls based on their documentation
+- Check `lib/cbk.ts` to understand how authentication works
+- Add `ObjectId` import from `mongodb` if needed: `import { ObjectId } from "mongodb"`
+
