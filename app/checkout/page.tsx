@@ -17,7 +17,6 @@ import { GovernateswithRegions } from "@/lib/utils"
 import type { Product } from "@/lib/types"
 import Cookies from "js-cookie"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import KNETPaymentButton from "@/components/knet-pay-button"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -706,8 +705,7 @@ export default function CheckoutPage() {
                 </Button>
               </div>
             </form>
-             {/* <KNETPaymentButton amount={(state.total - discountAmount + shippingFee).toFixed(2)} /> */}
-
+{/* here goes the knet pay button */}
             {/* Auth Dialog for Knet using shadcn/ui Dialog */}
             <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
               <DialogContent>
