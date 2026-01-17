@@ -811,20 +811,6 @@ Use React conditional rendering like:
 
 ---
 
-## Understanding CBK Integration
-
-### The `lib/cbk.ts` File
-
-This file contains functions for interacting with the CBK (Central Bank of Kuwait) payment gateway. You'll likely find:
-
-- `getAccessToken()` - Function that authenticates with CBK and returns an access token
-- This token is needed for all CBK API calls
-
-**How to use it:**
-- Import it in your API route: `import { getAccessToken } from "@/lib/cbk"`
-- Call it: `const token = await getAccessToken()`
-- Use the token in authorization headers when calling CBK APIs
-
 ### CBK API Documentation
 
 You'll need to refer to CBK's official API documentation to understand:
